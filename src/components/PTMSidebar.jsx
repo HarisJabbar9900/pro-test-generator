@@ -2,7 +2,7 @@ import React from 'react';
 import { 
   Gauge, Send, Save, Newspaper, Users, 
   Files, Clock, Settings, LogOut, CheckCircle2, X,
-  UploadCloud, ShieldCheck, KeyRound, School, Calendar, Sparkles, Lock, Headphones, Database
+  UploadCloud, ShieldCheck, KeyRound, School, Calendar, Sparkles, Lock, Headphones, Database, Bot
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 import { isSuperAdmin } from '../utils/pricingPlansService';
@@ -44,6 +44,7 @@ export default function PTMSidebar({
       label: isAdmin ? 'User Management & Audit' : 'My Activity', 
       icon: isAdmin ? Users : Clock 
     },
+    { id: 'ai_assistant', label: 'AI Assistant Guide', icon: Bot, badge: 'Smart' },
     { id: 'default_paper_settings', label: 'Default Paper Settings', icon: Settings },
     { id: 'contact', label: 'Contact Team', icon: Headphones, badge: 'Direct' },
   ];

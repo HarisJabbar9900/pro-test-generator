@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Menu, User, Maximize2, Cloud, LogOut, KeyRound, 
-  ChevronDown, Settings, ShieldCheck, CheckCircle2, Phone
+  ChevronDown, Settings, ShieldCheck, CheckCircle2, Phone, Bot
 } from 'lucide-react';
 import UserProfileModal from './UserProfileModal';
 
@@ -11,6 +11,7 @@ export default function PTMHeader({
   onGoHome,
   onOpenContact,
   onOpenFirebaseStatus,
+  onOpenAiBot,
   onOpenAdmin,
   currentUser,
   onUpdateUser,
@@ -100,9 +101,21 @@ export default function PTMHeader({
           </nav>
         </div>
 
-        {/* RIGHT: FIREBASE STATUS, USER ACCOUNT DROPDOWN, FULLSCREEN */}
+        {/* RIGHT: AI ASSISTANT, FIREBASE STATUS, USER ACCOUNT DROPDOWN, FULLSCREEN */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           
+          {/* AI Assistant Bot Trigger Button */}
+          <button
+            type="button"
+            onClick={onOpenAiBot}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200 text-blue-700 text-xs font-bold transition-all shadow-2xs hover:shadow-xs cursor-pointer group"
+            title="Ask AI Assistant about website & syllabus"
+          >
+            <Bot className="w-3.5 h-3.5 text-blue-600 group-hover:scale-110 transition-transform" />
+            <span className="hidden md:inline">AI Assistant</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          </button>
+
           {/* Live Firebase Status Indicator */}
           <button
             type="button"

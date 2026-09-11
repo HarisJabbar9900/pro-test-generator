@@ -23,6 +23,7 @@ const AdminPortalSection = React.lazy(() => import('./components/AdminPortalSect
 const AdminQuestionBankManagerView = React.lazy(() => import('./components/AdminQuestionBankManagerView'));
 const PricingPlansView = React.lazy(() => import('./components/PricingPlansView'));
 const ContactTeamView = React.lazy(() => import('./components/ContactTeamView'));
+const AIAssistantBotModal = React.lazy(() => import('./components/AIAssistantBotModal'));
 import { DEFAULT_PAPER_CONFIG } from './utils/sampleData';
 import { isUserSubscribed, isSuperAdmin } from './utils/pricingPlansService';
 import { 
@@ -38,7 +39,7 @@ import {
   subscribeToCloudBank, 
   testFirebaseConnection
 } from './utils/firebaseBankService';
-import { ArrowLeft, CheckCircle2, AlertTriangle, X, Cloud } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertTriangle, X, Cloud, Bot } from 'lucide-react';
 import { Toaster } from 'sonner';
 import { notify } from './utils/notify';
 
@@ -344,10 +345,11 @@ export default function App() {
     }
   });
 
-  // Firebase Live Test & Contact Modals State
+  // Firebase Live Test & Contact & AI Bot Modals State
   const [showFirebaseModal, setShowFirebaseModal] = useState(false);
   const [firebaseStatus, setFirebaseStatus] = useState(null);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [showAiBotModal, setShowAiBotModal] = useState(false);
 
   // Sync Question Bank with Firebase Cloud Firestore
   useEffect(() => {
@@ -931,6 +933,11 @@ export default function App() {
         onCloseMobile={() => setMobileSidebarOpen(false)}
         activeNav={activeNav}
         setActiveNav={(navId) => {
+          if (navId === 'ai_assistant') {
+            setShowAiBotModal(true);
+            setMobileSidebarOpen(false);
+            return;
+          }
           handleSafeNavigate(navId);
           setMobileSidebarOpen(false);
         }}
@@ -957,6 +964,7 @@ export default function App() {
           }}
           onOpenContact={() => handleSafeNavigate('contact')}
           onOpenFirebaseStatus={handleTestFirebase}
+          onOpenAiBot={() => setShowAiBotModal(true)}
           onOpenAdmin={() => {
             setMobileSidebarOpen(false);
             if (isAdminUnlocked) {
@@ -979,6 +987,7 @@ export default function App() {
             <AdminPortalSection
               bank={bank}
               onBankUpdated={handleBankUpdated}
+              currentUser={currentUser}
               onExit={() => {
                 setActiveNav('generate_paper');
                 setPaperStep('course');
@@ -1391,6 +1400,35 @@ export default function App() {
         onClose={() => setShowContactModal(false)}
         currentUser={currentUser}
       />
+
+      {/* FLOATING AI ASSISTANT LAUNCHER WIDGET */}
+      {!showAiBotModal && (
+        <button
+          type="button"
+          onClick={() => setShowAiBotModal(true)}
+          className="fixed bottom-5 right-5 z-40 p-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full shadow-2xl hover:shadow-blue-500/50 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-2 group border border-white/20 cursor-pointer no-print"
+          title="Ask Pro Test Maker AI Assistant"
+        >
+          <div className="relative">
+            <Bot className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-slate-900 animate-pulse"></span>
+          </div>
+          <span className="hidden sm:inline font-black text-xs pr-1">Ask AI</span>
+        </button>
+      )}
+
+      {/* AI ASSISTANT BOT MODAL */}
+      <React.Suspense fallback={null}>
+        {showAiBotModal && (
+          <AIAssistantBotModal
+            isOpen={showAiBotModal}
+            onClose={() => setShowAiBotModal(false)}
+            currentUser={currentUser}
+            onOpenPricing={() => handleSafeNavigate('pricing')}
+            onOpenContact={() => handleSafeNavigate('contact')}
+          />
+        )}
+      </React.Suspense>
 
       {/* GLOBAL PROFESSIONAL CONFIRMATION MODAL */}
       <ConfirmationModal />

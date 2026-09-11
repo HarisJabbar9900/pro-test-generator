@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   ArrowLeft, Plus, Trash2, Upload, 
   CheckCircle2, Cloud, Layers, 
-  Check, Database, CheckSquare
+  Check, Database, CheckSquare, Bot, Sliders
 } from 'lucide-react';
 import { 
   addClassToBank, 
@@ -21,12 +21,15 @@ import { syncBankToFirebase, fetchBankFromFirebase } from '../utils/firebaseBank
 import { parseDocumentIntoQuestions } from '../utils/docParser';
 import AdminDatabaseCatalogView from './AdminDatabaseCatalogView';
 import AdminQuestionBankManagerView from './AdminQuestionBankManagerView';
+import AdminBotRulesModal from './AdminBotRulesModal';
+import { fetchBotConfig } from '../utils/aiBotService';
 import { notify } from '../utils/notify';
 import { confirmAction } from '../utils/confirmDialog';
 
 export default function AdminPortalSection({
   bank,
   onBankUpdated,
+  currentUser,
   onExit
 }) {
   // Navigation & Selection States
@@ -47,9 +50,11 @@ export default function AdminPortalSection({
   const [selectedTopicId, setSelectedTopicId] = useState(() => topics[0]?.id || '');
   const currentTopic = topics.find(t => t.id === selectedTopicId) || topics[0];
 
-  // Active Management Tab: 'catalog' | 'upload' | 'single' | 'manage'
+  // Active Management Tab: 'catalog' | 'upload' | 'single' | 'manage' | 'bot_rules'
   const [activeTab, setActiveTab] = useState('catalog');
   const [isRefreshingDb, setIsRefreshingDb] = useState(false);
+  const [showBotRulesModal, setShowBotRulesModal] = useState(false);
+  const [botConfig, setBotConfig] = useState(null);
 
   const handleRefreshDatabase = async () => {
     setIsRefreshingDb(true);
@@ -642,6 +647,17 @@ export default function AdminPortalSection({
               <Layers className="w-3.5 h-3.5" />
               <span>4. Manage Questions ({ (currentTopic?.mcqs?.length || 0) + (currentTopic?.shortQuestions?.length || 0) + (currentTopic?.longQuestions?.length || 0) })</span>
             </button>
+
+            <button
+              onClick={() => {
+                fetchBotConfig().then(cfg => setBotConfig(cfg));
+                setShowBotRulesModal(true);
+              }}
+              className="px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-t-lg transition-all cursor-pointer flex items-center gap-1.5 ml-auto"
+            >
+              <Bot className="w-3.5 h-3.5 text-amber-600" />
+              <span>AI Assistant Rules & Guardrails</span>
+            </button>
           </div>
 
           {/* TAB: QUESTION BANK & LIVE ANSWER KEY EDITOR */}
@@ -1135,6 +1151,17 @@ export default function AdminPortalSection({
             </div>
           </div>
         </div>
+      )}
+
+      {/* ADMIN AI BOT RULES CONTROL MODAL */}
+      {showBotRulesModal && (
+        <AdminBotRulesModal
+          isOpen={showBotRulesModal}
+          onClose={() => setShowBotRulesModal(false)}
+          currentConfig={botConfig}
+          currentUser={currentUser}
+          onConfigSaved={(updated) => setBotConfig(updated)}
+        />
       )}
 
     </div>
