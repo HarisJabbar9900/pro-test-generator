@@ -111,25 +111,37 @@ export default function DateSheetPlannerView({
     return list;
   }, [currentChapters]);
 
-  // Generate Date-Sheet Function
-  const handleGenerateSchedule = () => {
-    if (!startDate || !endDate) {
-      notify.error("براہ کرم شروع اور اختتام کی تاریخ منتخب کریں۔ (Please select dates)");
+  // Generate Date-Sheet Function with optional override params for real-time auto sync
+  const handleGenerateSchedule = (overrideParams = {}) => {
+    const activeStart = overrideParams.startDate !== undefined ? overrideParams.startDate : startDate;
+    const activeEnd = overrideParams.endDate !== undefined ? overrideParams.endDate : endDate;
+    const activePlanMode = overrideParams.planMode !== undefined ? overrideParams.planMode : planMode;
+    const activeSkipSundays = overrideParams.skipSundays !== undefined ? overrideParams.skipSundays : skipSundays;
+    const activeSkipFridays = overrideParams.skipFridays !== undefined ? overrideParams.skipFridays : skipFridays;
+
+    if (!activeStart || !activeEnd) {
+      if (overrideParams.showNotification !== false) {
+        notify.error("براہ کرم شروع اور اختتام کی تاریخ منتخب کریں۔ (Please select dates)");
+      }
       return;
     }
 
-    const workingDates = generateWorkingDates(startDate, endDate, skipSundays, skipFridays);
+    const workingDates = generateWorkingDates(activeStart, activeEnd, activeSkipSundays, activeSkipFridays);
 
     if (workingDates.length === 0) {
-      notify.error("منتخب تاریخوں میں کوئی ورکنگ دن نہیں ملا۔ (No working days in range)");
+      if (overrideParams.showNotification !== false) {
+        notify.error("منتخب تاریخوں میں کوئی ورکنگ دن نہیں ملا۔ (No working days in range)");
+      }
       return;
     }
 
     let items = [];
 
-    if (planMode === 'topic') {
+    if (activePlanMode === 'topic') {
       if (flattenedTopics.length === 0) {
-        notify.warning("اس مضمون میں کوئی ٹاپکس دستیاب نہیں ہیں۔ (No topics found)");
+        if (overrideParams.showNotification !== false) {
+          notify.warning("اس مضمون میں کوئی ٹاپکس دستیاب نہیں ہیں۔ (No topics found)");
+        }
         return;
       }
 
@@ -176,9 +188,11 @@ export default function DateSheetPlannerView({
           }
         }
       }
-    } else if (planMode === 'chapter') {
+    } else if (activePlanMode === 'chapter') {
       if (currentChapters.length === 0) {
-        notify.warning("اس مضمون میں کوئی چیپٹرز دستیاب نہیں ہیں۔");
+        if (overrideParams.showNotification !== false) {
+          notify.warning("اس مضمون میں کوئی چیپٹرز دستیاب نہیں ہیں۔");
+        }
         return;
       }
 
@@ -205,10 +219,12 @@ export default function DateSheetPlannerView({
           details: chNames
         });
       }
-    } else if (planMode === 'half') {
+    } else if (activePlanMode === 'half') {
       // 2 Half-Book Tests
       if (workingDates.length < 2) {
-        notify.warning("ہاف بک ٹیسٹ کے لیے کم از کم 2 دن درکار ہیں۔");
+        if (overrideParams.showNotification !== false) {
+          notify.warning("ہاف بک ٹیسٹ کے لیے کم از کم 2 دن درکار ہیں۔");
+        }
         return;
       }
       const mid = Math.ceil(currentChapters.length / 2);
@@ -235,7 +251,7 @@ export default function DateSheetPlannerView({
         topicIds: secondHalf.flatMap(c => (c.topics || []).map(t => t.id)),
         details: 'Second 50% Comprehensive Syllabus Exam'
       });
-    } else if (planMode === 'full') {
+    } else if (activePlanMode === 'full') {
       // Full Book / Pre-Board Tests
       items.push({
         testNumber: 1,
@@ -262,7 +278,9 @@ export default function DateSheetPlannerView({
 
     setScheduleRows(items);
     setHasGenerated(true);
-    notify.success(`${items.length} ٹیسٹ پیپرز کا شیڈول کامیابی سے تیار کر لیا گیا ہے۔ (Date-Sheet Created)`);
+    if (overrideParams.showNotification !== false) {
+      notify.success(`${items.length} ٹیسٹ پیپرز کا شیڈول کامیابی سے تیار کر لیا گیا ہے۔ (Date-Sheet Created)`);
+    }
   };
 
   // Helper date formatter: "15-Oct-2026 (Monday)"
@@ -602,7 +620,13 @@ export default function DateSheetPlannerView({
             <input
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => {
+                const newStart = e.target.value;
+                setStartDate(newStart);
+                if (hasGenerated) {
+                  handleGenerateSchedule({ startDate: newStart, showNotification: false });
+                }
+              }}
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 cursor-pointer"
             />
           </div>
@@ -616,7 +640,13 @@ export default function DateSheetPlannerView({
             <input
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => {
+                const newEnd = e.target.value;
+                setEndDate(newEnd);
+                if (hasGenerated) {
+                  handleGenerateSchedule({ endDate: newEnd, showNotification: false });
+                }
+              }}
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 cursor-pointer"
             />
           </div>
@@ -629,7 +659,13 @@ export default function DateSheetPlannerView({
             </label>
             <select
               value={planMode}
-              onChange={(e) => setPlanMode(e.target.value)}
+              onChange={(e) => {
+                const newMode = e.target.value;
+                setPlanMode(newMode);
+                if (hasGenerated) {
+                  handleGenerateSchedule({ planMode: newMode, showNotification: false });
+                }
+              }}
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               <option value="topic">Topic-wise (ٹاپک وائز ٹیسٹ سیریز)</option>
@@ -650,7 +686,13 @@ export default function DateSheetPlannerView({
                 <input
                   type="checkbox"
                   checked={skipSundays}
-                  onChange={(e) => setSkipSundays(e.target.checked)}
+                  onChange={(e) => {
+                    const nextSkip = e.target.checked;
+                    setSkipSundays(nextSkip);
+                    if (hasGenerated) {
+                      handleGenerateSchedule({ skipSundays: nextSkip, showNotification: false });
+                    }
+                  }}
                   className="w-4 h-4 rounded text-blue-600 focus:ring-0 cursor-pointer"
                 />
                 <span>Skip Sunday (اتوار چھٹی)</span>
@@ -660,7 +702,13 @@ export default function DateSheetPlannerView({
                 <input
                   type="checkbox"
                   checked={skipFridays}
-                  onChange={(e) => setSkipFridays(e.target.checked)}
+                  onChange={(e) => {
+                    const nextFri = e.target.checked;
+                    setSkipFridays(nextFri);
+                    if (hasGenerated) {
+                      handleGenerateSchedule({ skipFridays: nextFri, showNotification: false });
+                    }
+                  }}
                   className="w-4 h-4 rounded text-blue-600 focus:ring-0 cursor-pointer"
                 />
                 <span>Skip Friday</span>
