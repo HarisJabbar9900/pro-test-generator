@@ -342,9 +342,10 @@ export default function DateSheetPlannerView({
 
     msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
     msg += `⚠️ *Instructions for Students & Parents:*\n`;
-    msg += `1. تمام طلبہ مقررہ وقت پر ٹیسٹ کے لیے حاضر ہوں۔\n`;
-    msg += `2. روزانہ کا سلیبس تیار کر کے ٹیسٹ میں شمولیت لازمی ہے۔\n`;
-    msg += `3. ٹیسٹ رزلٹ شیٹ والدین کو بروقت شیئر کی جائے گی۔\n\n`;
+    msg += `1. All students must arrive on time for each scheduled test.\n`;
+    msg += `2. In case of any unforeseen closure, the test will be held on the next working day.\n`;
+    msg += `3. Regular test attendance and syllabus preparation are mandatory.\n`;
+    msg += `4. Test results will be communicated to parents on a regular basis.\n\n`;
     msg += `_Generated via PRO TEST MAKER Enterprise_`;
 
     return msg;
@@ -426,9 +427,10 @@ export default function DateSheetPlannerView({
 
         <div class="instructions">
           <strong>Instructions for Students & Parents:</strong><br/>
-          1. تمام طلبہ کے لیے مقررہ وقت پر ٹیسٹ میں شرکت لازمی ہے۔<br/>
-          2. کسی ناگزیر چھٹی کی صورت میں متعلقہ ٹیسٹ اگلے ورکنگ دن لیا جائے گا۔<br/>
-          3. روزانہ کا سلیبس مکمل تیار کر کے تشریف لائیں۔
+          1. All students must arrive on time for each scheduled test.<br/>
+          2. In case of any unforeseen holiday or closure, the test will be conducted on the next working day.<br/>
+          3. Full syllabus preparation according to the date-sheet is mandatory for all students.<br/>
+          4. Test evaluation report and results will be shared with parents promptly.
         </div>
 
         <table style="width: 100%; border: none; margin-top: 35pt;">
@@ -848,8 +850,9 @@ export default function DateSheetPlannerView({
             {/* Note & Signature Bar */}
             <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 gap-4">
               <div className="space-y-1 text-[11px]">
-                <p>• <strong>Instructions:</strong> تمام طلبہ و طالبات کے لیے ہر ٹیسٹ میں بروقت شرکت لازمی ہے۔</p>
-                <p>• کسی بھی ناگزیر چھٹی کی صورت میں متعلقہ ٹیسٹ اگلے ورکنگ دن لیا جائے گا۔</p>
+                <p>• <strong>Instructions:</strong> All students must arrive on time for each scheduled test.</p>
+                <p>• In case of any unforeseen holiday or closure, the test will be conducted on the next working day.</p>
+                <p>• Full syllabus preparation according to the date-sheet is mandatory for all students.</p>
               </div>
               <div className="flex items-end gap-10 text-center font-bold text-slate-800">
                 <div>
