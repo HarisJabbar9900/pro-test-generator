@@ -494,112 +494,24 @@ export default function AuthPortal({ onLoginSuccess }) {
       {/* 2. OPTICAL BLUR & DARK ATMOSPHERIC VIGNETTE OVERLAY */}
       <div className="fixed inset-0 bg-gradient-to-br from-slate-950/85 via-slate-900/80 to-indigo-950/90 backdrop-blur-[7px]" />
 
-      {/* 3. CENTRAL EXECUTIVE AUTH CONTAINER (SPLIT 2-COLUMN DESIGN) */}
-      <div className="relative z-10 w-full max-w-4xl bg-white/95 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-3xl overflow-hidden animate-fadeIn my-auto flex flex-col md:flex-row">
+      {/* 3. CENTRAL EXECUTIVE AUTH CONTAINER - FOCUSED & CLEAN */}
+      <div className="relative z-10 w-full max-w-md bg-white/95 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-3xl overflow-hidden animate-fadeIn my-auto p-6 sm:p-8 flex flex-col justify-between">
         
-        {/* LEFT COLUMN: GUIDANCE & PORTAL HIGHLIGHTS */}
-        <div className={`w-full md:w-5/12 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white p-6 sm:p-7 flex flex-col justify-between border-b md:border-b-0 md:border-r border-slate-700/80 relative overflow-hidden ${
-          lang === 'ur' ? 'text-right' : 'text-left'
-        }`}>
-          
-          {/* Ambient Glow */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-
-          <div className="relative z-10 space-y-4">
-            
-            {/* Header Brand */}
-            <div className={`flex items-center gap-3 ${lang === 'ur' ? 'flex-row-reverse' : 'flex-row'}`}>
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-500 to-cyan-400 p-0.5 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0">
-                <BookOpen className="w-6 h-6 text-white stroke-[2.2]" />
-              </div>
-              <div>
-                <h2 className="text-xl font-black text-white tracking-tight leading-tight">
-                  PRO TEST MAKER
-                </h2>
-                <span className="text-[11px] font-bold text-cyan-300 uppercase tracking-wider">
-                  {lang === 'ur' ? 'امتحانی پورٹل و سمارٹ جنریٹر' : 'Exam & Assessment Portal'}
-                </span>
-              </div>
+        <div>
+          {/* BRAND HEADER INSIDE CARD */}
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 p-0.5 flex items-center justify-center shadow-lg shadow-blue-500/25 shrink-0">
+              <BookOpen className="w-6 h-6 text-white stroke-[2.2]" />
             </div>
-
-            {/* Subtitle / Intro */}
-            <div className="pt-2 border-t border-slate-700/80">
-              <h3 className="text-base sm:text-lg font-black text-amber-300 leading-snug">
-                {lang === 'ur' 
-                  ? 'خوش آمدید • اساتذہ و ایڈمن پورٹل' 
-                  : 'Welcome • Faculty & Admin Portal'}
-              </h3>
-              <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                {lang === 'ur'
-                  ? 'بورڈ اور اسکول امتحانات کے جدید پرچہ جات تیار کرنے کا خودکار نظام۔'
-                  : 'Automated test paper generation aligned with National Curriculum standards.'}
-              </p>
+            <div className="text-left">
+              <h2 className="text-xl font-black text-slate-900 tracking-tight leading-tight">
+                PRO TEST MAKER
+              </h2>
+              <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider block">
+                {lang === 'ur' ? 'امتحانی پورٹل و سمارٹ جنریٹر' : 'Exam & Assessment Portal'}
+              </span>
             </div>
-
-            {/* Guidance Points */}
-            <div className="space-y-3 pt-1">
-              
-              {/* Feature 1: Admin Account */}
-              <div className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl border border-white/10 transition-colors">
-                <div className={`flex items-center justify-between gap-2 mb-1 ${lang === 'ur' ? 'flex-row' : 'flex-row-reverse'}`}>
-                  <span className="px-2 py-0.5 rounded-md bg-amber-400/20 text-amber-300 text-[10px] font-black font-mono">
-                    ADMIN
-                  </span>
-                  <div className={`flex items-center gap-1.5 text-xs font-black text-white ${lang === 'ur' ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>{lang === 'ur' ? 'ایڈمن کنٹرول' : 'Administrator Control'}</span>
-                  </div>
-                </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
-                  {lang === 'ur'
-                    ? 'ایڈمن تمام سوالات اپلوڈ اور مواد کا انتظام کر سکتے ہیں۔ لاگ ان کے لیے مخصوص ایڈمن ای میل اور پاسورڈ استعمال کریں۔'
-                    : 'System Administrator has access to question bank uploading, syllabus management, and configuration.'}
-                </p>
-              </div>
-
-              {/* Feature 2: Teacher Registration */}
-              <div className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl border border-white/10 transition-colors">
-                <div className={`flex items-center gap-1.5 text-xs font-black text-white mb-1 ${lang === 'ur' ? 'justify-end flex-row-reverse' : 'justify-start flex-row'}`}>
-                  <User className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>{lang === 'ur' ? 'اساتذہ کا اندراج' : 'Teacher Registration'}</span>
-                </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
-                  {lang === 'ur'
-                    ? 'نئے اساتذہ "نیا اکاؤنٹ بنائیں" پر جا کر رجسٹر ہوں، اس کے بعد اپنے پاسورڈ سے لاگ ان کر کے پیپرز بنائیں گے۔'
-                    : 'New teachers should create an account first. Registered accounts can sign in anytime to generate exam papers.'}
-                </p>
-              </div>
-
-              {/* Feature 3: Cloud Database */}
-              <div className="bg-white/5 hover:bg-white/10 p-3 rounded-2xl border border-white/10 transition-colors">
-                <div className={`flex items-center gap-1.5 text-xs font-black text-white mb-1 ${lang === 'ur' ? 'justify-end flex-row-reverse' : 'justify-start flex-row'}`}>
-                  <Database className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>{lang === 'ur' ? 'کلاؤڈ ڈیٹا بیس' : 'Cloud Database Sync'}</span>
-                </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
-                  {lang === 'ur'
-                    ? 'تمام صارفین اور سوالیہ بینک فائر بیس کلاؤڈ ڈیٹا بیس میں خودکار محفوظ رہتے ہیں۔'
-                    : 'User profiles and question banks are safely persisted in Firebase Cloud Firestore.'}
-                </p>
-              </div>
-
-            </div>
-
           </div>
-
-          {/* Footer Badge */}
-          <div className="mt-5 pt-3 border-t border-slate-700/60 flex items-center justify-between text-[10px] text-slate-400">
-            <span className="font-mono text-cyan-400">PRO TEST MAKER v2.5</span>
-            <span>{lang === 'ur' ? '24/7 کلاؤڈ سیکیورڈ' : 'Cloud Secured'}</span>
-          </div>
-
-        </div>
-
-        {/* RIGHT COLUMN: INTERACTIVE FORM (SIGN IN & REGISTER) */}
-        <div className="w-full md:w-7/12 p-6 sm:p-8 flex flex-col justify-between">
-          
-          <div>
             
             {/* TOP BAR: LANGUAGE SWITCHER & TABS */}
             <div className="flex items-center justify-between gap-3 mb-5">
@@ -947,8 +859,6 @@ export default function AuthPortal({ onLoginSuccess }) {
             </span>
             <span>PRO TEST MAKER © 2026</span>
           </div>
-
-        </div>
 
       </div>
 
