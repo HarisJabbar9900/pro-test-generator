@@ -53,6 +53,7 @@ export default function DateSheetPlannerView({
   const [startDate, setStartDate] = useState(getTodayStr());
   const [endDate, setEndDate] = useState(getDefaultEndStr());
   const [planMode, setPlanMode] = useState('topic'); // 'topic' | 'chapter' | 'half' | 'full'
+  const [topicsPerTest, setTopicsPerTest] = useState('1'); // '1' | '2' | '3' | '4' | 'auto'
   const [skipSundays, setSkipSundays] = useState(true);
   const [skipFridays, setSkipFridays] = useState(false);
   const [examStartTime, setExamStartTime] = useState('09:00 AM');
@@ -137,6 +138,8 @@ export default function DateSheetPlannerView({
 
     let items = [];
 
+    const activeTopicsPerTest = overrideParams.topicsPerTest !== undefined ? overrideParams.topicsPerTest : topicsPerTest;
+
     if (activePlanMode === 'topic') {
       if (flattenedTopics.length === 0) {
         if (overrideParams.showNotification !== false) {
@@ -145,47 +148,38 @@ export default function DateSheetPlannerView({
         return;
       }
 
-      // If available working dates >= topics, 1 topic per day
-      // If dates < topics, cluster multiple topics per test
       const topicsCount = flattenedTopics.length;
       const daysCount = workingDates.length;
 
-      if (daysCount >= topicsCount) {
-        items = flattenedTopics.map((top, idx) => ({
-          testNumber: idx + 1,
-          date: workingDates[idx],
-          scopeType: 'Topic-Wise Test',
-          syllabus: `Ch ${top.chapterNumber} (Topic ${top.topicNumber}: ${top.topicName})`,
-          chapterNumber: top.chapterNumber,
-          topicIds: [top.topicId],
-          details: `${top.chapterName} • Topic ${top.topicNumber}`
-        }));
+      // Determine how many topics per test based on teacher's choice:
+      let perDay = 1;
+      if (activeTopicsPerTest === 'auto') {
+        perDay = Math.max(1, Math.ceil(topicsCount / Math.max(1, daysCount)));
       } else {
-        // Group topics evenly into available days
-        const perDay = Math.ceil(topicsCount / daysCount);
-        let currentTopicIdx = 0;
+        perDay = Math.max(1, parseInt(activeTopicsPerTest, 10) || 1);
+      }
 
-        for (let d = 0; d < daysCount && currentTopicIdx < topicsCount; d++) {
-          const slice = flattenedTopics.slice(currentTopicIdx, currentTopicIdx + perDay);
-          currentTopicIdx += perDay;
+      let currentTopicIdx = 0;
+      for (let d = 0; d < daysCount && currentTopicIdx < topicsCount; d++) {
+        const slice = flattenedTopics.slice(currentTopicIdx, currentTopicIdx + perDay);
+        currentTopicIdx += perDay;
 
-          if (slice.length > 0) {
-            const firstT = slice[0];
-            const lastT = slice[slice.length - 1];
-            const syllabusStr = slice.length === 1
-              ? `Ch ${firstT.chapterNumber} (Topic ${firstT.topicNumber}: ${firstT.topicName})`
-              : `Ch ${firstT.chapterNumber} (Topic ${firstT.topicNumber} to ${lastT.topicNumber})`;
+        if (slice.length > 0) {
+          const firstT = slice[0];
+          const lastT = slice[slice.length - 1];
+          const syllabusStr = slice.length === 1
+            ? `Ch ${firstT.chapterNumber} (Topic ${firstT.topicNumber}: ${firstT.topicName})`
+            : `Ch ${firstT.chapterNumber} (Topic ${firstT.topicNumber} to ${lastT.topicNumber})`;
 
-            items.push({
-              testNumber: d + 1,
-              date: workingDates[d],
-              scopeType: `Topic-Wise (${slice.length} Topics)`,
-              syllabus: syllabusStr,
-              chapterNumber: firstT.chapterNumber,
-              topicIds: slice.map(s => s.topicId),
-              details: `${firstT.chapterName} • ${slice.length} Combined Topics`
-            });
-          }
+          items.push({
+            testNumber: d + 1,
+            date: workingDates[d],
+            scopeType: slice.length === 1 ? 'Topic-Wise (1 Topic)' : `Topic-Wise (${slice.length} Topics)`,
+            syllabus: syllabusStr,
+            chapterNumber: firstT.chapterNumber,
+            topicIds: slice.map(s => s.topicId),
+            details: `${firstT.chapterName} • ${slice.length} Topic(s)`
+          });
         }
       }
     } else if (activePlanMode === 'chapter') {
@@ -608,8 +602,8 @@ export default function DateSheetPlannerView({
           </div>
         </div>
 
-        {/* Row B: Dates, Test Scope Mode, Off Days */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-2 border-t border-slate-100">
+        {/* Row B: Dates, Test Scope Mode, Topics per Test, Off Days */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 pt-2 border-t border-slate-100">
           
           {/* Start Date */}
           <div className="space-y-1">
@@ -674,6 +668,48 @@ export default function DateSheetPlannerView({
               <option value="full">Full-Book / Pre-Board (فل بک ماڈل پیپرز)</option>
             </select>
           </div>
+
+          {/* Topics per Test Control (Only for Topic-Wise mode) */}
+          {planMode === 'topic' ? (
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <BookOpen className="w-3.5 h-3.5 text-blue-600" />
+                <span>Topics Per Test (ٹاپکس فی ٹیسٹ)</span>
+              </label>
+              <select
+                value={topicsPerTest}
+                onChange={(e) => {
+                  const newTpt = e.target.value;
+                  setTopicsPerTest(newTpt);
+                  if (hasGenerated) {
+                    handleGenerateSchedule({ topicsPerTest: newTpt, showNotification: false });
+                  }
+                }}
+                className="w-full bg-blue-50 border border-blue-300 text-blue-900 rounded-xl px-3 py-2 text-xs font-black focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              >
+                <option value="1">1 Topic per Test (Daily 1 ٹاپک)</option>
+                <option value="2">2 Topics per Test (Daily 2 ٹاپکس)</option>
+                <option value="3">3 Topics per Test (Daily 3 ٹاپکس)</option>
+                <option value="4">4 Topics per Test (Daily 4 ٹاپکس)</option>
+                <option value="auto">Auto-Fit to Days (خودکار حساب)</option>
+              </select>
+            </div>
+          ) : (
+            /* Timing Display for other modes */
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-slate-600" />
+                <span>Test Duration</span>
+              </label>
+              <input
+                type="text"
+                value={examDuration}
+                onChange={(e) => setExamDuration(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800"
+                placeholder="45 Mins"
+              />
+            </div>
+          )}
 
           {/* Off Days Flags */}
           <div className="space-y-1">
