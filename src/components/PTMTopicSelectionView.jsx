@@ -799,10 +799,10 @@ export default function PTMTopicSelectionView({
 
             {/* Row 2: Medium (◐), Choice, Blank Lines Type (☰), Chap Name, Selected Counter */}
             <div className="flex flex-wrap items-center justify-between gap-3 text-xs pt-1">
-              <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-[300px]">
+              <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:flex-1">
                 {/* Medium */}
-                <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs min-w-[190px]">
-                  <span className="bg-[#1890ff] text-white font-bold px-3 py-1.5 flex items-center justify-center text-sm select-none">
+                <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs flex-1 sm:flex-initial min-w-[140px] sm:min-w-[180px]">
+                  <span className="bg-[#1890ff] text-white font-bold px-2.5 sm:px-3 py-1.5 flex items-center justify-center text-sm select-none shrink-0">
                     ◐
                   </span>
                   <select
@@ -817,8 +817,8 @@ export default function PTMTopicSelectionView({
                 </div>
 
                 {/* Choice */}
-                <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs w-28">
-                  <span className="bg-[#1890ff] text-white font-bold px-2.5 py-1.5 flex items-center whitespace-nowrap text-xs select-none">
+                <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs w-24 sm:w-28 shrink-0">
+                  <span className="bg-[#1890ff] text-white font-bold px-2 sm:px-2.5 py-1.5 flex items-center whitespace-nowrap text-xs select-none">
                     Choice
                   </span>
                   <input
@@ -826,14 +826,14 @@ export default function PTMTopicSelectionView({
                     min="0"
                     value={choiceCount}
                     onChange={(e) => setChoiceCount(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-full bg-white px-2 py-1.5 text-slate-800 font-bold focus:outline-none text-xs text-center"
+                    className="w-full bg-white px-1.5 sm:px-2 py-1.5 text-slate-800 font-bold focus:outline-none text-xs text-center"
                     placeholder="0"
                   />
                 </div>
 
                 {/* Blank Lines Type */}
-                <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs min-w-[160px]">
-                  <span className="bg-[#1890ff] text-white font-bold px-3 py-1.5 flex items-center justify-center text-sm select-none">
+                <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs flex-1 sm:flex-initial min-w-[130px] sm:min-w-[160px]">
+                  <span className="bg-[#1890ff] text-white font-bold px-2.5 sm:px-3 py-1.5 flex items-center justify-center text-sm select-none shrink-0">
                     ☰
                   </span>
                   <select
@@ -861,22 +861,26 @@ export default function PTMTopicSelectionView({
               </div>
 
               {/* Counter: Selected Questions & Real-Time Pool Breakdown */}
-              <div className="flex flex-wrap items-center gap-2 font-bold text-xs text-slate-800 whitespace-nowrap bg-slate-50 px-3 py-1.5 rounded border border-slate-200 shrink-0">
-                <span className="text-slate-500 font-semibold">Pool:</span>
-                <span className="px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-800 border border-cyan-200 font-mono text-[11px]">
-                  {availableQuestions.mcqs} MCQs
-                </span>
-                <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 border border-indigo-200 font-mono text-[11px]">
-                  {availableQuestions.shorts} Shorts
-                </span>
-                <span className="px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-200 font-mono text-[11px]">
-                  {availableQuestions.longs} Longs
-                </span>
-                <span className="text-slate-300">|</span>
-                <span>Selected </span>
-                <span className="text-blue-600 font-black mx-1 text-sm">{requiredQuestions}</span>
-                <span>From </span>
-                <span className="text-red-600 font-black ml-1 text-sm">{availableQuestions.total}</span>
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 font-bold text-xs text-slate-800 bg-slate-50 px-2.5 sm:px-3 py-1.5 rounded border border-slate-200 w-full lg:w-auto justify-between sm:justify-start">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-slate-500 font-semibold text-[11px] sm:text-xs">Pool:</span>
+                  <span className="px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-800 border border-cyan-200 font-mono text-[10px] sm:text-[11px]">
+                    {availableQuestions.mcqs} MCQs
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 border border-indigo-200 font-mono text-[10px] sm:text-[11px]">
+                    {availableQuestions.shorts} Shorts
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-200 font-mono text-[10px] sm:text-[11px]">
+                    {availableQuestions.longs} Longs
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-[11px] sm:text-xs shrink-0">
+                  <span className="text-slate-300 hidden sm:inline">|</span>
+                  <span>Selected</span>
+                  <span className="text-blue-600 font-black text-sm">{requiredQuestions}</span>
+                  <span>From</span>
+                  <span className="text-red-600 font-black text-sm">{availableQuestions.total}</span>
+                </div>
               </div>
             </div>
 

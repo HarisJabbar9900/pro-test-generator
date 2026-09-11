@@ -398,20 +398,25 @@ export default function DefaultPaperSettingsView({
 
         {/* PREVIEW CONTAINER */}
         <div 
-          className="bg-white rounded-xl border border-slate-300 p-4 sm:p-6 shadow-xs overflow-x-auto"
+          className="bg-white rounded-xl border border-slate-300 p-2.5 sm:p-6 shadow-xs overflow-x-auto relative"
           style={{ color: fontColorHex }}
         >
-          {/* RENDER SELECTED LAYOUT PREVIEW */}
-          <PreviewHeaderRenderer
-            layoutId={formData.headerLayout}
-            academyName={formData.academyName}
-            tagline={formData.tagline}
-            syllabus={formData.syllabus}
-            headerFontSize={formData.headerFontSize}
-            headingFontSize={formData.headingFontSize}
-            headerFontStyle={formData.headerFontStyle}
-            fontColor={fontColorHex}
-          />
+          <div className="min-w-[620px]">
+            {/* RENDER SELECTED LAYOUT PREVIEW */}
+            <PreviewHeaderRenderer
+              layoutId={formData.headerLayout}
+              academyName={formData.academyName}
+              tagline={formData.tagline}
+              syllabus={formData.syllabus}
+              headerFontSize={formData.headerFontSize}
+              headingFontSize={formData.headingFontSize}
+              headerFontStyle={formData.headerFontStyle}
+              fontColor={fontColorHex}
+            />
+          </div>
+        </div>
+        <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium px-1 sm:hidden">
+          <span>👈 Scroll horizontally to preview full paper header 👉</span>
         </div>
       </div>
 

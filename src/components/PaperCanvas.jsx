@@ -582,15 +582,15 @@ export default function PaperCanvas({
       
       {/* CREATIVE TEST MAKER STYLE TOP ACTION BAR (RESPONSIVE FOR MOBILE & DESKTOP) */}
       <div className="no-print w-full bg-white/95 backdrop-blur-xs border border-slate-200/90 rounded-2xl p-2 sm:px-4 sm:py-2.5 shadow-xs mb-2">
-        <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-2.5 sm:gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
           
           {/* Left Group: Questions & Teacher Tools */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             {/* Question's Menu */}
             <button
               type="button"
               onClick={onOpenGeneratorModal}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-bold shadow-xs transition-all cursor-pointer active:scale-95"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-bold shadow-xs transition-all cursor-pointer active:scale-95"
               title="Open Topics Checklist & Paper Criteria Dialog"
             >
               <span>☰ Questions Menu</span>
@@ -600,7 +600,7 @@ export default function PaperCanvas({
             <button
               type="button"
               onClick={() => setShowTeacherMcqKey(!showTeacherMcqKey)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95 ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95 ${
                 showTeacherMcqKey
                   ? 'bg-amber-500 hover:bg-amber-600 text-white ring-2 ring-amber-300'
                   : 'bg-slate-100 hover:bg-amber-50 text-slate-700 hover:text-amber-800 border border-slate-200 hover:border-amber-300'
@@ -615,74 +615,64 @@ export default function PaperCanvas({
             <button
               type="button"
               onClick={() => setShowAnswerKeyModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-300 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-300 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
               title="View & Print Full Answer Key Table"
             >
               <span>📋 Key Sheet</span>
             </button>
-
-            {/* 1-Click WhatsApp Share Button */}
-            <button
-              type="button"
-              onClick={() => setShowWhatsAppModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
-              title="1-Click WhatsApp Share (پیپر اور سلیبس واٹس ایپ پر شیئر کریں)"
-            >
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-              <span>WhatsApp Share</span>
-            </button>
           </div>
 
-          {/* Center Group: Zoom Controls */}
-          <div className="flex items-center gap-1 bg-slate-100/90 border border-slate-200/90 px-2 py-1 rounded-xl shadow-2xs shrink-0 mx-auto lg:mx-0">
-            <button
-              type="button"
-              onClick={() => setZoomLevel(prev => Math.max(30, prev - 10))}
-              className="p-1 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 font-bold transition-all cursor-pointer"
-              title="Zoom Out"
-            >
-              <ZoomOut className="w-3.5 h-3.5" />
-            </button>
-            <span className="font-mono font-bold text-slate-800 text-xs px-1 min-w-[38px] text-center select-none">
-              {zoomLevel}%
-            </span>
-            <button
-              type="button"
-              onClick={() => setZoomLevel(prev => Math.min(150, prev + 10))}
-              className="p-1 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 font-bold transition-all cursor-pointer"
-              title="Zoom In"
-            >
-              <ZoomIn className="w-3.5 h-3.5" />
-            </button>
+          {/* Right/Center Group: Zoom & Discard Controls */}
+          <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto justify-between sm:justify-end">
+            {/* Zoom Controls */}
+            <div className="flex items-center gap-1 bg-slate-100/90 border border-slate-200/90 px-2 py-1 rounded-xl shadow-2xs shrink-0">
+              <button
+                type="button"
+                onClick={() => setZoomLevel(prev => Math.max(30, prev - 10))}
+                className="p-1 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 font-bold transition-all cursor-pointer"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-3.5 h-3.5" />
+              </button>
+              <span className="font-mono font-bold text-slate-800 text-xs px-1 min-w-[36px] text-center select-none">
+                {zoomLevel}%
+              </span>
+              <button
+                type="button"
+                onClick={() => setZoomLevel(prev => Math.min(150, prev + 10))}
+                className="p-1 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 font-bold transition-all cursor-pointer"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
+              </button>
 
-            <div className="h-4 w-px bg-slate-300 mx-1"></div>
+              <div className="h-4 w-px bg-slate-300 mx-1"></div>
 
-            <button
-              type="button"
-              onClick={() => setZoomLevel(calculateFitZoom())}
-              className="px-2 py-0.5 rounded-lg hover:bg-white text-slate-700 font-bold text-[11px] transition-all cursor-pointer"
-              title="Fit to Screen Width"
-            >
-              Fit Screen
-            </button>
-            <button
-              type="button"
-              onClick={() => setZoomLevel(100)}
-              className={`px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                zoomLevel === 100 ? 'bg-white text-blue-600 shadow-2xs' : 'hover:bg-white text-slate-600'
-              }`}
-              title="Reset to 100% Zoom"
-            >
-              100%
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={() => setZoomLevel(calculateFitZoom())}
+                className="px-1.5 sm:px-2 py-0.5 rounded-lg hover:bg-white text-slate-700 font-bold text-[11px] transition-all cursor-pointer"
+                title="Fit to Screen Width"
+              >
+                Fit Screen
+              </button>
+              <button
+                type="button"
+                onClick={() => setZoomLevel(100)}
+                className={`px-1.5 sm:px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                  zoomLevel === 100 ? 'bg-white text-blue-600 shadow-2xs' : 'hover:bg-white text-slate-600'
+                }`}
+                title="Reset to 100% Zoom"
+              >
+                100%
+              </button>
+            </div>
 
-          {/* Right Group: Cancel / Discard Paper */}
-          <div className="flex items-center gap-1.5 shrink-0 ml-auto lg:ml-0">
+            {/* Cancel / Discard Paper */}
             <button
               type="button"
               onClick={onResetPaper}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 shadow-2xs"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 shadow-2xs shrink-0"
               title="Cancel & Reset Paper"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -694,7 +684,7 @@ export default function PaperCanvas({
       </div>
 
       {/* PAPER ACTION DECK DIRECTLY WITH PAPER */}
-      <div className="no-print w-full max-w-[794px] bg-white/95 backdrop-blur-xs border border-slate-200/90 rounded-2xl p-2 sm:p-2.5 shadow-xs mb-2 space-y-2">
+      <div className="no-print w-full max-w-[794px] bg-white/95 backdrop-blur-xs border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-xs mb-2 space-y-2.5">
         {/* Tier 1: Direct Edit & Multi-Set Cheating Protection */}
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full shadow-2xs">
@@ -745,7 +735,7 @@ export default function PaperCanvas({
         </div>
 
         {/* Tier 2: Layout Options & Action Buttons */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-1.5 border-t border-slate-100">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-slate-100">
           <div className="flex items-center gap-2 flex-wrap">
             {/* Quick MCQs Layout Toggle: 1 Col vs 2 Col */}
             <div className="flex items-center gap-1 bg-slate-50 border border-slate-300/80 px-2 py-1 rounded-xl shadow-2xs">
@@ -805,37 +795,38 @@ export default function PaperCanvas({
             </button>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap ml-auto">
+          {/* Primary Action Buttons (WhatsApp, Print, DOC) */}
+          <div className="grid grid-cols-3 sm:flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
             {/* 1-Click WhatsApp Share */}
             <button
               type="button"
               onClick={() => setShowWhatsAppModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
+              className="flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
               title="1-Click WhatsApp Share (پیپر اور سلیبس واٹس ایپ پر شیئر کریں)"
             >
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>WhatsApp</span>
+              <MessageCircle className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">WhatsApp</span>
             </button>
 
             {/* Print Paper */}
             <button
               type="button"
               onClick={handlePrintPaper}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
+              className="flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-2 sm:py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
               title="Print Paper / Save as PDF (Ctrl+P)"
             >
-              <Printer className="w-3.5 h-3.5" />
-              <span>Print Paper</span>
+              <Printer className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Print Paper</span>
             </button>
 
             {/* Save Paper (.doc download) */}
             <button
               type="button"
               onClick={onExportDocx}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
+              className="flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
               title="Download editable Microsoft Word (.doc) paper"
             >
-              <span>Save .DOC</span>
+              <span className="truncate">Save .DOC</span>
             </button>
           </div>
         </div>
