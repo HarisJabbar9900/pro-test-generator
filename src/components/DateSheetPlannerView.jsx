@@ -653,27 +653,27 @@ export default function DateSheetPlannerView({
             </div>
 
             {/* Interactive Schedule Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse border border-slate-300 text-xs">
+            <div className="overflow-x-auto rounded-xl border border-slate-300">
+              <table className="w-full text-left border-collapse text-xs min-w-[700px]">
                 <thead>
-                  <tr className="bg-slate-100 text-slate-900 font-black border-b-2 border-slate-400 uppercase text-[11px] tracking-wider">
-                    <th className="p-2.5 border border-slate-300 w-12 text-center">Test #</th>
-                    <th className="p-2.5 border border-slate-300 w-44">Date & Day</th>
-                    <th className="p-2.5 border border-slate-300 w-36">Test Scope</th>
-                    <th className="p-2.5 border border-slate-300">Complete Syllabus / Topics Included</th>
-                    <th className="p-2.5 border border-slate-300 w-36 text-center no-print">Paper Action</th>
+                  <tr className="bg-slate-100 text-slate-900 font-black border-b-2 border-slate-300 uppercase text-[11px] tracking-wider">
+                    <th className="p-3 border-r border-slate-300 w-14 text-center">Test #</th>
+                    <th className="p-3 border-r border-slate-300 w-48">Date & Day</th>
+                    <th className="p-3 border-r border-slate-300 w-48">Test Scope</th>
+                    <th className="p-3 border-r border-slate-300">Complete Syllabus / Topics Included</th>
+                    <th className="p-3 w-36 text-center no-print">Paper Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
                   {scheduleRows.map((row, idx) => (
                     <tr key={idx} className="hover:bg-blue-50/40 transition-colors">
                       {/* Test Number */}
-                      <td className="p-2.5 border border-slate-300 text-center font-black text-slate-800 bg-slate-50/50">
+                      <td className="p-3 border-r border-slate-200 text-center font-black text-slate-800 bg-slate-50/50">
                         {row.testNumber}
                       </td>
 
                       {/* Date & Day */}
-                      <td className="p-2 border border-slate-300 font-bold text-slate-800 whitespace-nowrap">
+                      <td className="p-3 border-r border-slate-200 font-bold text-slate-800 whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-blue-600 shrink-0 no-print" />
                           <span>{formatDateDisplay(row.date)}</span>
@@ -681,29 +681,29 @@ export default function DateSheetPlannerView({
                       </td>
 
                       {/* Scope */}
-                      <td className="p-2 border border-slate-300 font-semibold text-slate-700">
-                        <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-800 font-bold border border-blue-200 text-[11px]">
+                      <td className="p-3 border-r border-slate-200 font-semibold text-slate-700 whitespace-nowrap">
+                        <span className="inline-block px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 font-bold border border-blue-200 text-xs shadow-2xs">
                           {row.scopeType}
                         </span>
                       </td>
 
                       {/* Syllabus (Editable on Click) */}
-                      <td className="p-2 border border-slate-300 font-medium text-slate-800">
+                      <td className="p-2 border-r border-slate-200 font-medium text-slate-800 min-w-[240px]">
                         <input
                           type="text"
                           value={row.syllabus}
                           onChange={(e) => handleUpdateRow(idx, 'syllabus', e.target.value)}
-                          className="w-full bg-transparent hover:bg-slate-50 focus:bg-white focus:ring-1 focus:ring-blue-400 px-1.5 py-1 rounded text-xs font-semibold text-slate-900"
+                          className="w-full bg-transparent hover:bg-slate-100/70 focus:bg-white focus:ring-1 focus:ring-blue-500 border border-transparent focus:border-slate-300 px-2 py-1.5 rounded-lg text-xs font-semibold text-slate-900 transition-all"
                         />
                       </td>
 
                       {/* Paper Action (No-print) */}
-                      <td className="p-2 border border-slate-300 text-center no-print whitespace-nowrap">
+                      <td className="p-2.5 text-center no-print whitespace-nowrap">
                         <div className="flex items-center justify-center gap-1.5">
                           <button
                             type="button"
                             onClick={() => handleLaunchGeneratorForTest(row)}
-                            className="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-[11px] font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
+                            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
                             title="Generate test paper for this exact topic"
                           >
                             Generate Paper 📄
@@ -711,7 +711,7 @@ export default function DateSheetPlannerView({
                           <button
                             type="button"
                             onClick={() => handleDeleteRow(idx)}
-                            className="p-1 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
+                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                             title="Delete this test row"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
