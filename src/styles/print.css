@@ -1,0 +1,474 @@
+/* A4 & Letter Paper Formatting & CSS Print Rules */
+
+/* ========================================================= */
+/* CSS PRINT MEDIA STYLES - 1:1 PREVIEW MATCHING PRINT ENGINE */
+/* ========================================================= */
+
+.print-watermark-root {
+  display: none;
+}
+
+@media print {
+  /* Set exact A4 page size with minimal printable margin */
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+
+  /* Universal Print Reset: Prevent clipping while preserving exact layout geometry */
+  *,
+  *::before,
+  *::after {
+    overflow: visible !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Reset all containers from html down to printable paper so they don't trap or force premature page breaks */
+  html, 
+  body, 
+  #root, 
+  #root > div,
+  #root > div > div,
+  main, 
+  main > div,
+  .a4-paper-wrapper,
+  .a4-paper-zoom-container {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    transform: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: static !important;
+    display: block !important;
+    float: none !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Paper Zoom Container in Print Mode: expand to full printable page */
+  .a4-paper-zoom-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    transform: none !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide UI elements from print */
+  .no-print, 
+  header.sticky, 
+  nav, 
+  aside, 
+  .app-sidebar, 
+  .control-panel, 
+  .btn, 
+  .modal-backdrop,
+  .action-bar,
+  .canvas-toolbar,
+  button {
+    display: none !important;
+  }
+
+  /* Paper Container styling: Full A4 width without any scaling or shrink-wrap */
+  #printable-paper,
+  .a4-paper {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+    position: static !important;
+    color: #000000 !important;
+    transform: none !important;
+    display: block !important;
+  }
+
+  /* Paper Header: Keep together on first page; let questions start immediately below it */
+  .paper-header-root,
+  .a4-paper > .paper-header-root,
+  .a4-paper > header {
+    display: block !important;
+    position: static !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
+    margin-bottom: 2.5mm !important;
+  }
+
+  /* CRITICAL FIX FOR CHROMIUM/EDGE PRINT:
+     Convert questions-container & section lists from flex to block.
+     Chromium treats flex-direction: column containers with break-inside: avoid children
+     as monolithic blocks, pushing the entire container onto Page 2 and leaving Page 1 blank! */
+  .questions-container {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+  }
+
+  /* Section block: allows natural breaking between question items across pages */
+  .section-block {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+    page-break-before: auto !important;
+    break-before: auto !important;
+    margin-bottom: 3.5mm !important;
+  }
+
+  /* Questions list inside section: MUST BE BLOCK (not flex column) */
+  .questions-list,
+  .section-block > .flex-col,
+  .section-block > div.flex {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+
+  /* Section title wrapper: Keep on same page as its first question, but avoid breaking whole section */
+  .section-title-wrapper {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background: transparent !important;
+    border-bottom: 2px solid #000000 !important;
+    border-left: none !important;
+    padding-left: 0 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 1.5mm !important;
+  }
+
+  .section-title {
+    color: #000000 !important;
+  }
+
+  /* Question card: Keep individual questions intact without splitting across page boundaries */
+  .question-card {
+    display: block !important;
+    position: static !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
+    margin-bottom: 2mm !important;
+    padding-top: 0.5mm !important;
+    padding-bottom: 0.5mm !important;
+  }
+
+  /* Preserve Grid Columns in Print Dialog for MCQ options */
+  .grid {
+    display: grid !important;
+  }
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+
+  /* Force dark sharp text colors for all paper contents */
+  .a4-paper header,
+  .a4-paper table,
+  .a4-paper .questions-container,
+  .a4-paper footer,
+  .a4-paper .question-card,
+  .a4-paper p, 
+  .a4-paper span, 
+  .a4-paper div, 
+  .a4-paper td, 
+  .a4-paper th, 
+  .a4-paper li {
+    color: #000000 !important;
+  }
+
+  /* Preserve table borders */
+  .a4-paper table,
+  .a4-paper td,
+  .a4-paper th {
+    border-color: #000000 !important;
+    background-color: transparent !important;
+  }
+
+  /* Print Watermark: Faint, centered watermark across paper during print */
+  .paper-watermarks-layer {
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+  }
+
+  .a4-paper .watermark-container {
+    display: flex !important;
+    position: absolute !important;
+    top: 140mm !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) rotate(-28deg) !important;
+    font-size: 38pt !important;
+    font-weight: 900 !important;
+    color: #000000 !important;
+    opacity: 0.08 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    pointer-events: none !important;
+    user-select: none !important;
+    z-index: 0 !important;
+    width: 85% !important;
+    max-width: 85% !important;
+    text-align: center !important;
+    line-height: 1.25 !important;
+  }
+
+  .a4-paper .watermark-container.watermark-page-2 {
+    top: 437mm !important;
+  }
+
+  /* Paper footer */
+  .a4-paper footer {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-top: 4mm !important;
+  }
+}
+
+/* ========================================================= */
+/* ON-SCREEN A4 PREVIEW STYLES */
+/* ========================================================= */
+
+.a4-paper-wrapper {
+  perspective: 1000px;
+}
+
+/* On-Screen A4 Preview Paper Sheet */
+.a4-paper {
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 16mm 14mm;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 
+    0 20px 40px -15px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+  color: #0f172a;
+  transform-origin: top center;
+}
+
+/* Urdu Language Styling with Jameel Noori Nastaleeq Font */
+.lang-urdu, [dir="rtl"], .font-serif-urdu {
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif !important;
+  line-height: 1.8 !important;
+}
+
+/* Ensure paper elements sit above watermark layer */
+.a4-paper header,
+.a4-paper table,
+.a4-paper .questions-container,
+.a4-paper footer {
+  position: relative;
+  z-index: 2;
+}
+
+/* Dim Watermark Overlay (Centered in Middle of Paper Sheet on screen) */
+.paper-watermarks-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.watermark-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 140mm;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-28deg);
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 900;
+  color: #000000;
+  opacity: 0.08;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+  white-space: normal;
+  width: 85%;
+  max-width: 85%;
+  user-select: none;
+  z-index: 0;
+  text-align: center;
+  line-height: 1.25;
+  word-wrap: break-word;
+}
+
+.watermark-container.watermark-page-2 {
+  top: 437mm;
+}
+
+/* Blank Ruled Answer Lines for Printed Writing Space */
+.answer-ruled-lines {
+  margin-top: 8px;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.answer-ruled-line {
+  border-bottom: 1px dashed #cbd5e1;
+  height: 1px;
+  width: 100%;
+}
+
+/* ========================================================= */
+/* THEMES CONFIGURATION FOR ON-SCREEN VIEW & PRINT */
+/* ========================================================= */
+
+/* 1. CLASSIC BOARD EXAM */
+.theme-classic .header-border {
+  border-bottom: 3px double #0f172a;
+  border-top: 1px solid #0f172a;
+  padding: 10px 0;
+  margin-bottom: 14px;
+}
+
+.theme-classic .section-title-wrapper {
+  border-bottom: 2px solid #0f172a;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.theme-classic .section-title {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+/* 2. MODERN ELEGANT */
+.theme-modern .header-border {
+  border-bottom: 3px solid #2563eb;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.theme-modern .section-title-wrapper {
+  background: linear-gradient(90deg, #eff6ff 0%, #ffffff 100%);
+  border-left: 4px solid #2563eb;
+  border-bottom: 1px solid #bfdbfe;
+  padding: 4px 8px;
+  margin-bottom: 10px;
+  border-radius: 0 6px 6px 0;
+}
+
+.theme-modern .section-title {
+  color: #1e40af;
+  font-weight: 800;
+}
+
+/* 3. MINIMALIST SCHOLAR */
+.theme-minimal .header-border {
+  border-bottom: 1px solid #94a3b8;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+}
+
+.theme-minimal .section-title-wrapper {
+  border-bottom: 1px solid #cbd5e1;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.theme-minimal .section-title {
+  font-weight: 700;
+  color: #334155;
+  letter-spacing: 0.08em;
+}
+
+/* 4. TWO-COLUMN COMPACT EXAM */
+.theme-twocolumn .questions-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.theme-twocolumn .section-title-wrapper {
+  grid-column: 1 / -1;
+  border-bottom: 2px solid #0f172a;
+}
+
+/* 5. ROYAL GOLD CREST */
+.theme-royal .header-border {
+  border: 2px solid #b45309;
+  outline: 1px solid #f59e0b;
+  outline-offset: -5px;
+  padding: 12px;
+  background: #fffbeb;
+  margin-bottom: 16px;
+  border-radius: 6px;
+}
+
+.theme-royal .section-title-wrapper {
+  background: #fef3c7;
+  border-bottom: 2px solid #d97706;
+  padding: 4px 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.theme-royal .section-title {
+  color: #78350f;
+  font-weight: 900;
+}
+
+/* Editable Hover Visual Cue */
+[contenteditable="true"]:hover {
+  outline: 1px dashed #6366f1;
+  background-color: #f0fdf4;
+  border-radius: 2px;
+  cursor: text;
+}
+
+[contenteditable="true"]:focus {
+  outline: 2px solid #4f46e5;
+  background-color: #fefce8;
+  border-radius: 3px;
+}

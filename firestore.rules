@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------------------
+    // HELPER SECURITY FUNCTIONS
+    // -------------------------------------------------------------
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.email.lower() == 'testgenerator76@gmail.com');
+    }
+
+    function isOwner(email) {
+      return isAuthenticated() && 
+        (request.auth.token.email.lower() == email.lower());
+    }
+
+    // -------------------------------------------------------------
+    // 1. USERS COLLECTION
+    // Protects accounts from self-activation, privilege escalation & unauthorized read
+    // -------------------------------------------------------------
+    match /users/{userEmail} {
+      // Users can only read their own profile. Only Super Admin can inspect all users.
+      allow read: if isSuperAdmin() || isOwner(userEmail);
+
+      // Registration: New users can create an account, but MUST be unpaid and NOT admin
+      allow create: if isSuperAdmin() || (
+        isAuthenticated() && 
+        isOwner(userEmail) &&
+        request.resource.data.subscriptionStatus == 'unpaid' &&
+        request.resource.data.isAdmin != true
+      );
+
+      // Profile updates: Regular users can update name or profile, but CANNOT tamper with subscriptionStatus, package, or quota!
+      allow update: if isSuperAdmin() || (
+        isAuthenticated() && 
+        isOwner(userEmail) &&
+        request.resource.data.subscriptionStatus == resource.data.subscriptionStatus &&
+        request.resource.data.package == resource.data.package &&
+        request.resource.data.expiryDate == resource.data.expiryDate &&
+        request.resource.data.maxPapers == resource.data.maxPapers &&
+        request.resource.data.isAdmin == resource.data.isAdmin
+      );
+
+      // Only Super Admin can delete users
+      allow delete: if isSuperAdmin();
+    }
+
+    // -------------------------------------------------------------
+    // 2. SYSTEM SETTINGS (Pricing Plans & Card Configurations)
+    // -------------------------------------------------------------
+    match /system_settings/{settingId} {
+      allow read: if true; // Needed to show pricing cards to registered & prospective teachers
+      allow write: if isSuperAdmin(); // ONLY Super Admin can edit card prices or features
+    }
+
+    // -------------------------------------------------------------
+    // 3. QUESTION BANK & CURRICULUM MATERIALS
+    // -------------------------------------------------------------
+    match /question_banks/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    match /uploaded_materials/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // -------------------------------------------------------------
+    // 4. LOGIN AUDIT & ACTIVITY LOGS
+    // -------------------------------------------------------------
+    match /login_logs/{logId} {
+      allow create: if true;
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    // -------------------------------------------------------------
+    // 5. CONNECTION TEST & HEARTBEAT
+    // -------------------------------------------------------------
+    match /_connection_test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}
