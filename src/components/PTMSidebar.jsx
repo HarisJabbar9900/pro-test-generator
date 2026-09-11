@@ -38,6 +38,7 @@ export default function PTMSidebar({
       { id: 'upload_material', label: 'Upload Material', icon: UploadCloud, isAdmin: true }
     ] : []),
     { id: 'past_papers', label: 'Past Papers', icon: Newspaper },
+    { id: 'date_sheet_planner', label: 'Date-Sheet Planner', icon: Calendar, badge: 'Planner' },
     { id: 'papers_history', label: 'Papers History', icon: Files },
     { 
       id: 'login_history', 

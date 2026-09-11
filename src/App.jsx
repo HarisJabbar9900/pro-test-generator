@@ -24,6 +24,7 @@ const AdminQuestionBankManagerView = React.lazy(() => import('./components/Admin
 const PricingPlansView = React.lazy(() => import('./components/PricingPlansView'));
 const ContactTeamView = React.lazy(() => import('./components/ContactTeamView'));
 const AIAssistantBotModal = React.lazy(() => import('./components/AIAssistantBotModal'));
+const DateSheetPlannerView = React.lazy(() => import('./components/DateSheetPlannerView'));
 import { DEFAULT_PAPER_CONFIG } from './utils/sampleData';
 import { isUserSubscribed, isSuperAdmin } from './utils/pricingPlansService';
 import { 
@@ -611,6 +612,56 @@ export default function App() {
       confetti({
         particleCount: 80,
         spread: 70,
+        origin: { y: 0.6 }
+      });
+    } catch (e) {}
+  };
+
+  // Direct 1-Click Test Paper Generation from Date-Sheet Planner
+  const handleGenerateSpecificPaperFromDateSheet = ({ classKey, subjectId, topicIds = [], syllabus, testNumber, examTitle }) => {
+    setSelectedClass(classKey);
+    setSelectedSubjectId(subjectId);
+    setSelectedTopicIds(topicIds);
+
+    const targetClassData = bank[classKey] || {};
+    const targetSubject = (targetClassData.subjects || []).find(s => s.id === subjectId) || targetClassData.subjects?.[0] || {};
+    const targetChapters = targetSubject.chapters || [];
+
+    setPaperConfig(prev => ({
+      ...prev,
+      subject: targetSubject.name || prev.subject,
+      gradeClass: `${classKey} Class`,
+      examTitle: examTitle || `Class Test #${testNumber || 1}`,
+      syllabus: syllabus || prev.syllabus || 'Special Test Session'
+    }));
+
+    // Auto generate 10 MCQs, 5 Shorts, 2 Longs
+    const generated = generatePaperFromTopics(classKey, subjectId, {
+      selectedTopicIds: topicIds,
+      chapters: targetChapters,
+      pooledMcqCount: 10,
+      pooledMcqMarks: 1,
+      pooledShortCount: 5,
+      pooledShortMarks: 2,
+      pooledLongCount: 2,
+      pooledLongMarks: 5,
+      isRandom: true
+    });
+
+    setPaperData({
+      mcqs: generated.mcqs || [],
+      shortQuestions: generated.shortQuestions || [],
+      longQuestions: generated.longQuestions || []
+    });
+
+    setActiveNav('generate_paper');
+    setPaperStep('canvas');
+
+    notify.success(`ٹیسٹ #${testNumber} کا پیپر کامیابی سے تیار کر لیا گیا ہے۔ (Test Paper Generated)`);
+    try {
+      confetti({
+        particleCount: 70,
+        spread: 60,
         origin: { y: 0.6 }
       });
     } catch (e) {}
@@ -1280,6 +1331,18 @@ export default function App() {
                 setPaperStep('canvas');
               }}
               hasActiveDraft={Boolean(paperData.mcqs?.length || paperData.shortQuestions?.length || paperData.longQuestions?.length)}
+            />
+          )}
+
+          {/* 8. AUTOMATIC DATE-SHEET & MONTHLY SYLLABUS TEST PLANNER */}
+          {activeNav === 'date_sheet_planner' && (
+            <DateSheetPlannerView
+              bank={bank}
+              selectedClass={selectedClass}
+              paperConfig={paperConfig}
+              currentUser={currentUser}
+              onGoToGenerator={() => handleSafeNavigate('generate_paper')}
+              onGenerateSpecificPaper={handleGenerateSpecificPaperFromDateSheet}
             />
           )}
 
