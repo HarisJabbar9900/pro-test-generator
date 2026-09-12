@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   CheckCircle2, Sliders, Eye, Sparkles, Building2, 
   RotateCcw, Info, ArrowRight, Layout 
@@ -74,6 +74,39 @@ export default function DefaultPaperSettingsView({
       return next;
     });
   };
+
+  // Auto-save any changes without requiring the user to manually click submit
+  const isInitialMount = useRef(true);
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      const updated = {
+        ...formData,
+        fontSize: Number(formData.textFontSize) || 11,
+        mcqLayout: formData.mcqLayout || '1 Column',
+        mcqOptionsCols: Number(formData.mcqOptionsCols) || 2
+      };
+
+      setPaperConfig(prev => ({
+        ...prev,
+        ...updated
+      }));
+
+      try {
+        localStorage.setItem('ptm_default_paper_settings', JSON.stringify(formData));
+      } catch (err) {
+        console.warn("Could not persist paper settings:", err);
+      }
+
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [formData, setPaperConfig]);
 
   const handleSave = (e) => {
     e?.preventDefault();
@@ -364,7 +397,7 @@ export default function DefaultPaperSettingsView({
 
         </div>
 
-        <div>
+        <div className="flex items-center gap-3">
           <button
             type="submit"
             className={`px-6 py-2.5 ${saveStatus === 'saved' ? 'bg-emerald-700' : 'bg-[#28a745] hover:bg-[#218838]'} text-white font-bold text-xs rounded-lg shadow-sm hover:shadow transition-all active:scale-95 cursor-pointer flex items-center gap-2`}
@@ -375,9 +408,14 @@ export default function DefaultPaperSettingsView({
                 <span>Settings Saved!</span>
               </>
             ) : (
-              <span>Update Settings</span>
+              <span>Save / Update Settings</span>
             )}
           </button>
+          {saveStatus === 'saved' && (
+            <span className="text-xs font-bold text-emerald-600 flex items-center gap-1 animate-fadeIn">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Auto-saved in real-time
+            </span>
+          )}
         </div>
 
       </form>
