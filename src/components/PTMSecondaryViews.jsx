@@ -1876,9 +1876,9 @@ export default function PTMSecondaryViews({
                   <ShieldCheck className="w-3 h-3" />
                   محفوظ ذاتی ریکارڈ (Private Teacher Portal)
                 </span>
-                <span className="flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                  5-Min Inactivity Auto-Logout Active
+                <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  اکاؤنٹ فعال (Active & Verified)
                 </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight flex items-center gap-2">
@@ -1908,16 +1908,17 @@ export default function PTMSecondaryViews({
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
-                <p className="font-black text-slate-800 text-xs sm:text-sm">
+                <p className="font-black text-slate-900 text-xs sm:text-sm">
                   مکمل ذاتی ڈیٹا سیکیورٹی (100% Isolated Data)
                 </p>
-                <p className="text-[11px] text-slate-600 mt-0.5">
+                <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
                   یہ ڈیش بورڈ صرف آپ کے ذاتی اکاؤنٹ کے لیے مخصوص ہے۔ ایڈمن اور دیگر تمام اساتذہ کا ڈیٹا الگ، محفوظ اور انکرپٹڈ ہے۔
                 </p>
               </div>
             </div>
-            <span className="px-3 py-1 rounded-full bg-white border border-emerald-300 font-bold text-emerald-800 text-[11px] shadow-2xs self-start md:self-auto">
-              🔒 پرائیویٹ رسائی (Only You)
+            <span className="px-3 py-1 bg-white border border-emerald-200 text-emerald-800 font-bold rounded-xl text-[11px] self-start md:self-auto shrink-0 shadow-2xs flex items-center gap-1.5">
+              <Lock className="w-3 h-3 text-emerald-600" />
+              پرائیویٹ رسائی (Only You)
             </span>
           </div>
 
@@ -1929,21 +1930,22 @@ export default function PTMSecondaryViews({
               <div className="flex items-center justify-between">
                 <span className="text-slate-500 text-xs font-bold">کل بنائے گئے پیپرز</span>
                 <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center">
-                  <Newspaper className="w-5 h-5" />
+                  <FileText className="w-5 h-5" />
                 </div>
               </div>
               <div className="mt-3">
                 <p className="text-3xl font-black text-slate-800 tracking-tight">{teacherCreatedPapers}</p>
                 <p className="text-[11px] text-slate-400 font-medium mt-0.5">Papers Created & Saved</p>
               </div>
-              <button
-                type="button"
-                onClick={() => onNavigate && onNavigate('saved_papers')}
-                className="mt-3 pt-2.5 border-t border-slate-100 text-[11px] font-bold text-blue-600 hover:text-blue-700 flex items-center justify-between cursor-pointer"
-              >
-                <span>Saved Papers دیکھیں</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
+              <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold">
+                <button 
+                  onClick={() => onNavigate && onNavigate('saved_papers')}
+                  className="text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Saved Papers دیکھیں</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
             </div>
 
             {/* 2. Papers Deleted */}
@@ -1975,9 +1977,9 @@ export default function PTMSecondaryViews({
                 <p className="text-3xl font-black text-amber-700 tracking-tight">{teacherLoginCount}</p>
                 <p className="text-[11px] text-slate-400 font-medium mt-0.5">Total Successful Logins</p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-slate-100 text-[11px] font-bold text-amber-700 flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                <span>5-Min Timeout Protected</span>
+              <div className="mt-3 pt-2.5 border-t border-slate-100 text-[11px] font-bold text-emerald-700 flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span>محفوظ سیشن (Secure Session)</span>
               </div>
             </div>
 
@@ -2043,8 +2045,8 @@ export default function PTMSecondaryViews({
                 <span className="font-bold text-blue-700">Full Teacher Access</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] font-bold">سیشن پروٹیکشن</span>
-                <span className="font-bold text-indigo-700">5-Min Auto Logout</span>
+                <span className="text-slate-400 block text-[10px] font-bold">سیکیورٹی پروٹیکشن</span>
+                <span className="font-bold text-emerald-700">End-to-End Encrypted</span>
               </div>
             </div>
           </div>
