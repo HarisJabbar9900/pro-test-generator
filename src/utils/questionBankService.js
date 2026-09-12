@@ -77,6 +77,19 @@ export function buildCleanClass11Chapters(existingChapters = []) {
           }
         }
       });
+
+      (exData.longQuestions || []).forEach(l => {
+        const topic = ch.topics.find(t => t.topicNumber?.trim() === l.topicNumber?.trim());
+        if (topic) {
+          if (!topic.longQuestions) topic.longQuestions = [];
+          const idx = topic.longQuestions.findIndex(x => x.id === l.id || x.question?.trim().toLowerCase() === l.question?.trim().toLowerCase());
+          if (idx !== -1) {
+            topic.longQuestions[idx] = JSON.parse(JSON.stringify(l));
+          } else {
+            topic.longQuestions.push(JSON.parse(JSON.stringify(l)));
+          }
+        }
+      });
     }
   });
 
