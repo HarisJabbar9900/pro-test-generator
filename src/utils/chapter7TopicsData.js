@@ -2,7 +2,7 @@
  * Chapter 7: Hypothesis Testing (12th Class Computer Science)
  * Complete Board-Style Topic-Wise Question Bank:
  * - 37 Total MCQs (10 Official Exercise MCQs + 27 Board-Style Topic MCQs)
- * - 10 Official Exercise Short Questions
+ * - 34 Total Short Questions (10 Official Exercise Shorts + 24 Board-Style Topic Shorts)
  * Topics: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7
  */
 
@@ -114,6 +114,30 @@ export const CHAPTER_7_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch7-sq1",
+        topicNumber: "7.1",
+        question: "What is a hypothesis in research and data analysis?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq2",
+        topicNumber: "7.1",
+        question: "What is the role of hypothesis testing in evidence-based decision-making?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq3",
+        topicNumber: "7.1",
+        question: "In the hypothesis function h_θ(x) = y, what do the terms x and y represent?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -217,6 +241,30 @@ export const CHAPTER_7_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch7-sq4",
+        topicNumber: "7.2",
+        question: "Define the Null Hypothesis (H₀) and state its default assumption in testing.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq5",
+        topicNumber: "7.2",
+        question: "What is the Alternative Hypothesis (H₁ or H_a), and what does it represent?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq6",
+        topicNumber: "7.2",
+        question: "Why is it essential for hypotheses to be clear, specific, and testable using data?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -438,6 +486,46 @@ export const CHAPTER_7_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch7-sq7",
+        topicNumber: "7.3",
+        question: "What is a test statistic? Name two commonly used test statistics.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq8",
+        topicNumber: "7.3",
+        question: "Define the Critical Region (rejection area) in a statistical distribution.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq9",
+        topicNumber: "7.3",
+        question: "What is the Significance Level (α), and what is its standard threshold value in research?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq10",
+        topicNumber: "7.3",
+        question: "Define the p-value and explain how it measures evidence against the null hypothesis.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq11",
+        topicNumber: "7.3",
+        question: "State the decision rule when comparing the calculated p-value with the significance level (α).",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -524,6 +612,30 @@ export const CHAPTER_7_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch7-sq12",
+        topicNumber: "7.4",
+        question: "List the sequential steps involved in performing a statistical hypothesis test.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq13",
+        topicNumber: "7.4",
+        question: "What is the primary purpose of an F-test in advanced statistical analysis?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq14",
+        topicNumber: "7.4",
+        question: "When is a Chi-Square test applied in categorical data analysis?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -627,6 +739,30 @@ export const CHAPTER_7_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch7-sq15",
+        topicNumber: "7.5",
+        question: "Why is data visualization an important preliminary and post-analysis step in hypothesis testing?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq16",
+        topicNumber: "7.5",
+        question: "Which chart type is best suited for comparing control and experimental treatment groups?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq17",
+        topicNumber: "7.5",
+        question: "How do scatter plots assist in identifying trends, correlations, and outliers in a dataset?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -738,6 +874,46 @@ export const CHAPTER_7_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch7-sq18",
+        topicNumber: "7.6",
+        question: "Define bias in data collection and analysis, and explain how it leads to misleading conclusions.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq19",
+        topicNumber: "7.6",
+        question: "Differentiate between Sampling Bias and Survey Bias with real-world examples.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq20",
+        topicNumber: "7.6",
+        question: "Explain Confirmation Bias and its negative impact on objective data analysis.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq21",
+        topicNumber: "7.6",
+        question: "What is Geographical Bias in data collection, and how does it affect rural decision-making?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq22",
+        topicNumber: "7.6",
+        question: "What practices define the ethical use of data and predictive models?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -782,7 +958,24 @@ export const CHAPTER_7_NEW_TOPICS = [
         marks: 1
       }
     ],
-    shortQuestions: [],
+    shortQuestions: [
+      {
+        id: "cs12-ch7-sq23",
+        topicNumber: "7.7",
+        question: "Why should research findings be presented in simple, organized language without technical jargon?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch7-sq24",
+        topicNumber: "7.7",
+        question: "How must final research conclusions be explicitly linked back to the original hypotheses?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      }
+    ],
     longQuestions: []
   }
 ];

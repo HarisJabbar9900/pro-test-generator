@@ -94,8 +94,18 @@ async function main() {
     process.exit(1);
   }
 
-  if (totalShorts !== 10) {
-    console.error(`ERROR: Expected 10 Exercise Shorts, got ${totalShorts}`);
+  if (totalShorts !== 34) {
+    console.error(`ERROR: Expected 34 Shorts (24 topic + 10 exercise), got ${totalShorts}`);
+    process.exit(1);
+  }
+
+  if (exerciseShorts !== 10) {
+    console.error(`ERROR: Expected 10 Exercise Shorts, got ${exerciseShorts}`);
+    process.exit(1);
+  }
+
+  if (topicShorts !== 24) {
+    console.error(`ERROR: Expected 24 Topic Shorts, got ${topicShorts}`);
     process.exit(1);
   }
 
@@ -104,7 +114,7 @@ async function main() {
     updatedAt: new Date().toISOString()
   });
 
-  console.log("Firestore successfully written and verified with 37 MCQs (27 Topic + 10 Exercise) and 10 Shorts for Grade 12 Chapter 7!");
+  console.log("Firestore successfully written and verified with 37 MCQs (27 Topic + 10 Exercise) and 34 Shorts (24 Topic + 10 Exercise) for Grade 12 Chapter 7!");
   process.exit(0);
 }
 
