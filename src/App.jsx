@@ -1322,24 +1322,26 @@ export default function App() {
 
           {/* 5. SECONDARY PTM VIEWS (Saved Papers, Past Papers, Model Papers, Teachers, etc.) */}
           {['saved_papers', 'past_papers', 'model_papers', 'teachers', 'papers_history', 'login_history', 'default_paper_settings'].includes(activeNav) && (
-            <PTMSecondaryViews
-              activeNav={activeNav}
-              currentUser={currentUser}
-              paperConfig={paperConfig}
-              setPaperConfig={setPaperConfig}
-              onGoToGenerate={() => setActiveNav('generate_paper')}
-              savedPapers={savedPapers}
-              onOpenSavedPaper={handleOpenSavedPaper}
-              onDeleteSavedPaper={handleDeleteSavedPaper}
-              onStartNewPaper={handleStartNewPaper}
-              onResumeCurrentDraft={() => {
-                setActiveNav('generate_paper');
-                setPaperStep('canvas');
-              }}
-              hasActiveDraft={Boolean(paperData.mcqs?.length || paperData.shortQuestions?.length || paperData.longQuestions?.length)}
-              onExportDocx={handleExportDocx}
-              onNavigate={handleSafeNavigate}
-            />
+            <div className="w-full max-w-full min-w-0 overflow-x-hidden">
+              <PTMSecondaryViews
+                activeNav={activeNav}
+                currentUser={currentUser}
+                paperConfig={paperConfig}
+                setPaperConfig={setPaperConfig}
+                onGoToGenerate={() => setActiveNav('generate_paper')}
+                savedPapers={savedPapers}
+                onOpenSavedPaper={handleOpenSavedPaper}
+                onDeleteSavedPaper={handleDeleteSavedPaper}
+                onStartNewPaper={handleStartNewPaper}
+                onResumeCurrentDraft={() => {
+                  setActiveNav('generate_paper');
+                  setPaperStep('canvas');
+                }}
+                hasActiveDraft={Boolean(paperData.mcqs?.length || paperData.shortQuestions?.length || paperData.longQuestions?.length)}
+                onExportDocx={handleExportDocx}
+                onNavigate={handleSafeNavigate}
+              />
+            </div>
           )}
 
           {/* 6. PRICING & SUBSCRIPTION PACKAGES VIEW */}
