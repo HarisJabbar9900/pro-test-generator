@@ -427,20 +427,34 @@ export function mergeChapter1NewTopics(bank) {
                 changed = true;
               }
 
-              // Topic exists - ensure MCQs and short questions are populated
+              // Topic exists - ensure MCQs and short questions are populated and exercise category is synced
               if (!existingTopic.mcqs) existingTopic.mcqs = [];
-              const existingMcqSet = new Set(existingTopic.mcqs.map(m => m.question?.trim().toLowerCase()));
               (newTopic.mcqs || []).forEach(m => {
-                if (!existingMcqSet.has(m.question?.trim().toLowerCase())) {
+                const normQ = (m.question || '').trim().toLowerCase();
+                const existingMcq = existingTopic.mcqs.find(em => (em.question || '').trim().toLowerCase() === normQ);
+                if (existingMcq) {
+                  if (m.category === 'exercise' && (existingMcq.category !== 'exercise' || !existingMcq.isExercise)) {
+                    existingMcq.category = 'exercise';
+                    existingMcq.isExercise = true;
+                    changed = true;
+                  }
+                } else {
                   existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
                   changed = true;
                 }
               });
 
               if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
-              const existingShortSet = new Set(existingTopic.shortQuestions.map(s => s.question?.trim().toLowerCase()));
               (newTopic.shortQuestions || []).forEach(s => {
-                if (!existingShortSet.has(s.question?.trim().toLowerCase())) {
+                const normQ = (s.question || '').trim().toLowerCase();
+                const existingShort = existingTopic.shortQuestions.find(es => (es.question || '').trim().toLowerCase() === normQ);
+                if (existingShort) {
+                  if (s.category === 'exercise' && (existingShort.category !== 'exercise' || !existingShort.isExercise)) {
+                    existingShort.category = 'exercise';
+                    existingShort.isExercise = true;
+                    changed = true;
+                  }
+                } else {
                   existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
                   changed = true;
                 }
@@ -476,7 +490,9 @@ export function mergeChapter1NewTopics(bank) {
                 matchedTopic.longQuestions.push({
                   id: lq.id,
                   question: lq.question,
-                  marks: lq.marks || 8
+                  marks: lq.marks || 8,
+                  category: 'exercise',
+                  isExercise: true
                 });
                 changed = true;
               }
