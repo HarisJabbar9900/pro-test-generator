@@ -755,7 +755,7 @@ export function mergeChapter1NewTopics(bank) {
             }
           });
 
-          // Strictly enforce that ONLY the 11 official textbook exercise MCQs and 11 Shorts in Chapter 2 are marked as exercise
+          // Strictly enforce that ONLY the 11 official textbook exercise MCQs and 10 Shorts in Chapter 2 are marked as exercise
           const OFFICIAL_CH2_EX_MCQ_KEYS = new Set([
             'breaking a large, complex problem into smaller, simpler, and more manageable parts is called:',
             'what is the main purpose of evaluating an algorithm after arriving at a solution?',
@@ -771,17 +771,16 @@ export function mergeChapter1NewTopics(bank) {
           ]);
 
           const OFFICIAL_CH2_EX_SHORT_KEYS = new Set([
-            'define computational thinking and list its four main techniques/pillars.',
-            'what is an algorithm, and why is evaluating a solution important in problem-solving?',
-            'explain the role of logic in computer reasoning and decision-making systems.',
-            'define a proposition and differentiate between a simple proposition and a compound proposition.',
-            'what is a truth table, and how do you calculate the number of rows needed for n propositions?',
-            'what is propositional equivalence, and how does it help optimize code in programming?',
-            'differentiate between a satisfiable proposition and an unsatisfiable proposition with an example of each.',
-            'define predicate logic and explain how a predicate differs from a variable.',
-            'differentiate between the universal quantifier (∀) and the existential quantifier (∃) with examples.',
-            'how can predicate logic be used to represent real-world relationships in automated systems (e.g., a library system)?',
-            'define logical inference and explain how deductive reasoning works.'
+            'what is meant by computational thinking?',
+            'why is computational thinking important in problem solving?',
+            'what is decomposition in problem solving?',
+            'what is an algorithm?',
+            'what is logic in computer science?',
+            'what is a proposition?',
+            'what are truth values?',
+            'what is a truth table?',
+            'what is propositional satisfiability?',
+            'what is a predicate in predicate logic?'
           ]);
 
           ch2.topics.forEach(t => {

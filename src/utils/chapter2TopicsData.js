@@ -109,11 +109,35 @@ export const CHAPTER_2_NEW_TOPICS = [
     ],
     "shortQuestions": [
       {
+        "id": "ch2-t2.1-ex-s3",
+        "topicNumber": "2.1",
+        "question": "What is decomposition in problem solving?",
+        "marks": 2,
+        "category": "exercise",
+        "isExercise": true
+      },
+      {
+        "id": "ch2-t2.1-ex-s2",
+        "topicNumber": "2.1",
+        "question": "Why is computational thinking important in problem solving?",
+        "marks": 2,
+        "category": "exercise",
+        "isExercise": true
+      },
+      {
         "id": "ch2-t2.1-ex-s1",
         "topicNumber": "2.1",
-        "question": "Define Computational Thinking and list its four main techniques/pillars.",
+        "question": "What is meant by computational thinking?",
+        "marks": 2,
         "category": "exercise",
-        "isExercise": true,
+        "isExercise": true
+      },
+      {
+        "id": "ch2-t2.1-s1",
+        "topicNumber": "2.1",
+        "question": "Define Computational Thinking and list its four main techniques/pillars.",
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -245,9 +269,17 @@ export const CHAPTER_2_NEW_TOPICS = [
       {
         "id": "ch2-t2.2-ex-s1",
         "topicNumber": "2.2",
-        "question": "What is an algorithm, and why is evaluating a solution important in problem-solving?",
+        "question": "What is an algorithm?",
+        "marks": 2,
         "category": "exercise",
-        "isExercise": true,
+        "isExercise": true
+      },
+      {
+        "id": "ch2-t2.2-s1",
+        "topicNumber": "2.2",
+        "question": "What is an algorithm, and why is evaluating a solution important in problem-solving?",
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -340,9 +372,17 @@ export const CHAPTER_2_NEW_TOPICS = [
       {
         "id": "ch2-t2.3-ex-s1",
         "topicNumber": "2.3",
-        "question": "Explain the role of logic in computer reasoning and decision-making systems.",
+        "question": "What is logic in computer science?",
+        "marks": 2,
         "category": "exercise",
-        "isExercise": true,
+        "isExercise": true
+      },
+      {
+        "id": "ch2-t2.3-s1",
+        "topicNumber": "2.3",
+        "question": "Explain the role of logic in computer reasoning and decision-making systems.",
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -474,11 +514,27 @@ export const CHAPTER_2_NEW_TOPICS = [
     ],
     "shortQuestions": [
       {
+        "id": "ch2-t2.4-ex-s2",
+        "topicNumber": "2.4",
+        "question": "What are truth values?",
+        "marks": 2,
+        "category": "exercise",
+        "isExercise": true
+      },
+      {
         "id": "ch2-t2.4-ex-s1",
         "topicNumber": "2.4",
-        "question": "Define a proposition and differentiate between a simple proposition and a compound proposition.",
+        "question": "What is a proposition?",
+        "marks": 2,
         "category": "exercise",
-        "isExercise": true,
+        "isExercise": true
+      },
+      {
+        "id": "ch2-t2.4-s1",
+        "topicNumber": "2.4",
+        "question": "Define a proposition and differentiate between a simple proposition and a compound proposition.",
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -587,9 +643,17 @@ export const CHAPTER_2_NEW_TOPICS = [
       {
         "id": "ch2-t2.5-ex-s1",
         "topicNumber": "2.5",
-        "question": "What is a truth table, and how do you calculate the number of rows needed for n propositions?",
+        "question": "What is a truth table?",
+        "marks": 2,
         "category": "exercise",
-        "isExercise": true,
+        "isExercise": true
+      },
+      {
+        "id": "ch2-t2.5-s1",
+        "topicNumber": "2.5",
+        "question": "What is a truth table, and how do you calculate the number of rows needed for n propositions?",
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -689,11 +753,11 @@ export const CHAPTER_2_NEW_TOPICS = [
     ],
     "shortQuestions": [
       {
-        "id": "ch2-t2.6-ex-s1",
+        "id": "ch2-t2.6-s1",
         "topicNumber": "2.6",
         "question": "What is propositional equivalence, and how does it help optimize code in programming?",
-        "category": "exercise",
-        "isExercise": true,
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -795,17 +859,18 @@ export const CHAPTER_2_NEW_TOPICS = [
       {
         "id": "ch2-t2.7-ex-s1",
         "topicNumber": "2.7",
-        "question": "Differentiate between a satisfiable proposition and an unsatisfiable proposition with an example of each.",
+        "question": "What is propositional satisfiability?",
+        "marks": 2,
         "category": "exercise",
-        "isExercise": true,
-        "marks": 2
+        "isExercise": true
       },
       {
         "id": "ch2-t2.7-s1",
-        "question": "What is propositional satisfiability?",
-        "marks": 2,
+        "topicNumber": "2.7",
+        "question": "Differentiate between a satisfiable proposition and an unsatisfiable proposition with an example of each.",
         "category": "topic",
-        "isExercise": false
+        "isExercise": false,
+        "marks": 2
       },
       {
         "id": "ch2-t2.7-s2",
@@ -899,9 +964,17 @@ export const CHAPTER_2_NEW_TOPICS = [
       {
         "id": "ch2-t2.8-ex-s1",
         "topicNumber": "2.8",
-        "question": "Define Predicate Logic and explain how a predicate differs from a variable.",
+        "question": "What is a predicate in predicate logic?",
+        "marks": 2,
         "category": "exercise",
-        "isExercise": true,
+        "isExercise": true
+      },
+      {
+        "id": "ch2-t2.8-s1",
+        "topicNumber": "2.8",
+        "question": "Define Predicate Logic and explain how a predicate differs from a variable.",
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -1017,11 +1090,11 @@ export const CHAPTER_2_NEW_TOPICS = [
     ],
     "shortQuestions": [
       {
-        "id": "ch2-t2.9-ex-s1",
+        "id": "ch2-t2.9-s1",
         "topicNumber": "2.9",
         "question": "Differentiate between the Universal Quantifier (∀) and the Existential Quantifier (∃) with examples.",
-        "category": "exercise",
-        "isExercise": true,
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -1121,11 +1194,11 @@ export const CHAPTER_2_NEW_TOPICS = [
     ],
     "shortQuestions": [
       {
-        "id": "ch2-t2.10-ex-s1",
+        "id": "ch2-t2.10-s1",
         "topicNumber": "2.10",
         "question": "How can predicate logic be used to represent real-world relationships in automated systems (e.g., a library system)?",
-        "category": "exercise",
-        "isExercise": true,
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -1225,11 +1298,11 @@ export const CHAPTER_2_NEW_TOPICS = [
     ],
     "shortQuestions": [
       {
-        "id": "ch2-t2.11-ex-s1",
+        "id": "ch2-t2.11-s1",
         "topicNumber": "2.11",
         "question": "Define logical inference and explain how deductive reasoning works.",
-        "category": "exercise",
-        "isExercise": true,
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
