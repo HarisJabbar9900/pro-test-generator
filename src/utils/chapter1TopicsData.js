@@ -10,7 +10,9 @@ export const CHAPTER_1_NEW_TOPICS = [
       {
         "id": "cs-ch1-lq-1_1",
         "question": "Define a computer network. Explain its importance and uses in daily life. || کمپیوٹر نیٹ ورک کی تعریف کریں۔ روزمرہ زندگی میں اس کی اہمیت اور استعمالات بیان کریں۔",
-        "marks": 8
+        "marks": 8,
+        "category": "exercise",
+        "isExercise": true
       }
     ],
     "mcqs": [
@@ -407,7 +409,9 @@ export const CHAPTER_1_NEW_TOPICS = [
       {
         "question": "Explain network architecture and describe the main components of a computer network. || نیٹ ورک آرکیٹیکچر کی وضاحت کریں اور کمپیوٹر نیٹ ورک کے اہم اجزاء بیان کریں۔",
         "marks": 8,
-        "id": "cs-ch1-lq-1_2"
+        "id": "cs-ch1-lq-1_2",
+        "category": "exercise",
+        "isExercise": true
       }
     ]
   },
@@ -416,7 +420,9 @@ export const CHAPTER_1_NEW_TOPICS = [
       {
         "marks": 8,
         "question": "Explain the types of computer networks. Describe LAN, WAN, and the Internet. || کمپیوٹر نیٹ ورکس کی اقسام کی وضاحت کریں۔ لوکل ایریا نیٹ ورک (LAN)، وائڈ ایریا نیٹ ورک (WAN) اور انٹرنیٹ بیان کریں۔",
-        "id": "cs-ch1-lq-1_3"
+        "id": "cs-ch1-lq-1_3",
+        "category": "exercise",
+        "isExercise": true
       }
     ],
     "mcqs": [
@@ -624,7 +630,9 @@ export const CHAPTER_1_NEW_TOPICS = [
       {
         "question": "Describe the main networking devices used in a computer network and explain their functions. || کمپیوٹر نیٹ ورک میں استعمال ہونے والے اہم نیٹ ورکنگ آلات بیان کریں اور ان کے افعال کی وضاحت کریں۔",
         "id": "cs-ch1-lq-1_4",
-        "marks": 8
+        "marks": 8,
+        "category": "exercise",
+        "isExercise": true
       }
     ],
     "id": "cs-12-ch1-t1_4",
@@ -830,7 +838,9 @@ export const CHAPTER_1_NEW_TOPICS = [
       {
         "marks": 8,
         "id": "cs-ch1-lq-1_5",
-        "question": "Define network topology. Explain bus, star, ring, and mesh topologies with advantages and disadvantages. || نیٹ ورک ٹوپولوجی کی تعریف کریں۔ بس، سٹار، رنگ اور میش ٹوپولوجیز کی وضاحت فوائد اور نقصانات کے ساتھ کریں۔"
+        "question": "Define network topology. Explain bus, star, ring, and mesh topologies with advantages and disadvantages. || نیٹ ورک ٹوپولوجی کی تعریف کریں۔ بس، سٹار، رنگ اور میش ٹوپولوجیز کی وضاحت فوائد اور نقصانات کے ساتھ کریں۔",
+        "category": "exercise",
+        "isExercise": true
       }
     ],
     "shortQuestions": [
@@ -1104,7 +1114,9 @@ export const CHAPTER_1_NEW_TOPICS = [
       {
         "question": "What is the OSI model? Explain its layers and their functions. || او ایس آئی (OSI) ماڈل کیا ہے؟ اس کی تہوں (لیئرز) اور ان کے افعال کی وضاحت کریں۔",
         "marks": 8,
-        "id": "cs-ch1-lq-1_6"
+        "id": "cs-ch1-lq-1_6",
+        "category": "exercise",
+        "isExercise": true
       }
     ],
     "id": "cs-12-ch1-t1_6",
@@ -1274,7 +1286,9 @@ export const CHAPTER_1_NEW_TOPICS = [
       {
         "question": "What are network protocols? Explain TCP/IP, HTTP, FTP, and DNS. || نیٹ ورک پروٹوکولز کیا ہیں؟ TCP/IP، HTTP، FTP اور DNS کی وضاحت کریں۔",
         "marks": 8,
-        "id": "cs-ch1-lq-1_7"
+        "id": "cs-ch1-lq-1_7",
+        "category": "exercise",
+        "isExercise": true
       }
     ],
     "mcqs": [
@@ -1491,7 +1505,9 @@ export const CHAPTER_1_NEW_TOPICS = [
       {
         "question": "Explain IP addressing. Describe IPv4, IPv6, the default gateway, and subnetting. || آئی پی ایڈریسنگ کی وضاحت کریں۔ IPv4، IPv6، ڈیفالٹ گیٹ وے اور سب نیٹنگ بیان کریں۔",
         "marks": 8,
-        "id": "cs-ch1-lq-1_8"
+        "id": "cs-ch1-lq-1_8",
+        "category": "exercise",
+        "isExercise": true
       }
     ],
     "mcqs": [

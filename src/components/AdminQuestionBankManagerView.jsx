@@ -263,9 +263,12 @@ export default function AdminQuestionBankManagerView({
           (ch.topics || []).forEach(top => {
             if (selectedTopicId !== 'ALL' && top.id !== selectedTopicId) return;
 
+            const isExFilter = activeTypeFilter.startsWith('exercise');
+
             const mcqs = (top.mcqs || []).filter(q => {
               if (activeTypeFilter === 'shortQuestions' || activeTypeFilter === 'longQuestions') return false;
-              if (activeTypeFilter === 'exercise' && !isExerciseQuestion(q, top)) return false;
+              if (activeTypeFilter === 'exercise_shorts' || activeTypeFilter === 'exercise_longs') return false;
+              if (isExFilter && !isExerciseQuestion(q, top)) return false;
               if (qLower) {
                 const inQ = (q.question || '').toLowerCase().includes(qLower);
                 const inOpts = (q.options || []).some(opt => opt.toLowerCase().includes(qLower));
@@ -277,14 +280,16 @@ export default function AdminQuestionBankManagerView({
 
             const shorts = (top.shortQuestions || []).filter(q => {
               if (activeTypeFilter === 'mcqs' || activeTypeFilter === 'longQuestions') return false;
-              if (activeTypeFilter === 'exercise' && !isExerciseQuestion(q, top)) return false;
+              if (activeTypeFilter === 'exercise_mcqs' || activeTypeFilter === 'exercise_longs') return false;
+              if (isExFilter && !isExerciseQuestion(q, top)) return false;
               if (qLower && !(q.question || '').toLowerCase().includes(qLower)) return false;
               return true;
             });
 
             const longs = (top.longQuestions || []).filter(q => {
               if (activeTypeFilter === 'mcqs' || activeTypeFilter === 'shortQuestions') return false;
-              if (activeTypeFilter === 'exercise' && !isExerciseQuestion(q, top)) return false;
+              if (activeTypeFilter === 'exercise_mcqs' || activeTypeFilter === 'exercise_shorts') return false;
+              if (isExFilter && !isExerciseQuestion(q, top)) return false;
               if (qLower && !(q.question || '').toLowerCase().includes(qLower)) return false;
               return true;
             });
@@ -516,20 +521,53 @@ export default function AdminQuestionBankManagerView({
                 { id: 'shortQuestions', label: 'Short Qs Only' },
                 { id: 'longQuestions', label: 'Long Qs Only' },
                 { id: 'exercise', label: 'Exercise Questions' }
-              ].map(f => (
-                <button
-                  key={f.id}
-                  type="button"
-                  onClick={() => setActiveTypeFilter(f.id)}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${
-                    activeTypeFilter === f.id
-                      ? 'bg-slate-800 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
+              ].map(f => {
+                const isActive = f.id === 'exercise' ? activeTypeFilter.startsWith('exercise') : activeTypeFilter === f.id;
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setActiveTypeFilter(f.id)}
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${
+                      isActive
+                        ? f.id === 'exercise'
+                          ? 'bg-emerald-700 text-white shadow-xs'
+                          : 'bg-slate-800 text-white'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                );
+              })}
+
+              {/* Sub-filters when Exercise is selected */}
+              {activeTypeFilter.startsWith('exercise') && (
+                <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-300/80 px-2 py-0.5 rounded-md text-[11px] animate-fadeIn">
+                  <span className="text-emerald-900 font-black text-[10px] uppercase tracking-wider px-1">
+                    Exercise:
+                  </span>
+                  {[
+                    { id: 'exercise', label: 'All' },
+                    { id: 'exercise_mcqs', label: 'MCQs Only' },
+                    { id: 'exercise_shorts', label: 'Shorts Only' },
+                    { id: 'exercise_longs', label: 'Longs Only' }
+                  ].map(sub => (
+                    <button
+                      key={sub.id}
+                      type="button"
+                      onClick={() => setActiveTypeFilter(sub.id)}
+                      className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                        activeTypeFilter === sub.id
+                          ? 'bg-emerald-700 text-white shadow-xs'
+                          : 'bg-white text-emerald-800 hover:bg-emerald-100 border border-emerald-200'
+                      }`}
+                    >
+                      {sub.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Counts Badge */}
