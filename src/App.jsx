@@ -13,18 +13,38 @@ import ConfirmationModal from './components/ConfirmationModal';
 import ContactTeamModal from './components/ContactTeamModal';
 import { confirmAction } from './utils/confirmDialog';
 
-// Code-split secondary views & modals for maximum initial load performance
-const PTMSecondaryViews = React.lazy(() => import('./components/PTMSecondaryViews'));
-const UploadMaterialSection = React.lazy(() => import('./components/UploadMaterialSection'));
-const MaterialOverviewSection = React.lazy(() => import('./components/MaterialOverviewSection'));
-const ManualQuestionPickerModal = React.lazy(() => import('./components/ManualQuestionPickerModal'));
-const AdminPinModal = React.lazy(() => import('./components/AdminPinModal'));
-const AdminPortalSection = React.lazy(() => import('./components/AdminPortalSection'));
-const AdminQuestionBankManagerView = React.lazy(() => import('./components/AdminQuestionBankManagerView'));
-const PricingPlansView = React.lazy(() => import('./components/PricingPlansView'));
-const ContactTeamView = React.lazy(() => import('./components/ContactTeamView'));
-const AIAssistantBotModal = React.lazy(() => import('./components/AIAssistantBotModal'));
-const DateSheetPlannerView = React.lazy(() => import('./components/DateSheetPlannerView'));
+// Directly imported primary user views (guarantees instant navigation without loading delays or stale chunk 404s)
+import PTMSecondaryViews from './components/PTMSecondaryViews';
+import PricingPlansView from './components/PricingPlansView';
+import ContactTeamView from './components/ContactTeamView';
+import DateSheetPlannerView from './components/DateSheetPlannerView';
+
+// Auto-retrying lazy loader for heavy administrative modules and modals
+function lazyWithRetry(componentImport) {
+  return React.lazy(async () => {
+    try {
+      return await componentImport();
+    } catch (error) {
+      console.warn("Chunk load error (deployment update), auto-reloading to fetch newest version:", error);
+      const isRetried = sessionStorage.getItem('ptm_chunk_retry');
+      if (!isRetried) {
+        sessionStorage.setItem('ptm_chunk_retry', 'true');
+        window.location.reload();
+        return new Promise(() => {});
+      }
+      sessionStorage.removeItem('ptm_chunk_retry');
+      throw error;
+    }
+  });
+}
+
+const UploadMaterialSection = lazyWithRetry(() => import('./components/UploadMaterialSection'));
+const MaterialOverviewSection = lazyWithRetry(() => import('./components/MaterialOverviewSection'));
+const ManualQuestionPickerModal = lazyWithRetry(() => import('./components/ManualQuestionPickerModal'));
+const AdminPinModal = lazyWithRetry(() => import('./components/AdminPinModal'));
+const AdminPortalSection = lazyWithRetry(() => import('./components/AdminPortalSection'));
+const AdminQuestionBankManagerView = lazyWithRetry(() => import('./components/AdminQuestionBankManagerView'));
+const AIAssistantBotModal = lazyWithRetry(() => import('./components/AIAssistantBotModal'));
 import { DEFAULT_PAPER_CONFIG } from './utils/sampleData';
 import { isUserSubscribed, isSuperAdmin } from './utils/pricingPlansService';
 import { 
