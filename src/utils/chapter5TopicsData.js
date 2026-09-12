@@ -1,17 +1,18 @@
 /**
  * Chapter 5: Code Testing and Debugging (12th Class Computer Science)
  * Official Exercise Questions (MCQs & Short Questions)
+ * Topics: 5.1, 5.2, 5.3 (no sub-topics like 5.2.1)
  */
 
 export const CHAPTER_5_NEW_TOPICS = [
   {
-    id: "cs-ch5-topic-5.2.1",
-    topicNumber: "5.2.1",
-    name: "Importance of Testing and Common Errors",
+    id: "cs-ch5-topic-5.1",
+    topicNumber: "5.1",
+    name: "Introduction to Testing and Debugging",
     mcqs: [
       {
-        id: "ch5-t5.2.1-ex-m1",
-        topicNumber: "5.2.1",
+        id: "ch5-t5.1-ex-m1",
+        topicNumber: "5.1",
         question: "Testing is essential for reliable applications because it helps to:",
         options: [
           "Optimise code performance",
@@ -27,8 +28,8 @@ export const CHAPTER_5_NEW_TOPICS = [
         marks: 1
       },
       {
-        id: "ch5-t5.2.1-ex-m2",
-        topicNumber: "5.2.1",
+        id: "ch5-t5.1-ex-m2",
+        topicNumber: "5.1",
         question: "Common types of programming errors include:",
         options: [
           "Syntax error",
@@ -46,16 +47,16 @@ export const CHAPTER_5_NEW_TOPICS = [
     ],
     shortQuestions: [
       {
-        id: "ch5-t5.2.1-ex-s1",
-        topicNumber: "5.2.1",
+        id: "ch5-t5.1-ex-s1",
+        topicNumber: "5.1",
         question: "Why is testing essential for ensuring reliable applications?",
         marks: 2,
         category: "exercise",
         isExercise: true
       },
       {
-        id: "ch5-t5.2.1-ex-s2",
-        topicNumber: "5.2.1",
+        id: "ch5-t5.1-ex-s2",
+        topicNumber: "5.1",
         question: "What are some common types of programming errors and bugs?",
         marks: 2,
         category: "exercise",
@@ -65,13 +66,13 @@ export const CHAPTER_5_NEW_TOPICS = [
     longQuestions: []
   },
   {
-    id: "cs-ch5-topic-5.2.2",
-    topicNumber: "5.2.2",
-    name: "Unit Testing",
+    id: "cs-ch5-topic-5.2",
+    topicNumber: "5.2",
+    name: "Testing, Debugging and Exception Handling",
     mcqs: [
       {
-        id: "ch5-t5.2.2-ex-m1",
-        topicNumber: "5.2.2",
+        id: "ch5-t5.2-ex-m1",
+        topicNumber: "5.2",
         question: "Unit testing focuses on:",
         options: [
           "Testing the entire application",
@@ -87,8 +88,8 @@ export const CHAPTER_5_NEW_TOPICS = [
         marks: 1
       },
       {
-        id: "ch5-t5.2.2-ex-m2",
-        topicNumber: "5.2.2",
+        id: "ch5-t5.2-ex-m2",
+        topicNumber: "5.2",
         question: "The Python module used for unit testing is:",
         options: [
           "numpy",
@@ -104,8 +105,8 @@ export const CHAPTER_5_NEW_TOPICS = [
         marks: 1
       },
       {
-        id: "ch5-t5.2.2-ex-m3",
-        topicNumber: "5.2.2",
+        id: "ch5-t5.2-ex-m3",
+        topicNumber: "5.2",
         question: "The main purpose of using testing tools like unittest and pytest is:",
         options: [
           "To increase program size",
@@ -119,44 +120,10 @@ export const CHAPTER_5_NEW_TOPICS = [
         category: "exercise",
         isExercise: true,
         marks: 1
-      }
-    ],
-    shortQuestions: [
-      {
-        id: "ch5-t5.2.2-ex-s1",
-        topicNumber: "5.2.2",
-        question: "What is unit testing, and why is it important in programming?",
-        marks: 2,
-        category: "exercise",
-        isExercise: true
       },
       {
-        id: "ch5-t5.2.2-ex-s2",
-        topicNumber: "5.2.2",
-        question: "How do Python's unittest and pytest modules help in unit testing?",
-        marks: 2,
-        category: "exercise",
-        isExercise: true
-      },
-      {
-        id: "ch5-t5.2.2-ex-s3",
-        topicNumber: "5.2.2",
-        question: "What is the purpose of writing and executing test cases?",
-        marks: 2,
-        category: "exercise",
-        isExercise: true
-      }
-    ],
-    longQuestions: []
-  },
-  {
-    id: "cs-ch5-topic-5.2.3",
-    topicNumber: "5.2.3",
-    name: "Debugging Techniques in IDEs",
-    mcqs: [
-      {
-        id: "ch5-t5.2.3-ex-m1",
-        topicNumber: "5.2.3",
+        id: "ch5-t5.2-ex-m4",
+        topicNumber: "5.2",
         question: "Breakpoints in debugging are used to:",
         options: [
           "Run the program faster",
@@ -172,8 +139,8 @@ export const CHAPTER_5_NEW_TOPICS = [
         marks: 1
       },
       {
-        id: "ch5-t5.2.3-ex-m2",
-        topicNumber: "5.2.3",
+        id: "ch5-t5.2-ex-m5",
+        topicNumber: "5.2",
         question: "Watch expressions in debugging are used to:",
         options: [
           "Change variable values",
@@ -189,8 +156,8 @@ export const CHAPTER_5_NEW_TOPICS = [
         marks: 1
       },
       {
-        id: "ch5-t5.2.3-ex-m3",
-        topicNumber: "5.2.3",
+        id: "ch5-t5.2-ex-m6",
+        topicNumber: "5.2",
         question: "Step-by-step debugging is used to:",
         options: [
           "Run the program faster",
@@ -204,44 +171,10 @@ export const CHAPTER_5_NEW_TOPICS = [
         category: "exercise",
         isExercise: true,
         marks: 1
-      }
-    ],
-    shortQuestions: [
-      {
-        id: "ch5-t5.2.3-ex-s1",
-        topicNumber: "5.2.3",
-        question: "How do you set breakpoints in IDEs like PyCharm or VS Code?",
-        marks: 2,
-        category: "exercise",
-        isExercise: true
       },
       {
-        id: "ch5-t5.2.3-ex-s2",
-        topicNumber: "5.2.3",
-        question: "What is the role of monitoring variable values with watch expressions during debugging?",
-        marks: 2,
-        category: "exercise",
-        isExercise: true
-      },
-      {
-        id: "ch5-t5.2.3-ex-s3",
-        topicNumber: "5.2.3",
-        question: "What is the step-by-step debugging process in IDEs?",
-        marks: 2,
-        category: "exercise",
-        isExercise: true
-      }
-    ],
-    longQuestions: []
-  },
-  {
-    id: "cs-ch5-topic-5.2.4",
-    topicNumber: "5.2.4",
-    name: "Exception Handling",
-    mcqs: [
-      {
-        id: "ch5-t5.2.4-ex-m1",
-        topicNumber: "5.2.4",
+        id: "ch5-t5.2-ex-m7",
+        topicNumber: "5.2",
         question: "The Python keyword pair used for exception handling is:",
         options: [
           "try-except",
@@ -259,8 +192,56 @@ export const CHAPTER_5_NEW_TOPICS = [
     ],
     shortQuestions: [
       {
-        id: "ch5-t5.2.4-ex-s1",
-        topicNumber: "5.2.4",
+        id: "ch5-t5.2-ex-s1",
+        topicNumber: "5.2",
+        question: "What is unit testing, and why is it important in programming?",
+        marks: 2,
+        category: "exercise",
+        isExercise: true
+      },
+      {
+        id: "ch5-t5.2-ex-s2",
+        topicNumber: "5.2",
+        question: "How do Python's unittest and pytest modules help in unit testing?",
+        marks: 2,
+        category: "exercise",
+        isExercise: true
+      },
+      {
+        id: "ch5-t5.2-ex-s3",
+        topicNumber: "5.2",
+        question: "What is the purpose of writing and executing test cases?",
+        marks: 2,
+        category: "exercise",
+        isExercise: true
+      },
+      {
+        id: "ch5-t5.2-ex-s4",
+        topicNumber: "5.2",
+        question: "How do you set breakpoints in IDEs like PyCharm or VS Code?",
+        marks: 2,
+        category: "exercise",
+        isExercise: true
+      },
+      {
+        id: "ch5-t5.2-ex-s5",
+        topicNumber: "5.2",
+        question: "What is the role of monitoring variable values with watch expressions during debugging?",
+        marks: 2,
+        category: "exercise",
+        isExercise: true
+      },
+      {
+        id: "ch5-t5.2-ex-s6",
+        topicNumber: "5.2",
+        question: "What is the step-by-step debugging process in IDEs?",
+        marks: 2,
+        category: "exercise",
+        isExercise: true
+      },
+      {
+        id: "ch5-t5.2-ex-s7",
+        topicNumber: "5.2",
         question: "How does exception handling help in managing multiple exception types effectively?",
         marks: 2,
         category: "exercise",

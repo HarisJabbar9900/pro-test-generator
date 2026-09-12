@@ -1231,16 +1231,24 @@ export function mergeChapter1NewTopics(bank) {
           }
           if (!ch5.topics) ch5.topics = [];
 
+          // Remove any stale sub-topics (like 5.2.1, 5.2.2, etc.) and restrict strictly to 5.1, 5.2, 5.3
+          const preCh5Count = ch5.topics.length;
+          ch5.topics = ch5.topics.filter(t => {
+            const parts = (t.topicNumber || '').trim().split('.');
+            return parts.length <= 2;
+          });
+          if (ch5.topics.length !== preCh5Count) changed = true;
+
           CHAPTER_5_NEW_TOPICS.forEach(newTopic => {
             const existingTopic = ch5.topics.find(t => 
-              t.topicNumber?.trim() === newTopic.topicNumber.trim() || 
-              t.name?.toLowerCase().trim() === newTopic.name.toLowerCase().trim()
+              t.topicNumber?.trim() === newTopic.topicNumber.trim()
             );
 
             if (!existingTopic) {
               ch5.topics.push(JSON.parse(JSON.stringify(newTopic)));
               changed = true;
             } else {
+              existingTopic.name = newTopic.name;
               if (!existingTopic.id || (newTopic.id && existingTopic.id !== newTopic.id)) {
                 existingTopic.id = newTopic.id;
                 changed = true;
