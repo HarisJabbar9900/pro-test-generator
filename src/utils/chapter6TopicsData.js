@@ -2,7 +2,7 @@
  * Chapter 6: Data Science and Machine Learning (12th Class Computer Science)
  * Complete Board-Style Conceptual Question Bank:
  * - 40 Total MCQs (10 Official Exercise MCQs + 30 Board-Style Topic MCQs)
- * - 10 Official Exercise Short Questions
+ * - 31 Total Short Questions (10 Official Exercise Shorts + 21 Board Practice Topic Shorts)
  * Topics: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 6.10
  */
 
@@ -89,6 +89,22 @@ export const CHAPTER_6_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch6-sq1",
+        topicNumber: "6.1",
+        question: "What is Data Science, and why is it categorized as an interdisciplinary field?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq2",
+        topicNumber: "6.1",
+        question: "Outline the four main stages in the Data Science workflow.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -208,6 +224,30 @@ export const CHAPTER_6_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch6-sq3",
+        topicNumber: "6.2",
+        question: "Differentiate between Structured Data and Unstructured Data with suitable examples.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq4",
+        topicNumber: "6.2",
+        question: "Compare manual data collection methods with automated data collection methods.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq5",
+        topicNumber: "6.2",
+        question: "Why is proper data storage and data management essential before analysis?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -294,6 +334,22 @@ export const CHAPTER_6_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch6-sq6",
+        topicNumber: "6.3",
+        question: "How does Machine Learning fundamentally differ from Traditional Programming?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq7",
+        topicNumber: "6.3",
+        question: "Explain how Machine Learning models adapt and improve performance over time.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -397,6 +453,22 @@ export const CHAPTER_6_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch6-sq8",
+        topicNumber: "6.4",
+        question: "Differentiate between Supervised Learning and Unsupervised Learning.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq9",
+        topicNumber: "6.4",
+        question: "Describe Reinforcement Learning and explain the role of rewards and penalties.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -458,7 +530,24 @@ export const CHAPTER_6_NEW_TOPICS = [
         marks: 1
       }
     ],
-    shortQuestions: [],
+    shortQuestions: [
+      {
+        id: "cs12-ch6-sq10",
+        topicNumber: "6.5",
+        question: "State two practical applications of Machine Learning in the healthcare sector.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq11",
+        topicNumber: "6.5",
+        question: "How do e-commerce platforms utilize Machine Learning to improve customer experience and sales?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      }
+    ],
     longQuestions: []
   },
   {
@@ -577,6 +666,30 @@ export const CHAPTER_6_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch6-sq12",
+        topicNumber: "6.6",
+        question: "Define Features (Inputs) and Target Values (Outputs) in a Machine Learning dataset with an example.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq13",
+        topicNumber: "6.6",
+        question: "What is Feature Engineering, and why is it necessary before model training?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq14",
+        topicNumber: "6.6",
+        question: "What is a Train-Test Split, and why is an 80/20 ratio commonly used?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -680,6 +793,30 @@ export const CHAPTER_6_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch6-sq15",
+        topicNumber: "6.7",
+        question: "Define Accuracy in model evaluation and state its mathematical formula.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq16",
+        topicNumber: "6.7",
+        question: "Differentiate between Precision and Recall in classification models.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq17",
+        topicNumber: "6.7",
+        question: "What is the F1-Score, and why is it preferred over Accuracy for unbalanced datasets?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -724,7 +861,24 @@ export const CHAPTER_6_NEW_TOPICS = [
         marks: 1
       }
     ],
-    shortQuestions: [],
+    shortQuestions: [
+      {
+        id: "cs12-ch6-sq18",
+        topicNumber: "6.8",
+        question: "What is the primary purpose of using a separate Validation Dataset?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch6-sq19",
+        topicNumber: "6.8",
+        question: "Define Hyperparameter Tuning and explain its role in model optimization.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      }
+    ],
     longQuestions: []
   },
   {
@@ -775,6 +929,14 @@ export const CHAPTER_6_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch6-sq20",
+        topicNumber: "6.9",
+        question: "Explain the core difference between Prediction and Causality in data analysis.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -861,6 +1023,14 @@ export const CHAPTER_6_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch6-sq21",
+        topicNumber: "6.10",
+        question: "Name three standard tools/languages used in Data Science (e.g., Excel, R, Python) and state their primary uses.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
