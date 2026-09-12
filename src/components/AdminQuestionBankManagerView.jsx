@@ -666,24 +666,15 @@ export default function AdminQuestionBankManagerView({
               )}
             </div>
 
-            {/* Stable Overall Counts Badge */}
-            <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs shrink-0 self-start lg:self-center">
-              <span className="text-cyan-800 font-bold bg-cyan-50 border border-cyan-200 px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
-                <span>{scopeCounts.mcqs} MCQs</span>
-              </span>
-              <span className="text-indigo-800 font-bold bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                <span>{scopeCounts.shorts} Shorts</span>
-              </span>
-              <span className="text-purple-800 font-bold bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                <span>{scopeCounts.longs} Longs</span>
-              </span>
-              <span className="bg-slate-900 text-white font-black px-3 py-1 rounded-md shadow-2xs">
-                Total: {scopeCounts.total} Qs
-              </span>
-            </div>
+            {/* Total Scope Count Badge */}
+            {scopeCounts.total > 0 && (
+              <div className="shrink-0 self-start lg:self-center">
+                <span className="bg-slate-900 text-white font-mono text-xs font-bold px-3 py-1.5 rounded-lg shadow-2xs flex items-center gap-1.5">
+                  <span className="text-slate-400 font-sans text-[11px] uppercase tracking-wider font-semibold">Total:</span>
+                  <span className="text-cyan-300 font-black">{scopeCounts.total} Qs</span>
+                </span>
+              </div>
+            )}
           </div>
 
         </div>
