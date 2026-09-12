@@ -1,7 +1,9 @@
 /**
  * Chapter 7: Hypothesis Testing (12th Class Computer Science)
- * Official Exercise Questions (MCQs & Short Questions)
- * Topics: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6
+ * Complete Board-Style Topic-Wise Question Bank:
+ * - 37 Total MCQs (10 Official Exercise MCQs + 27 Board-Style Topic MCQs)
+ * - 10 Official Exercise Short Questions
+ * Topics: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7
  */
 
 export const CHAPTER_7_NEW_TOPICS = [
@@ -25,6 +27,74 @@ export const CHAPTER_7_NEW_TOPICS = [
         answerKey: "A proposed explanation",
         category: "exercise",
         isExercise: true,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b1",
+        topicNumber: "7.1",
+        question: "What is hypothesis testing primarily used for in data analysis?",
+        options: [
+          "Designing hardware microchips",
+          "Making decisions and checking whether an assumption is true or false",
+          "Formatting database tables",
+          "Writing graphical user interfaces"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Making decisions and checking whether an assumption is true or false",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b2",
+        topicNumber: "7.1",
+        question: "A hypothesis in research is defined as a testable assumption or statement made before:",
+        options: [
+          "System deployment",
+          "Testing begins",
+          "Data deletion",
+          "Hardware installation"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Testing begins",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b3",
+        topicNumber: "7.1",
+        question: "In the hypothesis function h_θ(x) = y, what does x represent?",
+        options: [
+          "Predicted target value",
+          "Model parameters or weights",
+          "Input features or data points",
+          "Significance level"
+        ],
+        answer: "(c)",
+        correctIndex: 2,
+        answerKey: "Input features or data points",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b4",
+        topicNumber: "7.1",
+        question: "In the hypothesis function h_θ(x) = y, what does y represent?",
+        options: [
+          "Input features",
+          "Predicted output or target value",
+          "Sample standard deviation",
+          "Degrees of freedom"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Predicted output or target value",
+        category: "topic",
+        isExercise: false,
         marks: 1
       }
     ],
@@ -85,6 +155,57 @@ export const CHAPTER_7_NEW_TOPICS = [
         answerKey: "H₀",
         category: "exercise",
         isExercise: true,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b5",
+        topicNumber: "7.2",
+        question: "Which hypothesis states that there is no significant effect, difference, or relationship between variables?",
+        options: [
+          "Alternative Hypothesis (H₁)",
+          "Null Hypothesis (H₀)",
+          "Critical Hypothesis",
+          "Complex Hypothesis"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Null Hypothesis (H₀)",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b6",
+        topicNumber: "7.2",
+        question: "The Alternative Hypothesis is represented by which symbol?",
+        options: [
+          "H₀",
+          "H₁ or H_a",
+          "P_α",
+          "T₀"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "H₁ or H_a",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b7",
+        topicNumber: "7.2",
+        question: "What is the primary purpose of conducting a statistical hypothesis test?",
+        options: [
+          "To prove that H₀ is always true",
+          "To test data against the Null Hypothesis (H₀) to decide whether to accept or reject it",
+          "To delete bad rows from a dataset",
+          "To eliminate sample variance"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "To test data against the Null Hypothesis (H₀) to decide whether to accept or reject it",
+        category: "topic",
+        isExercise: false,
         marks: 1
       }
     ],
@@ -155,6 +276,142 @@ export const CHAPTER_7_NEW_TOPICS = [
         category: "exercise",
         isExercise: true,
         marks: 1
+      },
+      {
+        id: "cs12-ch7-b8",
+        topicNumber: "7.3",
+        question: "Numerical values calculated from sample data used to evaluate hypotheses (e.g., t-value, chi-square) are called:",
+        options: [
+          "Parameters",
+          "Test statistics",
+          "Critical limits",
+          "Error margins"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Test statistics",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b9",
+        topicNumber: "7.3",
+        question: "In the t-value test formula t = (x̄ - μ₀) / (s / √n), what does x̄ represent?",
+        options: [
+          "Population mean under the null hypothesis",
+          "Sample mean",
+          "Sample size",
+          "Sample standard deviation"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Sample mean",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b10",
+        topicNumber: "7.3",
+        question: "In the Chi-Square test formula χ² = Σ ((Oᵢ - Eᵢ)² / Eᵢ), what does Oᵢ represent?",
+        options: [
+          "Expected frequency",
+          "Observed frequency in each category",
+          "Overall population mean",
+          "Optimal sample size"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Observed frequency in each category",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b11",
+        topicNumber: "7.3",
+        question: "The area in a statistical distribution where, if the test statistic falls within it, the null hypothesis is rejected is called the:",
+        options: [
+          "Acceptance region",
+          "Critical region (Rejection area)",
+          "Sample space",
+          "Confidence interval"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Critical region (Rejection area)",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b12",
+        topicNumber: "7.3",
+        question: "The significance level (α) defines the maximum probability of making an error by:",
+        options: [
+          "Accepting a true null hypothesis",
+          "Rejecting the null hypothesis when it is actually true",
+          "Calculating an incorrect mean",
+          "Collecting biased data"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Rejecting the null hypothesis when it is actually true",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b13",
+        topicNumber: "7.3",
+        question: "What is a commonly used standard value for the significance level (α) in research?",
+        options: [
+          "0.50",
+          "0.05 (5%)",
+          "0.95",
+          "0.00"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "0.05 (5%)",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b14",
+        topicNumber: "7.3",
+        question: "If the calculated p-value is LESS than the significance level (α), what decision is made regarding H₀?",
+        options: [
+          "Accept H₀",
+          "Reject H₀",
+          "Ignore the dataset",
+          "Recalculate the mean"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Reject H₀",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b15",
+        topicNumber: "7.3",
+        question: "If the p-value is GREATER than α, the correct decision is to:",
+        options: [
+          "Reject H₀",
+          "Accept (fail to reject) H₀",
+          "Change the significance level",
+          "Discard all sample data"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Accept (fail to reject) H₀",
+        category: "topic",
+        isExercise: false,
+        marks: 1
       }
     ],
     shortQuestions: [
@@ -205,6 +462,57 @@ export const CHAPTER_7_NEW_TOPICS = [
         answerKey: "Reject H₀",
         category: "exercise",
         isExercise: true,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b16",
+        topicNumber: "7.4",
+        question: "What is the very first step in performing a hypothesis test?",
+        options: [
+          "Collect data",
+          "State the hypotheses (H₀ and H₁)",
+          "Set the significance level",
+          "Calculate the p-value"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "State the hypotheses (H₀ and H₁)",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b17",
+        topicNumber: "7.4",
+        question: "Which advanced statistical test is used specifically to compare variances between two samples?",
+        options: [
+          "t-test",
+          "F-test",
+          "Chi-Square test",
+          "Z-test"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "F-test",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b18",
+        topicNumber: "7.4",
+        question: "Which test is used when analyzing categorical data to check relationships between variables?",
+        options: [
+          "F-test",
+          "Chi-Square test",
+          "Linear Regression",
+          "t-test"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Chi-Square test",
+        category: "topic",
+        isExercise: false,
         marks: 1
       }
     ],
@@ -258,6 +566,57 @@ export const CHAPTER_7_NEW_TOPICS = [
         category: "exercise",
         isExercise: true,
         marks: 1
+      },
+      {
+        id: "cs12-ch7-b19",
+        topicNumber: "7.5",
+        question: "Which chart type is best suited for comparing discrete categories or experimental groups in hypothesis testing?",
+        options: [
+          "Line Graph",
+          "Bar Chart",
+          "Pie Chart",
+          "Scatter Plot"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Bar Chart",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b20",
+        topicNumber: "7.5",
+        question: "Which visual tool is most effective for displaying trends and changes over time?",
+        options: [
+          "Bar Chart",
+          "Line Graph",
+          "Pie Chart",
+          "Table"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Line Graph",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b21",
+        topicNumber: "7.5",
+        question: "Which graph displays relationships between two variables and helps identify outliers or anomalies in a dataset?",
+        options: [
+          "Bar Chart",
+          "Scatter Plot",
+          "Pie Chart",
+          "Histogram"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Scatter Plot",
+        category: "topic",
+        isExercise: false,
+        marks: 1
       }
     ],
     shortQuestions: [
@@ -293,6 +652,74 @@ export const CHAPTER_7_NEW_TOPICS = [
         category: "exercise",
         isExercise: true,
         marks: 1
+      },
+      {
+        id: "cs12-ch7-b22",
+        topicNumber: "7.6",
+        question: "Conducting a survey on student performance by surveying ONLY top-performing schools is an example of:",
+        options: [
+          "Sampling Bias",
+          "Survey Bias",
+          "Gender Bias",
+          "Confirmation Bias"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Survey Bias",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b23",
+        topicNumber: "7.6",
+        question: "A health study that includes ONLY young adults, failing to represent older age groups, suffers from:",
+        options: [
+          "Geographical Bias",
+          "Sampling Bias",
+          "Confirmation Bias",
+          "Survey Bias"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Sampling Bias",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b24",
+        topicNumber: "7.6",
+        question: "When a researcher focuses ONLY on data that supports their pre-existing belief and ignores contradictory results, this is called:",
+        options: [
+          "Gender Bias",
+          "Confirmation Bias",
+          "Sampling Bias",
+          "Geographical Bias"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Confirmation Bias",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b25",
+        topicNumber: "7.6",
+        question: "Using data collected exclusively from urban areas to make decisions for rural populations exhibits:",
+        options: [
+          "Confirmation Bias",
+          "Geographical Bias",
+          "Survey Bias",
+          "Gender Bias"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Geographical Bias",
+        category: "topic",
+        isExercise: false,
+        marks: 1
       }
     ],
     shortQuestions: [
@@ -313,6 +740,49 @@ export const CHAPTER_7_NEW_TOPICS = [
         isExercise: true
       }
     ],
+    longQuestions: []
+  },
+  {
+    id: "cs-ch7-topic-7.7",
+    topicNumber: "7.7",
+    name: "Communicating Results and Conclusions",
+    mcqs: [
+      {
+        id: "cs12-ch7-b26",
+        topicNumber: "7.7",
+        question: "When presenting research findings clearly, language should be simple and organized without unnecessary:",
+        options: [
+          "Tables and charts",
+          "Technical jargon",
+          "Logical structures",
+          "Statistical outcomes"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Technical jargon",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      },
+      {
+        id: "cs12-ch7-b27",
+        topicNumber: "7.7",
+        question: "Conclusions derived from data analysis must be directly linked to the:",
+        options: [
+          "Personal opinions of the researcher",
+          "Original hypotheses",
+          "Unverified online claims",
+          "Uncleaned raw data"
+        ],
+        answer: "(b)",
+        correctIndex: 1,
+        answerKey: "Original hypotheses",
+        category: "topic",
+        isExercise: false,
+        marks: 1
+      }
+    ],
+    shortQuestions: [],
     longQuestions: []
   }
 ];
