@@ -290,7 +290,7 @@
 }
 
 /* Urdu Language Styling with Jameel Noori Nastaleeq Font */
-.lang-urdu, [dir="rtl"], .font-serif-urdu {
+.lang-urdu, [dir="rtl"], .font-serif-urdu, .font-urdu, [lang="ur"], .urdu-text {
   font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif !important;
   line-height: 1.8 !important;
 }

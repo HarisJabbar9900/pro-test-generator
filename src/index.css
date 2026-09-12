@@ -2,18 +2,36 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Open Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: 'Open Sans', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+  --font-urdu: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif;
 }
 
-/* Jameel Noori Nastaleeq / Noto Nastaliq Urdu Web Font Definition */
+/* Jameel Noori Nastaleeq Web Font Definition (Self-Hosted + CDN + Local) */
 @font-face {
   font-family: 'Jameel Noori Nastaleeq';
   src: local('Jameel Noori Nastaleeq Regular'),
        local('Jameel Noori Nastaleeq'),
-       local('Noto Nastaliq Urdu');
-  font-weight: normal;
+       url('/fonts/JameelNooriNastaleeqRegular.woff') format('woff'),
+       url('https://fonts.cdnfonts.com/s/149204/JameelNooriNastaleeqRegular.woff') format('woff');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
+}
+
+@font-face {
+  font-family: 'Jameel Noori Nastaleeq';
+  src: local('Jameel Noori Nastaleeq Regular'),
+       local('Jameel Noori Nastaleeq'),
+       url('/fonts/JameelNooriNastaleeqRegular.woff') format('woff'),
+       url('https://fonts.cdnfonts.com/s/149204/JameelNooriNastaleeqRegular.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Universal Urdu Font Classes */
+.font-urdu, [lang="ur"], .urdu-text, .lang-urdu, [dir="rtl"] {
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif !important;
 }
 
 @layer base {
