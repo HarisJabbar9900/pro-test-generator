@@ -94,8 +94,18 @@ async function main() {
     process.exit(1);
   }
 
-  if (totalShorts !== 10) {
-    console.error(`ERROR: Expected 10 Exercise Shorts, got ${totalShorts}`);
+  if (totalShorts !== 40) {
+    console.error(`ERROR: Expected 40 Shorts (30 topic + 10 exercise), got ${totalShorts}`);
+    process.exit(1);
+  }
+
+  if (exerciseShorts !== 10) {
+    console.error(`ERROR: Expected 10 Exercise Shorts, got ${exerciseShorts}`);
+    process.exit(1);
+  }
+
+  if (topicShorts !== 30) {
+    console.error(`ERROR: Expected 30 Topic Shorts, got ${topicShorts}`);
     process.exit(1);
   }
 
@@ -104,7 +114,7 @@ async function main() {
     updatedAt: new Date().toISOString()
   });
 
-  console.log("Firestore successfully written and verified with 40 MCQs (30 Topic + 10 Exercise) and 10 Shorts for Grade 12 Chapter 8!");
+  console.log("Firestore successfully written and verified with 40 MCQs (30 Topic + 10 Exercise) and 40 Shorts (30 Topic + 10 Exercise) for Grade 12 Chapter 8!");
   process.exit(0);
 }
 

@@ -317,6 +317,94 @@ export const CHAPTER_8_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch8-sq1",
+        topicNumber: "8.1",
+        question: "What is Artificial Intelligence (AI), and what are its primary sub-fields?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq2",
+        topicNumber: "8.1",
+        question: "Differentiate between Machine Learning (ML) and traditional computer programming.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq3",
+        topicNumber: "8.1",
+        question: "What is Natural Language Processing (NLP), and how is it used in daily AI applications?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq4",
+        topicNumber: "8.1",
+        question: "How does Google DeepMind’s AI model assist medical professionals in healthcare?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq5",
+        topicNumber: "8.1",
+        question: "Define the Internet of Things (IoT) and name two real-world IoT smart devices.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq6",
+        topicNumber: "8.1",
+        question: "Describe the three core functional stages of an IoT ecosystem.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq7",
+        topicNumber: "8.1",
+        question: "Explain how an IoT smart thermostat conserves energy in a smart home setting.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq8",
+        topicNumber: "8.1",
+        question: "Define Cloud Computing and state its primary purpose in modern software.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq9",
+        topicNumber: "8.1",
+        question: "Differentiate between the Scalability and Accessibility features of cloud computing.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq10",
+        topicNumber: "8.1",
+        question: "What is Blockchain technology, and why is its ledger described as \"immutable\"?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq11",
+        topicNumber: "8.1",
+        question: "How does Blockchain eliminate the need for centralized intermediaries like banks?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -521,6 +609,70 @@ export const CHAPTER_8_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch8-sq12",
+        topicNumber: "8.2",
+        question: "List the four main stakeholders in an AI ecosystem and state the primary responsibility of developers.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq13",
+        topicNumber: "8.2",
+        question: "What role do governments and communities play in regulating AI technologies?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq14",
+        topicNumber: "8.2",
+        question: "Why is cultural awareness critical when designing global AI language models?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq15",
+        topicNumber: "8.2",
+        question: "Explain the ethical principle of Fairness in AI systems.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq16",
+        topicNumber: "8.2",
+        question: "What is meant by Transparency and Accountability in automated AI decision-making?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq17",
+        topicNumber: "8.2",
+        question: "What causes algorithmic data bias in AI models, and how can developers prevent it?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq18",
+        topicNumber: "8.2",
+        question: "Give an example of a conflict of interest between corporate AI developers and individual users regarding data privacy.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq19",
+        topicNumber: "8.2",
+        question: "What is the General Data Protection Regulation (GDPR), and what is its core objective?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -683,6 +835,54 @@ export const CHAPTER_8_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch8-sq20",
+        topicNumber: "8.3",
+        question: "Identify four major national sectors in Pakistan that can be transformed using emerging technologies.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq21",
+        topicNumber: "8.3",
+        question: "How can AI and Cloud Computing improve educational outreach in Pakistan’s rural areas?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq22",
+        topicNumber: "8.3",
+        question: "Explain the concept of Technology Integration in modern application design.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq23",
+        topicNumber: "8.3",
+        question: "In the Smart Agriculture case study for Pakistan, what specific data do IoT field sensors collect?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq24",
+        topicNumber: "8.3",
+        question: "How do AI weather prediction models assist Pakistani farmers in crop management?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq25",
+        topicNumber: "8.3",
+        question: "Describe how Blockchain technology brings transparency to agricultural supply chains in Pakistan.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -803,6 +1003,46 @@ export const CHAPTER_8_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch8-sq26",
+        topicNumber: "8.4",
+        question: "Define AI Governance and explain why national AI frameworks are necessary.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq27",
+        topicNumber: "8.4",
+        question: "What is Responsible Innovation, and what does it prioritize over short-term financial profit?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq28",
+        topicNumber: "8.4",
+        question: "Why is interdisciplinary collaboration essential when building ethical AI applications?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq29",
+        topicNumber: "8.4",
+        question: "Describe the specific contribution of sociologists and legal experts on AI development teams.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch8-sq30",
+        topicNumber: "8.4",
+        question: "What role do ethicists play in guiding technological innovation?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
