@@ -49,21 +49,71 @@ export default function DefaultPaperSettingsView({
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [saveStatus, setSaveStatus] = useState('idle'); // 'idle' | 'saved'
 
-  // Keep formData in sync when paperConfig is updated
+  const isUserEdit = useRef(false);
+  const isInternalUpdate = useRef(false);
+  const statusTimeoutRef = useRef(null);
+
+  // Cleanup timers on unmount
   useEffect(() => {
+    return () => {
+      if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+    };
+  }, []);
+
+  // Keep formData in sync when paperConfig is updated from external sources
+  useEffect(() => {
+    if (isInternalUpdate.current) {
+      isInternalUpdate.current = false;
+      return;
+    }
     if (paperConfig && Object.keys(paperConfig).length > 0) {
-      setFormData(prev => ({
-        ...prev,
-        ...paperConfig,
-        headerLayout: paperConfig.headerLayout === 'Layout 42' ? 'Layout 13' : (paperConfig.headerLayout || prev.headerLayout || 'Layout 13'),
-        academyName: paperConfig.academyName || prev.academyName || 'AL-ZIA SCIENCE ACADEMY',
-        tagline: paperConfig.tagline || prev.tagline || 'One Stop Test Solution',
-        syllabus: paperConfig.syllabus || prev.syllabus || ''
-      }));
+      setFormData(prev => {
+        const newLayout = paperConfig.headerLayout === 'Layout 42' ? 'Layout 13' : (paperConfig.headerLayout || prev.headerLayout || 'Layout 13');
+        const newAcademy = paperConfig.academyName || prev.academyName || 'AL-ZIA SCIENCE ACADEMY';
+        const newTagline = paperConfig.tagline || prev.tagline || 'One Stop Test Solution';
+        const newSyllabus = paperConfig.syllabus || prev.syllabus || '';
+        const newFontSize = paperConfig.headerFontSize || prev.headerFontSize;
+        const newHeadingSize = paperConfig.headingFontSize || prev.headingFontSize;
+        const newTextSize = paperConfig.textFontSize || prev.textFontSize;
+        const newColor = paperConfig.paperFontColor || prev.paperFontColor;
+        const newWatermarkType = paperConfig.watermarkType || prev.watermarkType;
+        const newWatermarkText = paperConfig.watermarkText || prev.watermarkText;
+        const newShowWatermark = paperConfig.showWatermark !== false;
+        const newMcqLayout = paperConfig.mcqLayout || prev.mcqLayout;
+        const newMcqCols = String(paperConfig.mcqOptionsCols || prev.mcqOptionsCols);
+
+        if (
+          prev.headerLayout === newLayout &&
+          prev.academyName === newAcademy &&
+          prev.tagline === newTagline &&
+          prev.syllabus === newSyllabus &&
+          prev.headerFontSize === newFontSize &&
+          prev.headingFontSize === newHeadingSize &&
+          prev.textFontSize === newTextSize &&
+          prev.paperFontColor === newColor &&
+          prev.watermarkType === newWatermarkType &&
+          prev.watermarkText === newWatermarkText &&
+          prev.showWatermark === newShowWatermark &&
+          prev.mcqLayout === newMcqLayout &&
+          String(prev.mcqOptionsCols) === newMcqCols
+        ) {
+          return prev; // Values are identical, preserve reference to prevent re-render loop
+        }
+
+        return {
+          ...prev,
+          ...paperConfig,
+          headerLayout: newLayout,
+          academyName: newAcademy,
+          tagline: newTagline,
+          syllabus: newSyllabus
+        };
+      });
     }
   }, [paperConfig]);
 
   const handleChange = (field, value) => {
+    isUserEdit.current = true;
     setFormData(prev => {
       const next = { ...prev, [field]: value };
       if (field === 'watermarkType' && value === 'Text Watermark') {
@@ -75,14 +125,13 @@ export default function DefaultPaperSettingsView({
     });
   };
 
-  // Auto-save any changes without requiring the user to manually click submit
-  const isInitialMount = useRef(true);
+  // Auto-save ONLY when user explicitly changed a field
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
+    if (!isUserEdit.current) {
       return;
     }
     const timer = setTimeout(() => {
+      isUserEdit.current = false;
       const updated = {
         ...formData,
         fontSize: Number(formData.textFontSize) || 11,
@@ -90,6 +139,7 @@ export default function DefaultPaperSettingsView({
         mcqOptionsCols: Number(formData.mcqOptionsCols) || 2
       };
 
+      isInternalUpdate.current = true;
       setPaperConfig(prev => ({
         ...prev,
         ...updated
@@ -102,14 +152,16 @@ export default function DefaultPaperSettingsView({
       }
 
       setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
-    }, 350);
+      if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+      statusTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2500);
+    }, 400);
 
     return () => clearTimeout(timer);
   }, [formData, setPaperConfig]);
 
   const handleSave = (e) => {
     e?.preventDefault();
+    isUserEdit.current = false;
     
     // 1. Update Global State
     const updated = {
@@ -119,6 +171,7 @@ export default function DefaultPaperSettingsView({
       mcqOptionsCols: Number(formData.mcqOptionsCols) || 2
     };
 
+    isInternalUpdate.current = true;
     setPaperConfig(prev => ({
       ...prev,
       ...updated
@@ -135,10 +188,11 @@ export default function DefaultPaperSettingsView({
     setSaveStatus('saved');
     notify.success("Paper Settings & Header updated successfully!");
 
-    setTimeout(() => {
+    if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+    statusTimeoutRef.current = setTimeout(() => {
       setSavedSuccess(false);
       setSaveStatus('idle');
-    }, 3500);
+    }, 3000);
   };
 
   // Helper to get color code
