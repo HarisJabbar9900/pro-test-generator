@@ -173,23 +173,23 @@ export const CHAPTER_1_NEW_TOPICS = [
     ],
     "shortQuestions": [
       {
-        "question": "Define a computer network and list two common uses of networks in daily life.",
-        "id": "cs-12-t1_1-s1",
-        "marks": 2,
+        "id": "ch1-t1.1-ex-s1",
+        "question": "What is a computer network?",
         "category": "exercise",
-        "isExercise": true
+        "isExercise": true,
+        "marks": 2
+      },
+      {
+        "id": "ch1-t1.1-ex-s2",
+        "question": "Write two uses of computer networks.",
+        "category": "exercise",
+        "isExercise": true,
+        "marks": 2
       },
       {
         "question": "How do computer networks benefit organizations in terms of resource utilization? Give one example.",
         "marks": 2,
         "id": "cs-12-t1_1-s2",
-        "category": "topic",
-        "isExercise": false
-      },
-      {
-        "marks": 2,
-        "question": "List any four uses of computer networks in daily life.",
-        "id": "cs-12-t1_1-s3",
         "category": "topic",
         "isExercise": false
       },
@@ -360,11 +360,18 @@ export const CHAPTER_1_NEW_TOPICS = [
     "id": "cs-12-ch1-t1_2",
     "shortQuestions": [
       {
-        "question": "What is network architecture, and how does it help a network work efficiently?",
-        "marks": 2,
-        "id": "cs-12-t1_2-s1",
+        "id": "ch1-t1.2-ex-s1",
+        "question": "What is network architecture?",
         "category": "exercise",
-        "isExercise": true
+        "isExercise": true,
+        "marks": 2
+      },
+      {
+        "id": "ch1-t1.2-ex-s2",
+        "question": "Name any two components of a computer network.",
+        "category": "exercise",
+        "isExercise": true,
+        "marks": 2
       },
       {
         "question": "Why is data broken down into smaller packets before transmission?",
@@ -559,9 +566,16 @@ export const CHAPTER_1_NEW_TOPICS = [
     "shortQuestions": [
       {
         "id": "ch1-t1.3-ex-s1",
-        "question": "Differentiate between a Local Area Network (LAN) and a Wide Area Network (WAN) based on coverage area.",
+        "question": "What is a Local Area Network (LAN)?",
         "category": "exercise",
         "isExercise": true,
+        "marks": 2
+      },
+      {
+        "id": "ch1-t1.3-ex-s1",
+        "question": "Differentiate between a Local Area Network (LAN) and a Wide Area Network (WAN) based on coverage area.",
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -618,9 +632,16 @@ export const CHAPTER_1_NEW_TOPICS = [
     "shortQuestions": [
       {
         "id": "ch1-t1.4-ex-s1",
-        "question": "Differentiate between a Switch and a Router.",
+        "question": "What is the function of a router?",
         "category": "exercise",
         "isExercise": true,
+        "marks": 2
+      },
+      {
+        "id": "ch1-t1.4-s-diff",
+        "question": "Differentiate between a Switch and a Router.",
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -815,9 +836,16 @@ export const CHAPTER_1_NEW_TOPICS = [
     "shortQuestions": [
       {
         "id": "ch1-t1.5-ex-s1",
-        "question": "Why is Mesh topology considered the most reliable topology, and what is its main disadvantage?",
+        "question": "Write the name of any two network topologies.",
         "category": "exercise",
         "isExercise": true,
+        "marks": 2
+      },
+      {
+        "id": "ch1-t1.5-ex-s1",
+        "question": "Why is Mesh topology considered the most reliable topology, and what is its main disadvantage?",
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -1024,9 +1052,16 @@ export const CHAPTER_1_NEW_TOPICS = [
     "shortQuestions": [
       {
         "id": "ch1-t1.6-ex-s1",
-        "question": "Name the 7 layers of the OSI model in order from bottom (Layer 1) to top (Layer 7).",
+        "question": "What is the OSI model?",
         "category": "exercise",
         "isExercise": true,
+        "marks": 2
+      },
+      {
+        "id": "ch1-t1.6-ex-s1",
+        "question": "Name the 7 layers of the OSI model in order from bottom (Layer 1) to top (Layer 7).",
+        "category": "topic",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -1408,17 +1443,24 @@ export const CHAPTER_1_NEW_TOPICS = [
     "shortQuestions": [
       {
         "id": "ch1-t1.7-ex-s1",
-        "question": "Why is HTTPS preferred over HTTP for online banking and sensitive transactions?",
+        "question": "What is a network protocol?",
         "category": "exercise",
         "isExercise": true,
         "marks": 2
       },
       {
-        "question": "Define a network protocol and give two common examples.",
-        "id": "ch1-t1.7-s1",
-        "marks": 2,
+        "id": "ch1-t1.7-ex-s2",
+        "question": "What is the purpose of DNS?",
+        "category": "exercise",
+        "isExercise": true,
+        "marks": 2
+      },
+      {
+        "id": "ch1-t1.7-ex-s1",
+        "question": "Why is HTTPS preferred over HTTP for online banking and sensitive transactions?",
         "category": "topic",
-        "isExercise": false
+        "isExercise": false,
+        "marks": 2
       },
       {
         "id": "ch1-t1.7-s2",
@@ -1438,13 +1480,6 @@ export const CHAPTER_1_NEW_TOPICS = [
         "id": "ch1-t1.7-s4",
         "marks": 2,
         "question": "What is File Transfer Protocol (FTP), and who commonly uses it?",
-        "category": "topic",
-        "isExercise": false
-      },
-      {
-        "id": "ch1-t1.7-s5",
-        "marks": 2,
-        "question": "Why do we need the Domain Name System (DNS)? What would happen if DNS did not exist?",
         "category": "topic",
         "isExercise": false
       }
@@ -3450,75 +3485,75 @@ export const CHAPTER_1_NEW_TOPICS = [
 
 export const CHAPTER_1_EXERCISE_LONGS = [
   {
-    questionNumber: 1,
-    topicNumber: "1.1",
-    id: "cs-ch1-lq-1",
-    question: "Define a computer network. Explain its importance and uses in daily life. || کمپیوٹر نیٹ ورک کی تعریف کریں۔ روزمرہ زندگی میں اس کی اہمیت اور استعمالات بیان کریں۔",
-    marks: 8,
-    category: "exercise",
-    isExercise: true
+    "questionNumber": 1,
+    "topicNumber": "1.1",
+    "id": "cs-ch1-lq-1",
+    "question": "Define a computer network. Explain its importance and uses in daily life. || کمپیوٹر نیٹ ورک کی تعریف کریں۔ روزمرہ زندگی میں اس کی اہمیت اور استعمالات بیان کریں۔",
+    "marks": 8,
+    "category": "exercise",
+    "isExercise": true
   },
   {
-    questionNumber: 2,
-    topicNumber: "1.2",
-    id: "cs-ch1-lq-2",
-    question: "Explain network architecture and describe the main components of a computer network. || نیٹ ورک آرکیٹیکچر کی وضاحت کریں اور کمپیوٹر نیٹ ورک کے اہم اجزاء بیان کریں۔",
-    marks: 8,
-    category: "exercise",
-    isExercise: true
+    "questionNumber": 2,
+    "topicNumber": "1.2",
+    "id": "cs-ch1-lq-2",
+    "question": "Explain network architecture and describe the main components of a computer network. || نیٹ ورک آرکیٹیکچر کی وضاحت کریں اور کمپیوٹر نیٹ ورک کے اہم اجزاء بیان کریں۔",
+    "marks": 8,
+    "category": "exercise",
+    "isExercise": true
   },
   {
-    questionNumber: 3,
-    topicNumber: "1.6",
-    id: "cs-ch1-lq-3",
-    question: "What is the OSI model? Explain its layers and their functions. || او ایس آئی (OSI) ماڈل کیا ہے؟ اس کی تہوں (لیئرز) اور ان کے افعال کی وضاحت کریں۔",
-    marks: 8,
-    category: "exercise",
-    isExercise: true
+    "questionNumber": 3,
+    "topicNumber": "1.6",
+    "id": "cs-ch1-lq-3",
+    "question": "What is the OSI model? Explain its layers and their functions. || او ایس آئی (OSI) ماڈل کیا ہے؟ اس کی تہوں (لیئرز) اور ان کے افعال کی وضاحت کریں۔",
+    "marks": 8,
+    "category": "exercise",
+    "isExercise": true
   },
   {
-    questionNumber: 4,
-    topicNumber: "1.5",
-    id: "cs-ch1-lq-4",
-    question: "Define network topology. Explain bus, star, ring, and mesh topologies with advantages and disadvantages. || نیٹ ورک ٹوپولوجی کی تعریف کریں۔ بس، سٹار، رنگ اور میش ٹوپولوجیز کی وضاحت فوائد اور نقصانات کے ساتھ کریں۔",
-    marks: 8,
-    category: "exercise",
-    isExercise: true
+    "questionNumber": 4,
+    "topicNumber": "1.5",
+    "id": "cs-ch1-lq-4",
+    "question": "Define network topology. Explain bus, star, ring, and mesh topologies with advantages and disadvantages. || نیٹ ورک ٹوپولوجی کی تعریف کریں۔ بس، سٹار، رنگ اور میش ٹوپولوجیز کی وضاحت فوائد اور نقصانات کے ساتھ کریں۔",
+    "marks": 8,
+    "category": "exercise",
+    "isExercise": true
   },
   {
-    questionNumber: 5,
-    topicNumber: "1.3",
-    id: "cs-ch1-lq-5",
-    question: "Explain the types of computer networks. Describe LAN, WAN, and the Internet. || کمپیوٹر نیٹ ورکس کی اقسام کی وضاحت کریں۔ لوکل ایریا نیٹ ورک (LAN)، وائڈ ایریا نیٹ ورک (WAN) اور انٹرنیٹ بیان کریں۔",
-    marks: 8,
-    category: "exercise",
-    isExercise: true
+    "questionNumber": 5,
+    "topicNumber": "1.3",
+    "id": "cs-ch1-lq-5",
+    "question": "Explain the types of computer networks. Describe LAN, WAN, and the Internet. || کمپیوٹر نیٹ ورکس کی اقسام کی وضاحت کریں۔ لوکل ایریا نیٹ ورک (LAN)، وائڈ ایریا نیٹ ورک (WAN) اور انٹرنیٹ بیان کریں۔",
+    "marks": 8,
+    "category": "exercise",
+    "isExercise": true
   },
   {
-    questionNumber: 6,
-    topicNumber: "1.4",
-    id: "cs-ch1-lq-6",
-    question: "Describe the main networking devices used in a computer network and explain their functions. || کمپیوٹر نیٹ ورک میں استعمال ہونے والے اہم نیٹ ورکنگ آلات بیان کریں اور ان کے افعال کی وضاحت کریں۔",
-    marks: 8,
-    category: "exercise",
-    isExercise: true
+    "questionNumber": 6,
+    "topicNumber": "1.4",
+    "id": "cs-ch1-lq-6",
+    "question": "Describe the main networking devices used in a computer network and explain their functions. || کمپیوٹر نیٹ ورک میں استعمال ہونے والے اہم نیٹ ورکنگ آلات بیان کریں اور ان کے افعال کی وضاحت کریں۔",
+    "marks": 8,
+    "category": "exercise",
+    "isExercise": true
   },
   {
-    questionNumber: 7,
-    topicNumber: "1.7",
-    id: "cs-ch1-lq-7",
-    question: "What are network protocols? Explain TCP/IP, HTTP, FTP, and DNS. || نیٹ ورک پروٹوکولز کیا ہیں؟ TCP/IP، HTTP، FTP اور DNS کی وضاحت کریں۔",
-    marks: 8,
-    category: "exercise",
-    isExercise: true
+    "questionNumber": 7,
+    "topicNumber": "1.7",
+    "id": "cs-ch1-lq-7",
+    "question": "What are network protocols? Explain TCP/IP, HTTP, FTP, and DNS. || نیٹ ورک پروٹوکولز کیا ہیں؟ TCP/IP، HTTP، FTP اور DNS کی وضاحت کریں۔",
+    "marks": 8,
+    "category": "exercise",
+    "isExercise": true
   },
   {
-    questionNumber: 8,
-    topicNumber: "1.8",
-    id: "cs-ch1-lq-8",
-    question: "Explain IP addressing. Describe IPv4, IPv6, the default gateway, and subnetting. || آئی پی ایڈریسنگ کی وضاحت کریں۔ IPv4، IPv6، ڈیفالٹ گیٹ وے اور سب نیٹنگ بیان کریں۔",
-    marks: 8,
-    category: "exercise",
-    isExercise: true
+    "questionNumber": 8,
+    "topicNumber": "1.8",
+    "id": "cs-ch1-lq-8",
+    "question": "Explain IP addressing. Describe IPv4, IPv6, the default gateway, and subnetting. || آئی پی ایڈریسنگ کی وضاحت کریں۔ IPv4، IPv6، ڈیفالٹ گیٹ وے اور سب نیٹنگ بیان کریں۔",
+    "marks": 8,
+    "category": "exercise",
+    "isExercise": true
   }
 ];
