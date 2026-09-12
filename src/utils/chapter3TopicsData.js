@@ -1,6 +1,6 @@
 /**
  * Chapter 3: Object Oriented Programming Using Python (12th Class Computer Science)
- * Official Exercise Questions (MCQs & Short Questions) & Board-Style Topic-Wise MCQs
+ * Official Exercise Questions (MCQs & Short Questions) & Board-Style Topic-Wise MCQs & Shorts
  */
 
 export const CHAPTER_3_NEW_TOPICS = [
@@ -86,6 +86,30 @@ export const CHAPTER_3_NEW_TOPICS = [
         "marks": 2,
         "category": "exercise",
         "isExercise": true
+      },
+      {
+        "id": "ch3-t3.1-s1",
+        "topicNumber": "3.1",
+        "question": "What is Object-Oriented Programming (OOP), and how does it model real-world entities in code?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.1-s2",
+        "topicNumber": "3.1",
+        "question": "Explain the concepts of Modularity and Reusability as core benefits of OOP.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.1-s3",
+        "topicNumber": "3.1",
+        "question": "Why are software applications built using OOP easier to maintain and adapt over time?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
       }
     ],
     "longQuestions": []
@@ -780,6 +804,150 @@ export const CHAPTER_3_NEW_TOPICS = [
         "marks": 2,
         "category": "exercise",
         "isExercise": true
+      },
+      {
+        "id": "ch3-t3.2-s4",
+        "topicNumber": "3.2",
+        "question": "Differentiate between a Class and an Object with a simple example.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s5",
+        "topicNumber": "3.2",
+        "question": "What is the role of the __init__() constructor method in a Python class?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s6",
+        "topicNumber": "3.2",
+        "question": "Explain the purpose of the self parameter inside Python instance methods.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s7",
+        "topicNumber": "3.2",
+        "question": "Differentiate between Attributes (properties) and Methods (behaviors) of an object.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s8",
+        "topicNumber": "3.2",
+        "question": "Define Encapsulation and state two reasons why it is important in software security and design.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s9",
+        "topicNumber": "3.2",
+        "question": "Explain how Public, Protected (_), and Private (__) members are defined in Python using naming conventions.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s10",
+        "topicNumber": "3.2",
+        "question": "What is Name Mangling in Python, and how does it prevent direct external access to private data?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s11",
+        "topicNumber": "3.2",
+        "question": "What error occurs if an external statement attempts to access a private variable (e.g., account.__balance) directly?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s12",
+        "topicNumber": "3.2",
+        "question": "What is Inheritance, and how does it eliminate code redundancy?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s13",
+        "topicNumber": "3.2",
+        "question": "Differentiate between a Base Class (Parent) and a Derived Class (Child).",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s14",
+        "topicNumber": "3.2",
+        "question": "Compare Single Inheritance and Multiple Inheritance with structural examples.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s15",
+        "topicNumber": "3.2",
+        "question": "What is Multilevel Inheritance? Illustrate a three-tier class chain (e.g., Vehicle -> Car -> ElectricCar).",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s16",
+        "topicNumber": "3.2",
+        "question": "What is the function of the super() method in child class constructors?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s17",
+        "topicNumber": "3.2",
+        "question": "Define Method Overriding and explain how a subclass modifies parent class behavior.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s18",
+        "topicNumber": "3.2",
+        "question": "Define Polymorphism and explain how it allows the same method name to execute different actions based on context.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s19",
+        "topicNumber": "3.2",
+        "question": "Differentiate between Compile-Time Polymorphism and Runtime Polymorphism.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s20",
+        "topicNumber": "3.2",
+        "question": "How does Python simulate method overloading behavior using default parameters or variable-length arguments (*args)?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch3-t3.2-s21",
+        "topicNumber": "3.2",
+        "question": "Describe a real-world scenario demonstrating Runtime Polymorphism across different object types (e.g., a payment system or animal sounds).",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
       }
     ],
     "longQuestions": []
