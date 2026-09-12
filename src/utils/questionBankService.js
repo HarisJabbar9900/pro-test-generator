@@ -5,6 +5,7 @@ import { CHAPTER_3_NEW_TOPICS } from './chapter3TopicsData.js';
 import { CHAPTER_4_NEW_TOPICS } from './chapter4TopicsData.js';
 import { CHAPTER_5_NEW_TOPICS } from './chapter5TopicsData.js';
 import { CHAPTER_6_NEW_TOPICS } from './chapter6TopicsData.js';
+import { CHAPTER_7_NEW_TOPICS } from './chapter7TopicsData.js';
 import { CLASS_11_CHAPTER_1_TOPICS } from './class11Chapter1Data.js';
 import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
@@ -161,6 +162,12 @@ export const INITIAL_QUESTION_BANK = {
             "chapterNumber": 6,
             "name": "Data Science and Machine Learning",
             "topics": CHAPTER_6_NEW_TOPICS
+          },
+          {
+            "id": "cs-12-ch7",
+            "chapterNumber": 7,
+            "name": "Hypothesis Testing",
+            "topics": CHAPTER_7_NEW_TOPICS
           }
         ] 
       },
@@ -1562,6 +1569,189 @@ export function mergeChapter1NewTopics(bank) {
 
           // Sort numerically: 6.1, 6.2, 6.3, 6.4, 6.6, 6.7, 6.9, 6.10
           ch6.topics.sort((a, b) => {
+            const aParts = (a.topicNumber || '0').split('.').map(Number);
+            const bParts = (b.topicNumber || '0').split('.').map(Number);
+            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+              const av = aParts[i] || 0;
+              const bv = bParts[i] || 0;
+              if (av !== bv) return av - bv;
+            }
+            return 0;
+          });
+        }
+
+        // =====================================================================
+        // CHAPTER 7: HYPOTHESIS TESTING
+        // =====================================================================
+        let ch7 = sub.chapters.find(c => 
+          c.chapterNumber === 7 || 
+          (c.name && c.name.toLowerCase().includes('hypothesis')) ||
+          (c.name && c.name.toLowerCase().includes('chap#7'))
+        );
+
+        if (!ch7 && clsKey === '12th') {
+          ch7 = {
+            id: `${sub.id}-ch7`,
+            chapterNumber: 7,
+            name: "Hypothesis Testing",
+            topics: []
+          };
+          sub.chapters.push(ch7);
+          changed = true;
+        }
+
+        if (ch7 && clsKey === '12th') {
+          if (!ch7.name || !ch7.name.includes("Hypothesis")) {
+            ch7.name = "Hypothesis Testing";
+            ch7.chapterNumber = 7;
+            changed = true;
+          }
+          if (!ch7.topics) ch7.topics = [];
+
+          // Remove any stale sub-topics (e.g. 7.1.1) and keep strictly 7.1, 7.2, etc.
+          const preCh7Count = ch7.topics.length;
+          ch7.topics = ch7.topics.filter(t => {
+            const parts = (t.topicNumber || '').trim().split('.');
+            return parts.length <= 2;
+          });
+          if (ch7.topics.length !== preCh7Count) changed = true;
+
+          CHAPTER_7_NEW_TOPICS.forEach(newTopic => {
+            const existingTopic = ch7.topics.find(t => 
+              t.topicNumber?.trim() === newTopic.topicNumber.trim()
+            );
+
+            if (!existingTopic) {
+              ch7.topics.push(JSON.parse(JSON.stringify(newTopic)));
+              changed = true;
+            } else {
+              existingTopic.name = newTopic.name;
+              if (!existingTopic.id || (newTopic.id && existingTopic.id !== newTopic.id)) {
+                existingTopic.id = newTopic.id;
+                changed = true;
+              }
+
+              if (!existingTopic.mcqs) existingTopic.mcqs = [];
+              (newTopic.mcqs || []).forEach(m => {
+                const normQ = (m.question || '').trim().toLowerCase();
+                const existingMcq = existingTopic.mcqs.find(em => (em.question || '').trim().toLowerCase() === normQ);
+                if (existingMcq) {
+                  if (m.category === 'exercise' && (existingMcq.category !== 'exercise' || !existingMcq.isExercise)) {
+                    existingMcq.category = 'exercise';
+                    existingMcq.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise') {
+                    existingTopic.mcqs.unshift(JSON.parse(JSON.stringify(m)));
+                  } else {
+                    existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                  }
+                  changed = true;
+                }
+              });
+
+              if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
+              (newTopic.shortQuestions || []).forEach(s => {
+                const normQ = (s.question || '').trim().toLowerCase();
+                const existingShort = existingTopic.shortQuestions.find(es => (es.question || '').trim().toLowerCase() === normQ);
+                if (existingShort) {
+                  if (s.category === 'exercise' && (existingShort.category !== 'exercise' || !existingShort.isExercise)) {
+                    existingShort.category = 'exercise';
+                    existingShort.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise') {
+                    existingTopic.shortQuestions.unshift(JSON.parse(JSON.stringify(s)));
+                  } else {
+                    existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                  }
+                  changed = true;
+                }
+              });
+            }
+          });
+
+          // Strictly enforce that ONLY the 10 official textbook exercise MCQs and 10 Shorts in Chapter 7 are marked as exercise
+          const OFFICIAL_CH7_EX_MCQ_KEYS = new Set([
+            'a hypothesis is:',
+            'the null hypothesis represents:',
+            'the symbol used for the null hypothesis is:',
+            'a p-value is used for:',
+            'if (p-value < α), the decision is to:',
+            'if (p-value < a), the decision is to:',
+            'the critical region is the:',
+            'an example of a test statistic is:',
+            'data visualisation is used to:',
+            'a chart useful for comparison is:',
+            'bias in data means:'
+          ]);
+
+          const OFFICIAL_CH7_EX_SHORT_KEYS = new Set([
+            'what is a hypothesis?',
+            'what is a research question?',
+            'define null hypothesis (h₀).',
+            'define null hypothesis (h0).',
+            'what is a test statistic?',
+            'what is meant by p-value?',
+            'what is a critical region?',
+            'what are the basic steps in hypothesis testing?',
+            'why is data visualization important?',
+            'what is bias in data collection?',
+            'why is ethical use of data important?'
+          ]);
+
+          ch7.topics.forEach(t => {
+            if (Array.isArray(t.mcqs)) {
+              t.mcqs.forEach(m => {
+                const normQ = (m.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH7_EX_MCQ_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (m.category !== 'exercise' || !m.isExercise) {
+                    m.category = 'exercise';
+                    m.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise' || m.isExercise || (typeof m.id === 'string' && m.id.includes('-ex-'))) {
+                    m.category = 'topic';
+                    m.isExercise = false;
+                    if (typeof m.id === 'string' && m.id.includes('-ex-')) {
+                      m.id = m.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+
+            if (Array.isArray(t.shortQuestions)) {
+              t.shortQuestions.forEach(s => {
+                const normQ = (s.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH7_EX_SHORT_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (s.category !== 'exercise' || !s.isExercise) {
+                    s.category = 'exercise';
+                    s.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise' || s.isExercise || (typeof s.id === 'string' && s.id.includes('-ex-'))) {
+                    s.category = 'topic';
+                    s.isExercise = false;
+                    if (typeof s.id === 'string' && s.id.includes('-ex-')) {
+                      s.id = s.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+          });
+
+          // Sort numerically: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6
+          ch7.topics.sort((a, b) => {
             const aParts = (a.topicNumber || '0').split('.').map(Number);
             const bParts = (b.topicNumber || '0').split('.').map(Number);
             for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
