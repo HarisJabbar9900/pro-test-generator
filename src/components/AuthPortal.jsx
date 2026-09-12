@@ -20,13 +20,21 @@ export default function AuthPortal({ onLoginSuccess }) {
   const [lang, setLang] = useState('en'); 
   const [activeTab, setActiveTab] = useState('login'); // 'login' | 'register'
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Login form state
-  const [loginEmail, setLoginEmail] = useState('');
+  // Login form state (prefill remembered email for standard teachers only, never admin)
+  const [loginEmail, setLoginEmail] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ptm_remembered_email') || '';
+      if (saved.toLowerCase() === 'testgenerator76@gmail.com') return '';
+      return saved;
+    } catch (e) {
+      return '';
+    }
+  });
   const [loginPassword, setLoginPassword] = useState('');
 
   // Register form state
@@ -137,11 +145,13 @@ export default function AuthPortal({ onLoginSuccess }) {
 
         recordLoginLog(adminUser).catch(() => {});
 
-        if (rememberMe) {
-          localStorage.setItem('ptm_active_user', JSON.stringify(adminUser));
-        } else {
-          sessionStorage.setItem('ptm_active_user', JSON.stringify(adminUser));
-        }
+        // SECURITY: Admin session is strictly saved ONLY in sessionStorage for the active tab/window.
+        // Admin credentials and sessions must NEVER be stored in persistent localStorage.
+        sessionStorage.setItem('ptm_active_user', JSON.stringify(adminUser));
+        try {
+          localStorage.removeItem('ptm_active_user');
+          localStorage.removeItem('ptm_remembered_email');
+        } catch (e) {}
 
         try { confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } }); } catch (err) {}
         setSuccessMessage(
@@ -347,16 +357,21 @@ export default function AuthPortal({ onLoginSuccess }) {
         );
       }
 
-      // Login Successful: Save session & record log
+      // Login Successful: Save session strictly in sessionStorage & record log
       const nowFormatted = new Date().toLocaleString('en-PK', { dateStyle: 'medium', timeStyle: 'short' });
       loggedUser.lastLogin = nowFormatted;
       recordLoginLog(loggedUser).catch(() => {});
 
-      if (rememberMe) {
-        localStorage.setItem('ptm_active_user', JSON.stringify(loggedUser));
-      } else {
-        sessionStorage.setItem('ptm_active_user', JSON.stringify(loggedUser));
-      }
+      // Tab-isolated active session
+      sessionStorage.setItem('ptm_active_user', JSON.stringify(loggedUser));
+      try {
+        localStorage.removeItem('ptm_active_user');
+        if (rememberMe && !loggedUser.isAdmin && cleanEmail !== 'testgenerator76@gmail.com') {
+          localStorage.setItem('ptm_remembered_email', cleanEmail);
+        } else {
+          localStorage.removeItem('ptm_remembered_email');
+        }
+      } catch (e) {}
 
       // Check if user just registered to route them directly to pricing
       const justRegistered = sessionStorage.getItem('ptm_just_registered') === 'true' || 
@@ -636,7 +651,7 @@ export default function AuthPortal({ onLoginSuccess }) {
                   </div>
                 </div>
 
-                {/* Remember Me & Help Text */}
+                {/* Remember Email & Security Notice */}
                 <div className="flex items-center justify-between pt-1">
                   <label className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-600">
                     <input
@@ -645,20 +660,13 @@ export default function AuthPortal({ onLoginSuccess }) {
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="w-3.5 h-3.5 rounded text-blue-600 cursor-pointer"
                     />
-                    <span>{lang === 'ur' ? 'سیشن یاد رکھیں' : 'Remember me'}</span>
+                    <span>{lang === 'ur' ? 'ای میل یاد رکھیں' : 'Remember email'}</span>
                   </label>
                   
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLoginEmail('testgenerator76@gmail.com');
-                      setLoginPassword('9900');
-                    }}
-                    className="text-[11px] font-bold text-amber-600 hover:underline cursor-pointer flex items-center gap-1"
-                    title="Fill Admin Credentials"
-                  >
-                    <span>⚡ Admin Auto-fill</span>
-                  </button>
+                  <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>{lang === 'ur' ? 'محفوظ سیشن' : 'Encrypted Login'}</span>
+                  </span>
                 </div>
 
                 {/* Submit Sign In Button */}

@@ -55,14 +55,6 @@ if (typeof window !== 'undefined') {
   );
 }
 
-const DEFAULT_USER = {
-  name: 'System Administrator',
-  email: 'testgenerator76@gmail.com',
-  institute: 'Central Examination Board',
-  role: 'System Administrator',
-  isAdmin: true
-};
-
 export default function App() {
   // Current Logged-in User State (Requires Login/Register gate before opening app)
   const [currentUser, setCurrentUser] = useState(() => {
@@ -85,8 +77,22 @@ export default function App() {
         }
       } catch (e) {}
 
-      // 2. Load active session with strict anti-tampering validation
-      const stored = localStorage.getItem('ptm_active_user') || sessionStorage.getItem('ptm_active_user');
+      // 2. CRITICAL SECURITY: Purge any lingering admin account from persistent localStorage.
+      // Admin sessions must NEVER persist across new browser tabs, shared links, or public machines.
+      try {
+        const localStored = localStorage.getItem('ptm_active_user');
+        if (localStored) {
+          const parsedLocal = JSON.parse(localStored);
+          if (isSuperAdmin(parsedLocal) || !parsedLocal.email) {
+            localStorage.removeItem('ptm_active_user');
+          }
+        }
+      } catch (e) {}
+
+      // 3. MANDATORY AUTHENTICATION GATE:
+      // Every fresh visit, new tab, new window, or shared link MUST strictly require login.
+      // We read active session ONLY from sessionStorage (the current tab's active session).
+      const stored = sessionStorage.getItem('ptm_active_user');
       if (stored) {
         const u = JSON.parse(stored);
         if (!isSuperAdmin(u)) {
@@ -99,7 +105,7 @@ export default function App() {
             u.expiryDate = null;
           }
           try {
-            localStorage.setItem('ptm_active_user', JSON.stringify(u));
+            sessionStorage.setItem('ptm_active_user', JSON.stringify(u));
           } catch (e) {}
         } else {
           u.isAdmin = true;
@@ -140,12 +146,14 @@ export default function App() {
     });
   };
 
-  // 5-Minute Inactivity Auto-Logout (Exempt for Admin - Unlimited Session)
+  // Inactivity Auto-Logout: Strict Session Security (15 min for Admin, 10 min for Teachers)
   useEffect(() => {
-    if (!currentUser || currentUser?.isAdmin) return;
+    if (!currentUser) return;
 
     let timeoutId;
-    const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 minutes
+    const INACTIVITY_LIMIT = currentUser?.isAdmin 
+      ? 15 * 60 * 1000  // 15 minutes for Admin
+      : 10 * 60 * 1000; // 10 minutes for Teachers
 
     const performAutoLogout = () => {
       try {
@@ -161,7 +169,7 @@ export default function App() {
       setSavedPapers([]);
       setCurrentUser(null);
       notify.warning("Session Expired (سیشن ختم ہو گیا)", {
-        description: "5 منٹ غیر حاضری کی وجہ سے آپ کا اکاؤنٹ خودکار لاگ آؤٹ کر دیا گیا ہے۔ (Logged out due to 5 minutes of inactivity)"
+        description: "سیکیورٹی وجوہات کی بنا پر غیر حاضری کی وجہ سے آپ کا سیشن ختم کر دیا گیا ہے۔ برائے مہربانی دوبارہ لاگ ان کریں۔"
       });
     };
 
@@ -193,7 +201,7 @@ export default function App() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [activeNav, setActiveNav] = useState(() => {
     try {
-      const stored = localStorage.getItem('ptm_active_user') || sessionStorage.getItem('ptm_active_user');
+      const stored = sessionStorage.getItem('ptm_active_user');
       const u = stored ? JSON.parse(stored) : null;
       if (!u || !isUserSubscribed(u)) {
         return 'pricing';
@@ -270,7 +278,7 @@ export default function App() {
 
       setCurrentUser(updatedUser);
       try {
-        localStorage.setItem('ptm_active_user', JSON.stringify(updatedUser));
+        sessionStorage.setItem('ptm_active_user', JSON.stringify(updatedUser));
       } catch (e) {}
     }, (err) => {
       console.warn("Firestore live user sync note:", err.message);
@@ -491,7 +499,7 @@ export default function App() {
   const handleUpdateUser = (updatedUser) => {
     setCurrentUser(updatedUser);
     try {
-      localStorage.setItem('ptm_active_user', JSON.stringify(updatedUser));
+      sessionStorage.setItem('ptm_active_user', JSON.stringify(updatedUser));
     } catch (e) {}
   };
 

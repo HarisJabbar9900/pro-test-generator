@@ -293,10 +293,10 @@ export async function submitPaymentProof(email, proofData) {
     localStorage.setItem('ptm_registered_users', JSON.stringify(updated));
 
     // Update active user in session if matches
-    const active = JSON.parse(localStorage.getItem('ptm_active_user') || '{}');
+    const active = JSON.parse(sessionStorage.getItem('ptm_active_user') || localStorage.getItem('ptm_active_user') || '{}');
     if (active.email?.toLowerCase() === cleanEmail) {
       const updatedActive = { ...active, paymentProof: submission, subscriptionStatus: 'pending_verification' };
-      localStorage.setItem('ptm_active_user', JSON.stringify(updatedActive));
+      sessionStorage.setItem('ptm_active_user', JSON.stringify(updatedActive));
     }
   } catch (e) {}
 

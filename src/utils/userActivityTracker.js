@@ -281,10 +281,19 @@ export async function updateUserSubscription(email, {
 
   // C. Update active session if target user is currently active
   try {
-    const active = JSON.parse(localStorage.getItem('ptm_active_user') || '{}');
-    if (active.email?.toLowerCase() === cleanEmail) {
-      const merged = { ...active, ...updates };
-      localStorage.setItem('ptm_active_user', JSON.stringify(merged));
+    const rawSession = sessionStorage.getItem('ptm_active_user');
+    if (rawSession) {
+      const activeSession = JSON.parse(rawSession);
+      if (activeSession.email?.toLowerCase() === cleanEmail) {
+        sessionStorage.setItem('ptm_active_user', JSON.stringify({ ...activeSession, ...updates }));
+      }
+    }
+    const rawLocal = localStorage.getItem('ptm_active_user');
+    if (rawLocal) {
+      const activeLocal = JSON.parse(rawLocal);
+      if (activeLocal.email?.toLowerCase() === cleanEmail) {
+        localStorage.setItem('ptm_active_user', JSON.stringify({ ...activeLocal, ...updates }));
+      }
     }
   } catch (err) {}
 
