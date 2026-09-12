@@ -239,7 +239,7 @@ export default function PTMTopicSelectionView({
       {/* PAGE 1: CHAPTER & TOPIC SELECTION                                        */}
       {/* ========================================================================= */}
       {stage === 'topics' && (
-        <div className="space-y-4 sm:space-y-5 animate-fadeIn">
+        <div className="space-y-4 sm:space-y-5 animate-fadeIn pb-24">
           
           {/* TOP BREADCRUMB & HEADER */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
@@ -296,9 +296,21 @@ export default function PTMTopicSelectionView({
                 </button>
               )}
 
-              <span className="text-xs font-bold text-slate-500 shrink-0">
+              <span className="text-xs font-bold text-slate-600 shrink-0">
                 {selectedTopicIds.length} / {allTopicIds.length} Topics Selected
               </span>
+
+              {selectedTopicIds.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleProceedToCriteria}
+                  className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-lg shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                  title="Continue to Question Criteria"
+                >
+                  <span>Next: Criteria</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
 
@@ -468,6 +480,43 @@ export default function PTMTopicSelectionView({
             </button>
           </div>
 
+          {/* ALWAYS-VISIBLE FLOATING ACTION BAR ACROSS VIEWPORT (NO SCROLLING NEEDED) */}
+          {selectedTopicIds.length > 0 && (
+            <div className="fixed bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[94%] sm:w-auto max-w-xl transition-all duration-300 transform animate-fadeIn drop-shadow-2xl">
+              <div className="bg-slate-900/95 text-white backdrop-blur-md px-4 sm:px-6 py-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 sm:gap-6 ring-4 ring-blue-500/20">
+                
+                {/* Status Indicator & Topic Count */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-sm border border-white/20">
+                    ✓
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs sm:text-sm font-black text-white truncate tracking-tight">
+                        {selectedTopicIds.length} {selectedTopicIds.length === 1 ? 'Topic' : 'Topics'} Selected
+                      </span>
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 font-semibold truncate hidden sm:block">
+                      Pool: <strong className="text-cyan-300 font-mono">{availableQuestions.total}</strong> Questions Ready
+                    </p>
+                  </div>
+                </div>
+
+                {/* Floating Proceed Button */}
+                <button
+                  type="button"
+                  onClick={handleProceedToCriteria}
+                  className="px-4 sm:px-6 py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs sm:text-sm rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all flex items-center gap-2 cursor-pointer active:scale-95 shrink-0 border border-white/20"
+                >
+                  <span>Next: Criteria</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+              </div>
+            </div>
+          )}
+
         </div>
       )}
 
@@ -533,14 +582,25 @@ export default function PTMTopicSelectionView({
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={handleBackToTopics}
-              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-2 cursor-pointer self-start md:self-auto shrink-0"
-            >
-              <Edit3 className="w-3.5 h-3.5" />
-              <span>Change Topics</span>
-            </button>
+            <div className="flex items-center gap-2 self-start md:self-auto shrink-0 flex-wrap">
+              <button
+                type="button"
+                onClick={handleBackToTopics}
+                className="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <Edit3 className="w-3.5 h-3.5" />
+                <span>Change Topics</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleSearchAndGenerate}
+                disabled={selectedTopicIds.length === 0}
+                className="px-5 py-2 bg-gradient-to-r from-[#00a8cc] to-teal-500 hover:from-[#008ba8] hover:to-teal-600 text-white rounded-lg text-xs font-black transition-all shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95 disabled:opacity-50"
+              >
+                <span>Generate Paper 🔍</span>
+              </button>
+            </div>
           </div>
 
           {/* EXACT 2-ROW CTM FILTER & SELECTION BAR (MATCHING USER SCREENSHOT) */}
