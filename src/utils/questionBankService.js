@@ -16,9 +16,9 @@ import { CLASS_11_CHAPTER_5_TOPICS } from './class11Chapter5Data.js';
 import { CLASS_11_CHAPTER_6_TOPICS } from './class11Chapter6Data.js';
 import { CLASS_11_CHAPTER_7_TOPICS } from './class11Chapter7Data.js';
 import { CLASS_11_CHAPTER_8_TOPICS } from './class11Chapter8Data.js';
-import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
+import { CLASS_11_CHAPTER_9_TOPICS } from './class11Chapter9Data.js';
 import { CLASS_11_OFFICIAL_EXERCISES } from './class11OfficialExercises.js';
-const STORAGE_KEY = 'papergen_pro_question_bank_v15';
+const STORAGE_KEY = 'papergen_pro_question_bank_v16';
 
 // Canonical builder for 11th Class Computer Science - All 9 Units
 export function buildCleanClass11Chapters(existingChapters = []) {
@@ -71,7 +71,12 @@ export function buildCleanClass11Chapters(existingChapters = []) {
       name: "Online Research and Digital Literacy",
       topics: JSON.parse(JSON.stringify(CLASS_11_CHAPTER_8_TOPICS))
     },
-    ...JSON.parse(JSON.stringify(CLASS_11_UNITS_3_TO_9_CHAPTERS.filter(c => c.chapterNumber > 8)))
+    {
+      id: "cs-11-ch9",
+      chapterNumber: 9,
+      name: "Entrepreneurship in Digital Age",
+      topics: JSON.parse(JSON.stringify(CLASS_11_CHAPTER_9_TOPICS))
+    }
   ];
 
   // 1. Reset any stray exercise flags on base topic questions
