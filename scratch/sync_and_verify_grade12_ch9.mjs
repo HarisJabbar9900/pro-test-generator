@@ -38,6 +38,10 @@ async function main() {
   let topicMcqs = 0;
   let exerciseMcqs = 0;
 
+  let totalShorts = 0;
+  let topicShorts = 0;
+  let exerciseShorts = 0;
+
   ch9.topics.forEach(t => {
     (t.mcqs || []).forEach(m => {
       totalMcqs++;
@@ -47,17 +51,30 @@ async function main() {
         topicMcqs++;
       }
     });
+
+    (t.shortQuestions || []).forEach(s => {
+      totalShorts++;
+      if (s.isExercise || s.category === 'exercise') {
+        exerciseShorts++;
+      } else {
+        topicShorts++;
+      }
+    });
   });
 
   console.log(`===========================================`);
   console.log(`Grade 12 - Chapter 9 Verification:`);
-  console.log(`Topic MCQs: ${topicMcqs}`);
-  console.log(`Exercise MCQs: ${exerciseMcqs}`);
-  console.log(`TOTAL MCQS: ${totalMcqs}`);
+  console.log(`MCQs -> Topic: ${topicMcqs}, Exercise: ${exerciseMcqs}, TOTAL: ${totalMcqs}`);
+  console.log(`Shorts -> Topic: ${topicShorts}, Exercise: ${exerciseShorts}, TOTAL: ${totalShorts}`);
   console.log(`===========================================`);
 
   if (totalMcqs !== 40) {
-    console.error(`ERROR: Expected 40 (30 topic + 10 exercise), got ${totalMcqs}`);
+    console.error(`ERROR: Expected 40 MCQs (30 topic + 10 exercise), got ${totalMcqs}`);
+    process.exit(1);
+  }
+
+  if (totalShorts !== 43) {
+    console.error(`ERROR: Expected 43 Shorts (33 topic + 10 exercise), got ${totalShorts}`);
     process.exit(1);
   }
 
@@ -66,7 +83,7 @@ async function main() {
     updatedAt: new Date().toISOString()
   });
 
-  console.log("Firestore successfully written and verified with 40 MCQs for Grade 12 Chapter 9!");
+  console.log("Firestore successfully written and verified with 40 MCQs and 43 Shorts for Grade 12 Chapter 9!");
   process.exit(0);
 }
 

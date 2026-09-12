@@ -1,6 +1,8 @@
 /**
  * Chapter 9: Cybersecurity and Safe Digital Collaboration (12th Class Computer Science)
- * Complete Board-Style Topic-Wise Question Bank (30 Board MCQs + 10 Official Exercise MCQs)
+ * Complete Board-Style Topic-Wise Question Bank:
+ * - 40 MCQs (10 Official Exercise MCQs + 30 Board-Style Topic MCQs)
+ * - 43 Short Questions (10 Official Exercise Shorts + 33 Board-Style Topic Shorts)
  * Topics: 9.1, 9.2, 9.3, 9.4, 9.5
  */
 
@@ -196,6 +198,54 @@ export const CHAPTER_9_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch9-t9.1-sq1",
+        topicNumber: "9.1",
+        question: "What defines a strong password, and why is it considered the first line of defense in data protection?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.1-sq2",
+        topicNumber: "9.1",
+        question: "What are the primary risks associated with downloading software from suspicious or unknown websites?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.1-sq3",
+        topicNumber: "9.1",
+        question: "Explain why regular software updates and security patches are necessary for computer safety.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.1-sq4",
+        topicNumber: "9.1",
+        question: "What is a Privacy Policy, and why is it important to read it before signing up on digital platforms?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.1-sq5",
+        topicNumber: "9.1",
+        question: "How do privacy and security settings on platforms like WhatsApp or Instagram help users protect their personal data?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.1-sq6",
+        topicNumber: "9.1",
+        question: "What is digital etiquette, and why is it important in online group discussions?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -392,6 +442,78 @@ export const CHAPTER_9_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch9-t9.2-sq1",
+        topicNumber: "9.2",
+        question: "Define a cyber threat and list four common types of cyberattacks.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.2-sq2",
+        topicNumber: "9.2",
+        question: "How does a Phishing attack work, and what is its main goal?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.2-sq3",
+        topicNumber: "9.2",
+        question: "Explain the working mechanism of Ransomware and its impact on a user or organization.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.2-sq4",
+        topicNumber: "9.2",
+        question: "What is a Distributed Denial of Service (DDoS) attack, and how does it affect online services?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.2-sq5",
+        topicNumber: "9.2",
+        question: "How does Two-Factor Authentication (2FA) improve account security compared to a single password?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.2-sq6",
+        topicNumber: "9.2",
+        question: "What is biometric verification? Give two examples of physical features used in biometrics.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.2-sq7",
+        topicNumber: "9.2",
+        question: "Differentiate between a Firewall and an Intrusion Detection System (IDS).",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.2-sq8",
+        topicNumber: "9.2",
+        question: "Define Encryption and Decryption in the context of cryptography.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.2-sq9",
+        topicNumber: "9.2",
+        question: "What are software/hardware vulnerabilities, and how can they be identified before hackers exploit them?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -504,7 +626,48 @@ export const CHAPTER_9_NEW_TOPICS = [
         marks: 1
       }
     ],
-    shortQuestions: [],
+    shortQuestions: [
+      {
+        id: "cs12-ch9-t9.3-sq1",
+        topicNumber: "9.3",
+        question: "What is real-time digital collaboration? Name two secure platforms used for online teamwork.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.3-sq2",
+        topicNumber: "9.3",
+        question: "Define \"Equity in Computing\" and explain why equal access to technology is necessary.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.3-sq3",
+        topicNumber: "9.3",
+        question: "What is Inclusive Design in software development? Give two accessibility features used for individuals with disabilities.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.3-sq4",
+        topicNumber: "9.3",
+        question: "Name three key strategies required for effective teamwork in digital collaboration projects.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.3-sq5",
+        topicNumber: "9.3",
+        question: "Why is post-project team reflection important after completing a digital group task?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      }
+    ],
     longQuestions: []
   },
   {
@@ -657,6 +820,62 @@ export const CHAPTER_9_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch9-t9.4-sq1",
+        topicNumber: "9.4",
+        question: "What is Digital Entrepreneurship, and how does it differ from traditional entrepreneurship?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.4-sq2",
+        topicNumber: "9.4",
+        question: "State four essential characteristics of successful entrepreneurs.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.4-sq3",
+        topicNumber: "9.4",
+        question: "What factors are driving the rapid growth of digital entrepreneurship in Pakistan?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.4-sq4",
+        topicNumber: "9.4",
+        question: "Explain the process of identifying a digital business opportunity to solve a real-world problem.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.4-sq5",
+        topicNumber: "9.4",
+        question: "Differentiate between E-commerce platforms and Freelancing marketplaces, providing one example of each.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.4-sq6",
+        topicNumber: "9.4",
+        question: "Why are clear business planning and budgeting essential for the survival of a digital startup?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.4-sq7",
+        topicNumber: "9.4",
+        question: "Describe the role of Artificial Intelligence (AI) and mobile apps in modern business operations.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
@@ -810,6 +1029,54 @@ export const CHAPTER_9_NEW_TOPICS = [
         marks: 2,
         category: "exercise",
         isExercise: true
+      },
+      {
+        id: "cs12-ch9-t9.5-sq1",
+        topicNumber: "9.5",
+        question: "What constitutes the ethical use of technology and digital tools?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.5-sq2",
+        topicNumber: "9.5",
+        question: "What is Intellectual Property (IP), and why is respecting data ownership important?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.5-sq3",
+        topicNumber: "9.5",
+        question: "What is the Prevention of Electronic Crimes Act (PECA 2016) in Pakistan, and what is its main purpose?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.5-sq4",
+        topicNumber: "9.5",
+        question: "What is the General Data Protection Regulation (GDPR), and where does it apply?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.5-sq5",
+        topicNumber: "9.5",
+        question: "What is E-waste (electronic waste), and why is improper disposal harmful to the environment?",
+        marks: 2,
+        category: "topic",
+        isExercise: false
+      },
+      {
+        id: "cs12-ch9-t9.5-sq6",
+        topicNumber: "9.5",
+        question: "Define Sustainable Computing and list two practices that help reduce the environmental impact of technology.",
+        marks: 2,
+        category: "topic",
+        isExercise: false
       }
     ],
     longQuestions: []
