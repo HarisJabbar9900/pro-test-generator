@@ -437,6 +437,10 @@ export function mergeChapter1NewTopics(bank) {
                     existingMcq.category = 'exercise';
                     existingMcq.isExercise = true;
                     changed = true;
+                  } else if (m.category === 'topic' && (existingMcq.category === 'exercise' || existingMcq.isExercise)) {
+                    existingMcq.category = 'topic';
+                    existingMcq.isExercise = false;
+                    changed = true;
                   }
                 } else {
                   existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
@@ -452,6 +456,10 @@ export function mergeChapter1NewTopics(bank) {
                   if (s.category === 'exercise' && (existingShort.category !== 'exercise' || !existingShort.isExercise)) {
                     existingShort.category = 'exercise';
                     existingShort.isExercise = true;
+                    changed = true;
+                  } else if (s.category === 'topic' && (existingShort.category === 'exercise' || existingShort.isExercise)) {
+                    existingShort.category = 'topic';
+                    existingShort.isExercise = false;
                     changed = true;
                   }
                 } else {
@@ -533,6 +541,101 @@ export function mergeChapter1NewTopics(bank) {
                 return true;
               });
               if (t.longQuestions.length !== origLen) changed = true;
+            }
+          });
+
+          // Strictly sanitize and enforce EXACTLY the 10 official textbook exercise MCQs and 10 Shorts
+          const OFFICIAL_CH1_EX_MCQ_KEYS = new Set([
+            'a computer network is:',
+            'a network that covers a small geographical area, such as a school or office, is:',
+            'the device used to connect a computer to a network is:',
+            'the main function of a router is to:',
+            'the device that converts digital signals for internet transmission is:',
+            'the topology that uses a central hub or switch is:',
+            'the topology that provides the highest reliability is:',
+            'the osi model contains:',
+            'the protocol mainly used to view web pages is:',
+            'dns is used to:'
+          ]);
+          const OFFICIAL_CH1_EX_MCQ_IDS = new Set([
+            'ch1-t1.1-ex-m1', 'ch1-t1.3-ex-m1', 'ch1-t1.4-ex-m1', 'ch1-t1.4-ex-m2', 'ch1-t1.4-ex-m3',
+            'ch1-t1.5-ex-m1', 'ch1-t1.5-ex-m2', 'ch1-t1.6-ex-m1', 'ch1-t1.7-ex-m1', 'ch1-t1.7-ex-m2'
+          ]);
+
+          const OFFICIAL_CH1_EX_SHORT_KEYS = new Set([
+            'what is a computer network?',
+            'write two uses of computer networks.',
+            'what is network architecture?',
+            'name any two components of a computer network.',
+            'what is the osi model?',
+            'write the name of any two network topologies.',
+            'what is a local area network (lan)?',
+            'what is the function of a router?',
+            'what is a network protocol?',
+            'what is the purpose of dns?'
+          ]);
+          const OFFICIAL_CH1_EX_SHORT_IDS = new Set([
+            'ch1-t1.1-ex-s1', 'ch1-t1.1-ex-s2', 'ch1-t1.2-ex-s1', 'ch1-t1.2-ex-s2', 'ch1-t1.3-ex-s1',
+            'ch1-t1.4-ex-s1', 'ch1-t1.5-ex-s1', 'ch1-t1.6-ex-s1', 'ch1-t1.7-ex-s1', 'ch1-t1.7-ex-s2'
+          ]);
+
+          ch1.topics.forEach(t => {
+            if (Array.isArray(t.mcqs)) {
+              // Purge stale duplicate MCQs with id containing -ex-m that are not official
+              const prevLen = t.mcqs.length;
+              t.mcqs = t.mcqs.filter(m => {
+                const normQ = (m.question || '').toLowerCase().trim();
+                const isExId = typeof m.id === 'string' && m.id.includes('-ex-m');
+                if (isExId && !OFFICIAL_CH1_EX_MCQ_IDS.has(m.id) && !OFFICIAL_CH1_EX_MCQ_KEYS.has(normQ)) {
+                  return false;
+                }
+                return true;
+              });
+              if (t.mcqs.length !== prevLen) changed = true;
+
+              t.mcqs.forEach(m => {
+                const normQ = (m.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH1_EX_MCQ_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (m.category !== 'exercise' || !m.isExercise) {
+                    m.category = 'exercise';
+                    m.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise' || m.isExercise || (typeof m.id === 'string' && m.id.includes('-ex-'))) {
+                    m.category = 'topic';
+                    m.isExercise = false;
+                    if (typeof m.id === 'string' && m.id.includes('-ex-')) {
+                      m.id = m.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+
+            if (Array.isArray(t.shortQuestions)) {
+              t.shortQuestions.forEach(s => {
+                const normQ = (s.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH1_EX_SHORT_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (s.category !== 'exercise' || !s.isExercise) {
+                    s.category = 'exercise';
+                    s.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise' || s.isExercise || (typeof s.id === 'string' && s.id.includes('-ex-'))) {
+                    s.category = 'topic';
+                    s.isExercise = false;
+                    if (typeof s.id === 'string' && s.id.includes('-ex-')) {
+                      s.id = s.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
             }
           });
 
@@ -946,8 +1049,9 @@ export function updateQuestionInTopic(classId, subjectId, chapterId, topicId, ty
 // Helper to identify if a question or its topic represents textbook exercise material
 export function isExerciseQuestion(q, topic = null) {
   if (!q) return false;
+  if (q.category === 'topic' || q.isExercise === false) return false;
   if (q.isExercise === true || q.category === 'exercise') return true;
-  if (q.id && typeof q.id === 'string' && (q.id.includes('tex') || q.id.includes('exercise') || q.id.includes('ex-'))) return true;
+  if (q.id && typeof q.id === 'string' && (q.id.includes('tex') || q.id.includes('exercise') || q.id.includes('-ex-') || q.id.endsWith('-ex'))) return true;
 
   const qText = (q.question || '').toLowerCase();
   if (qText.includes('(exercise)') || qText.includes('textbook exercise') || qText.includes('مشقی')) return true;

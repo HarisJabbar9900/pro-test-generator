@@ -558,7 +558,7 @@ export const CHAPTER_1_NEW_TOPICS = [
         "category": "topic",
         "question": "Differentiate between a Local Area Network (LAN) and a Wide Area Network (WAN) based on coverage area.",
         "marks": 2,
-        "id": "ch1-t1.3-ex-s1",
+        "id": "ch1-t1.3-s1",
         "isExercise": false
       },
       {
@@ -727,7 +727,7 @@ export const CHAPTER_1_NEW_TOPICS = [
         "category": "topic",
         "question": "Which device connects different networks together and uses IP addresses to direct data packets?",
         "isExercise": false,
-        "id": "ch1-t1.4-ex-m1",
+        "id": "ch1-t1.4-m1",
         "marks": 1
       },
       {
@@ -840,7 +840,7 @@ export const CHAPTER_1_NEW_TOPICS = [
       {
         "isExercise": false,
         "marks": 2,
-        "id": "ch1-t1.5-ex-s1",
+        "id": "ch1-t1.5-s1",
         "question": "Why is Mesh topology considered the most reliable topology, and what is its main disadvantage?",
         "category": "topic"
       },
@@ -1200,7 +1200,7 @@ export const CHAPTER_1_NEW_TOPICS = [
         "marks": 2,
         "category": "topic",
         "isExercise": false,
-        "id": "ch1-t1.6-ex-s1"
+        "id": "ch1-t1.6-s1"
       },
       {
         "category": "topic",
@@ -1440,7 +1440,7 @@ export const CHAPTER_1_NEW_TOPICS = [
       {
         "category": "topic",
         "question": "Why is HTTPS preferred over HTTP for online banking and sensitive transactions?",
-        "id": "ch1-t1.7-ex-s1",
+        "id": "ch1-t1.7-s1",
         "isExercise": false,
         "marks": 2
       },
@@ -1482,9 +1482,9 @@ export const CHAPTER_1_NEW_TOPICS = [
     "topicNumber": "1.8",
     "shortQuestions": [
       {
-        "isExercise": true,
+        "isExercise": false,
         "id": "ch1-t1.8-s4",
-        "category": "exercise",
+        "category": "topic",
         "question": "What is Subnetting, and what are two benefits of dividing a network into subnets?",
         "marks": 2
       },
@@ -1694,11 +1694,11 @@ export const CHAPTER_1_NEW_TOPICS = [
     "topicNumber": "1.9",
     "shortQuestions": [
       {
-        "isExercise": true,
-        "category": "exercise",
+        "isExercise": false,
+        "category": "topic",
         "marks": 2,
         "question": "Compare wired network connections and wireless network connections in a home setup.",
-        "id": "ch1-t1.9-ex-s1"
+        "id": "ch1-t1.9-s1"
       },
       {
         "category": "topic",
@@ -1909,9 +1909,9 @@ export const CHAPTER_1_NEW_TOPICS = [
     "topicNumber": "1.10",
     "shortQuestions": [
       {
-        "category": "exercise",
+        "category": "topic",
         "question": "What is a Guest Network, and how does it protect personal devices on the main network?",
-        "isExercise": true,
+        "isExercise": false,
         "id": "ch1-t1.10-s4",
         "marks": 2
       },
@@ -2275,9 +2275,9 @@ export const CHAPTER_1_NEW_TOPICS = [
     "shortQuestions": [
       {
         "question": "Why is SSH preferred over Telnet for remote administration?",
-        "category": "exercise",
-        "id": "ch1-t1.11-ex-s1",
-        "isExercise": true,
+        "category": "topic",
+        "id": "ch1-t1.11-s1",
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -2488,10 +2488,10 @@ export const CHAPTER_1_NEW_TOPICS = [
     "shortQuestions": [
       {
         "question": "Define Network Bandwidth and state the unit in which it is measured.",
-        "category": "exercise",
+        "category": "topic",
         "marks": 2,
-        "isExercise": true,
-        "id": "ch1-t1.12-ex-s1"
+        "isExercise": false,
+        "id": "ch1-t1.12-s1"
       },
       {
         "marks": 2,
@@ -2696,10 +2696,10 @@ export const CHAPTER_1_NEW_TOPICS = [
     ],
     "shortQuestions": [
       {
-        "category": "exercise",
+        "category": "topic",
         "question": "What is Network Load Balancing, and why is it important for large websites?",
-        "isExercise": true,
-        "id": "ch1-t1.13-ex-s1",
+        "isExercise": false,
+        "id": "ch1-t1.13-s1",
         "marks": 2
       },
       {
@@ -2910,9 +2910,9 @@ export const CHAPTER_1_NEW_TOPICS = [
     "shortQuestions": [
       {
         "question": "Differentiate between Phishing and a Denial of Service (DoS) attack.",
-        "category": "exercise",
-        "isExercise": true,
-        "id": "ch1-t1.14-ex-s1",
+        "category": "topic",
+        "isExercise": false,
+        "id": "ch1-t1.14-s1",
         "marks": 2
       },
       {
@@ -2962,10 +2962,10 @@ export const CHAPTER_1_NEW_TOPICS = [
     "topicNumber": "1.15",
     "shortQuestions": [
       {
-        "id": "ch1-t1.15-ex-s1",
-        "category": "exercise",
+        "id": "ch1-t1.15-s1",
+        "category": "topic",
         "question": "Differentiate between a Full Backup and an Incremental Backup.",
-        "isExercise": true,
+        "isExercise": false,
         "marks": 2
       },
       {
@@ -3172,10 +3172,10 @@ export const CHAPTER_1_NEW_TOPICS = [
     "name": "Usability and Security Tradeoffs",
     "shortQuestions": [
       {
-        "isExercise": true,
-        "id": "ch1-t1.16-ex-s1",
+        "isExercise": false,
+        "id": "ch1-t1.16-s1",
         "marks": 2,
-        "category": "exercise",
+        "category": "topic",
         "question": "Explain the tradeoff between usability and security using password complexity as an example."
       },
       {
