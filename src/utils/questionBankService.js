@@ -1,6 +1,7 @@
 // Question Bank Service & LocalStorage Repository
 import { CHAPTER_1_NEW_TOPICS, CHAPTER_1_EXERCISE_LONGS } from './chapter1TopicsData.js';
 import { CHAPTER_2_NEW_TOPICS } from './chapter2TopicsData.js';
+import { CHAPTER_3_NEW_TOPICS } from './chapter3TopicsData.js';
 import { CLASS_11_CHAPTER_1_TOPICS } from './class11Chapter1Data.js';
 import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
@@ -866,6 +867,149 @@ export function mergeChapter1NewTopics(bank) {
             changed = true;
           }
           if (!ch3.topics) ch3.topics = [];
+          const preCh3Count = ch3.topics.length;
+          ch3.topics = ch3.topics.filter(t => t.topicNumber !== 'Exercise');
+          if (ch3.topics.length !== preCh3Count) changed = true;
+
+          CHAPTER_3_NEW_TOPICS.forEach(newTopic => {
+            const existingTopic = ch3.topics.find(t => 
+              t.topicNumber?.trim() === newTopic.topicNumber.trim() || 
+              t.name?.toLowerCase().trim() === newTopic.name.toLowerCase().trim()
+            );
+
+            if (!existingTopic) {
+              ch3.topics.push(JSON.parse(JSON.stringify(newTopic)));
+              changed = true;
+            } else {
+              if (!existingTopic.id || (newTopic.id && existingTopic.id !== newTopic.id)) {
+                existingTopic.id = newTopic.id;
+                changed = true;
+              }
+
+              if (!existingTopic.mcqs) existingTopic.mcqs = [];
+              (newTopic.mcqs || []).forEach(m => {
+                const normQ = (m.question || '').trim().toLowerCase();
+                const existingMcq = existingTopic.mcqs.find(em => (em.question || '').trim().toLowerCase() === normQ);
+                if (existingMcq) {
+                  if (m.category === 'exercise' && (existingMcq.category !== 'exercise' || !existingMcq.isExercise)) {
+                    existingMcq.category = 'exercise';
+                    existingMcq.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise') {
+                    existingTopic.mcqs.unshift(JSON.parse(JSON.stringify(m)));
+                  } else {
+                    existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                  }
+                  changed = true;
+                }
+              });
+
+              if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
+              (newTopic.shortQuestions || []).forEach(s => {
+                const normQ = (s.question || '').trim().toLowerCase();
+                const existingShort = existingTopic.shortQuestions.find(es => (es.question || '').trim().toLowerCase() === normQ);
+                if (existingShort) {
+                  if (s.category === 'exercise' && (existingShort.category !== 'exercise' || !existingShort.isExercise)) {
+                    existingShort.category = 'exercise';
+                    existingShort.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise') {
+                    existingTopic.shortQuestions.unshift(JSON.parse(JSON.stringify(s)));
+                  } else {
+                    existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                  }
+                  changed = true;
+                }
+              });
+            }
+          });
+
+          // Strictly enforce that ONLY the 10 official textbook exercise MCQs and 10 Shorts in Chapter 3 are marked as exercise
+          const OFFICIAL_CH3_EX_MCQ_KEYS = new Set([
+            'the oop concept that hides data inside a class is:',
+            'classes and objects in object-oriented programming are best described as:',
+            'the main idea behind encapsulation in oop is:',
+            'inheritance in oop means:',
+            'polymorphism in oop is best defined as:',
+            'an example of inheritance in python is:',
+            'the purpose of polymorphism in programming is:',
+            'the keyword used to define a class in python is:',
+            'encapsulation is best described as:',
+            'inheritance allows a class to:'
+          ]);
+
+          const OFFICIAL_CH3_EX_SHORT_KEYS = new Set([
+            'what is object-oriented programming (oop)?',
+            'what is the purpose of a class in python?',
+            'what is the difference between a class and an object?',
+            'what is purpose of __init__ ?',
+            'what is encapsulation in oop, and why is it important?',
+            'how does encapsulation help in keeping data secure and private?',
+            'what is inheritance in oop, and how does it help in reusing functionality?',
+            'how does inheritance enable the extension of functionality in python?',
+            'what is polymorphism in oop, and how does it make code more flexible?',
+            'how does polymorphism help in creating adaptable and reusable code?'
+          ]);
+
+          ch3.topics.forEach(t => {
+            if (Array.isArray(t.mcqs)) {
+              t.mcqs.forEach(m => {
+                const normQ = (m.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH3_EX_MCQ_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (m.category !== 'exercise' || !m.isExercise) {
+                    m.category = 'exercise';
+                    m.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise' || m.isExercise || (typeof m.id === 'string' && m.id.includes('-ex-'))) {
+                    m.category = 'topic';
+                    m.isExercise = false;
+                    if (typeof m.id === 'string' && m.id.includes('-ex-')) {
+                      m.id = m.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+
+            if (Array.isArray(t.shortQuestions)) {
+              t.shortQuestions.forEach(s => {
+                const normQ = (s.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH3_EX_SHORT_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (s.category !== 'exercise' || !s.isExercise) {
+                    s.category = 'exercise';
+                    s.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise' || s.isExercise || (typeof s.id === 'string' && s.id.includes('-ex-'))) {
+                    s.category = 'topic';
+                    s.isExercise = false;
+                    if (typeof s.id === 'string' && s.id.includes('-ex-')) {
+                      s.id = s.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+          });
+
+          // Sort numerically: 3.1, 3.2
+          ch3.topics.sort((a, b) => {
+            const aParts = (a.topicNumber || '0').split('.').map(Number);
+            const bParts = (b.topicNumber || '0').split('.').map(Number);
+            if (aParts[0] !== bParts[0]) return aParts[0] - bParts[0];
+            return (aParts[1] || 0) - (bParts[1] || 0);
+          });
         }
 
         // Keep chapters sorted by chapterNumber
