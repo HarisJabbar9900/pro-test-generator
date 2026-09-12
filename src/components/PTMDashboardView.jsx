@@ -165,207 +165,276 @@ export default function PTMDashboardView({
 
       </div>
 
-      {/* 2. REFINED PROFESSIONAL DASHBOARD UTILITY TILES */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-        
-        {/* Tool 1: Default Settings */}
-        <div 
-          onClick={onGoToSettings}
-          className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-blue-400/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center justify-between gap-3 group relative"
-        >
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-cyan-50 border border-cyan-200 text-cyan-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-cyan-600 group-hover:text-white transition-all duration-300">
-              <Settings className="w-6 h-6" />
+      {/* 2. REFINED PROFESSIONAL DASHBOARD UTILITY & ACADEMIC HUB */}
+      <div className="space-y-3.5 pt-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+          <div>
+            <h2 className="text-sm sm:text-base font-black text-slate-800 tracking-tight flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-orange-500" />
+              Quick Academic & Management Hub
+            </h2>
+            <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
+              Instant access to default configurations, archives, syllabus, and model paper suites.
+            </p>
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 self-start sm:self-auto bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/80">
+            8 Quick Modules
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+          
+          {/* Tool 1: Default Settings */}
+          <div 
+            onClick={onGoToSettings}
+            className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-cyan-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
+          >
+            <div className="flex items-start justify-between gap-2.5">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-cyan-500/25 group-hover:scale-110 transition-transform duration-300">
+                <Settings className="w-5 h-5" />
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
+                27 Configs
+              </span>
             </div>
-            <div className="min-w-0">
-              <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors truncate">
+
+            <div className="mt-3">
+              <h3 className="text-sm font-black text-slate-800 group-hover:text-blue-600 transition-colors tracking-tight leading-snug">
                 Default Settings
               </h3>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5">
-                <span className="font-black text-slate-900">27</span> Configurations
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
+                Header Layout, Watermarks & Styling
               </p>
             </div>
-          </div>
-          <div className="w-7 h-7 rounded-full bg-slate-50 group-hover:bg-blue-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-2xs group-hover:translate-x-1 shrink-0">
-            <ChevronRight className="w-3.5 h-3.5" />
-          </div>
-        </div>
 
-        {/* Tool 2: Deleted Papers */}
-        <div 
-          onClick={() => notify.info("Deleted Papers Archive is empty.")}
-          className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-rose-400/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center justify-between gap-3 group relative"
-        >
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-rose-600 group-hover:text-white transition-all duration-300">
-              <Trash2 className="w-6 h-6" />
+            <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-cyan-700 transition-colors">
+              <span>Configure System</span>
+              <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-cyan-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
+                <ChevronRight className="w-3 h-3" />
+              </div>
             </div>
-            <div className="min-w-0">
-              <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-rose-600 transition-colors truncate">
+          </div>
+
+          {/* Tool 2: Deleted Papers */}
+          <div 
+            onClick={() => notify.info("Deleted Papers Archive is empty.")}
+            className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-rose-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
+          >
+            <div className="flex items-start justify-between gap-2.5">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-rose-500/25 group-hover:scale-110 transition-transform duration-300">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
+                Recycle Bin
+              </span>
+            </div>
+
+            <div className="mt-3">
+              <h3 className="text-sm font-black text-slate-800 group-hover:text-rose-600 transition-colors tracking-tight leading-snug">
                 Deleted Papers
               </h3>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5">
-                <span className="font-black text-slate-900">0</span> Papers
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
+                Paper Recovery & Trash Archive
               </p>
             </div>
-          </div>
-          <div className="w-7 h-7 rounded-full bg-slate-50 group-hover:bg-rose-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-2xs group-hover:translate-x-1 shrink-0">
-            <ChevronRight className="w-3.5 h-3.5" />
-          </div>
-        </div>
 
-        {/* Tool 3: Paper History */}
-        <div 
-          onClick={() => handleNav('papers_history')}
-          className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-emerald-400/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center justify-between gap-3 group relative"
-        >
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
-              <Copy className="w-6 h-6" />
+            <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-rose-700 transition-colors">
+              <span>0 Items in Bin</span>
+              <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-rose-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
+                <ChevronRight className="w-3 h-3" />
+              </div>
             </div>
-            <div className="min-w-0">
-              <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-emerald-600 transition-colors truncate">
+          </div>
+
+          {/* Tool 3: Paper History */}
+          <div 
+            onClick={() => handleNav('papers_history')}
+            className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-emerald-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
+          >
+            <div className="flex items-start justify-between gap-2.5">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/25 group-hover:scale-110 transition-transform duration-300">
+                <Copy className="w-5 h-5" />
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
+                4 Records
+              </span>
+            </div>
+
+            <div className="mt-3">
+              <h3 className="text-sm font-black text-slate-800 group-hover:text-emerald-600 transition-colors tracking-tight leading-snug">
                 Paper History
               </h3>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5">
-                <span className="font-black text-slate-900">4</span> Archive Records
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
+                Generated Archives & Print Logs
               </p>
             </div>
-          </div>
-          <div className="w-7 h-7 rounded-full bg-slate-50 group-hover:bg-emerald-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-2xs group-hover:translate-x-1 shrink-0">
-            <ChevronRight className="w-3.5 h-3.5" />
-          </div>
-        </div>
 
-        {/* Tool 4: Login History / My Activity */}
-        <div 
-          onClick={() => handleNav('login_history')}
-          className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-amber-400/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center justify-between gap-3 group relative"
-        >
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
-              <Clock className="w-6 h-6" />
+            <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-emerald-700 transition-colors">
+              <span>View Archives</span>
+              <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-emerald-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
+                <ChevronRight className="w-3 h-3" />
+              </div>
             </div>
-            <div className="min-w-0">
-              <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-amber-600 transition-colors truncate">
-                {currentUser?.isAdmin ? 'User Management & Audit' : 'My Activity & Stats'}
+          </div>
+
+          {/* Tool 4: Login History / User Management */}
+          <div 
+            onClick={() => handleNav('login_history')}
+            className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-amber-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
+          >
+            <div className="flex items-start justify-between gap-2.5">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/25 group-hover:scale-110 transition-transform duration-300">
+                {currentUser?.isAdmin ? <Users className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
+                {currentUser?.isAdmin ? 'Live Cloud' : `${userStats.loginCount} Logins`}
+              </span>
+            </div>
+
+            <div className="mt-3">
+              <h3 className="text-sm font-black text-slate-800 group-hover:text-amber-600 transition-colors tracking-tight leading-snug">
+                {currentUser?.isAdmin ? 'User Management' : 'My Activity & Stats'}
               </h3>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5">
-                {currentUser?.isAdmin ? (
-                  <>
-                    <span className="font-black text-slate-900">Live</span> Accounts & Quotas
-                  </>
-                ) : (
-                  <>
-                    <span className="font-black text-slate-900">{userStats.loginCount}</span> Logins • <span className="font-black text-slate-900">{Math.max(userStats.createdCount, savedPapers.length)}</span> Papers
-                  </>
-                )}
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
+                {currentUser?.isAdmin ? 'Account Quotas & Audit' : `${Math.max(userStats.createdCount, savedPapers.length)} Created Papers`}
               </p>
             </div>
-          </div>
-          <div className="w-7 h-7 rounded-full bg-slate-50 group-hover:bg-amber-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-2xs group-hover:translate-x-1 shrink-0">
-            <ChevronRight className="w-3.5 h-3.5" />
-          </div>
-        </div>
 
-        {/* Tool 5: Draft Papers */}
-        <div 
-          onClick={() => handleNav('saved_papers')}
-          className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-purple-400/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center justify-between gap-3 group relative"
-        >
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
-              <PenTool className="w-6 h-6" />
+            <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-amber-700 transition-colors">
+              <span>{currentUser?.isAdmin ? 'Manage Users' : 'View Activity'}</span>
+              <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-amber-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
+                <ChevronRight className="w-3 h-3" />
+              </div>
             </div>
-            <div className="min-w-0">
-              <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-purple-600 transition-colors truncate">
+          </div>
+
+          {/* Tool 5: Draft Papers */}
+          <div 
+            onClick={() => handleNav('saved_papers')}
+            className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-purple-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
+          >
+            <div className="flex items-start justify-between gap-2.5">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-purple-500/25 group-hover:scale-110 transition-transform duration-300">
+                <PenTool className="w-5 h-5" />
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
+                {savedPapers.length || 1} Saved
+              </span>
+            </div>
+
+            <div className="mt-3">
+              <h3 className="text-sm font-black text-slate-800 group-hover:text-purple-600 transition-colors tracking-tight leading-snug">
                 Draft Papers
               </h3>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5">
-                <span className="font-black text-slate-900">1</span> Unsaved Paper
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
+                Continue In-Progress Test Sheets
               </p>
             </div>
-          </div>
-          <div className="w-7 h-7 rounded-full bg-slate-50 group-hover:bg-purple-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-2xs group-hover:translate-x-1 shrink-0">
-            <ChevronRight className="w-3.5 h-3.5" />
-          </div>
-        </div>
 
-        {/* Tool 6: Study Scheme (With 'Old' Badge) */}
-        <div 
-          onClick={() => notify.info("Study Scheme: Punjab Boards 2024-2025")}
-          className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-teal-400/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center justify-between gap-3 group relative"
-        >
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200 text-teal-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-teal-600 group-hover:text-white transition-all duration-300">
-              <BookOpen className="w-6 h-6" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-teal-600 transition-colors">
-                  Study Scheme
-                </h3>
-                <span className="px-1.5 py-0.5 bg-cyan-100 text-cyan-800 border border-cyan-300 text-[9px] font-black rounded-full">Old</span>
+            <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-purple-700 transition-colors">
+              <span>Open Drafts</span>
+              <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-purple-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
+                <ChevronRight className="w-3.5 h-3.5" />
               </div>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5 truncate">Punjab Boards</p>
             </div>
           </div>
-          <div className="w-7 h-7 rounded-full bg-slate-50 group-hover:bg-teal-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-2xs group-hover:translate-x-1 shrink-0">
-            <ChevronRight className="w-3.5 h-3.5" />
-          </div>
-        </div>
 
-        {/* Tool 7: Smart Syllabus (With 'New' Badge - No Text Truncation!) */}
-        <div 
-          onClick={() => notify.info("Smart Syllabus: Punjab Boards (2025-26)")}
-          className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-indigo-400/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center justify-between gap-3 group relative"
-        >
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-              <Newspaper className="w-6 h-6" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-indigo-600 transition-colors">
-                  Smart Syllabus
-                </h3>
-                <span className="px-1.5 py-0.5 bg-rose-500 text-white text-[9px] font-black rounded-full shadow-2xs">New</span>
+          {/* Tool 6: Study Scheme */}
+          <div 
+            onClick={() => notify.info("Study Scheme: Punjab Boards 2024-2025")}
+            className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-teal-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
+          >
+            <div className="flex items-start justify-between gap-2.5">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-teal-500/25 group-hover:scale-110 transition-transform duration-300">
+                <BookOpen className="w-5 h-5" />
               </div>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5 truncate">Punjab (2025-26)</p>
+              <span className="px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
+                Pairing
+              </span>
+            </div>
+
+            <div className="mt-3">
+              <h3 className="text-sm font-black text-slate-800 group-hover:text-teal-600 transition-colors tracking-tight leading-snug">
+                Study Scheme
+              </h3>
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
+                Official Punjab Boards Pairing Scheme
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-teal-700 transition-colors">
+              <span>View Scheme</span>
+              <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-teal-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
+                <ChevronRight className="w-3.5 h-3.5" />
+              </div>
             </div>
           </div>
-          <div className="w-7 h-7 rounded-full bg-slate-50 group-hover:bg-indigo-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-2xs group-hover:translate-x-1 shrink-0">
-            <ChevronRight className="w-3.5 h-3.5" />
-          </div>
-        </div>
 
-        {/* Tool 8: Model Papers (With Floating Beating 'New' Badge on Top) */}
-        <div 
-          onClick={() => handleNav('model_papers')}
-          className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-orange-400/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center justify-between gap-3 group relative"
-        >
-          {/* Floating Beating NEW Badge On Top */}
-          <div className="absolute -top-2.5 right-4 z-10 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-rose-500 via-rose-600 to-red-600 text-white text-[10px] font-black tracking-wider uppercase shadow-md shadow-rose-500/40 border border-white select-none animate-heartbeat">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-            NEW
-          </div>
-
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
-              <FileSignature className="w-6 h-6" />
+          {/* Tool 7: Smart Syllabus */}
+          <div 
+            onClick={() => notify.info("Smart Syllabus: Punjab Boards (2025-26)")}
+            className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-indigo-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
+          >
+            <div className="flex items-start justify-between gap-2.5">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-600/25 group-hover:scale-110 transition-transform duration-300">
+                <Newspaper className="w-5 h-5" />
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
+                2025 - 2026
+              </span>
             </div>
-            <div className="min-w-0">
-              <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-orange-600 transition-colors">
+
+            <div className="mt-3">
+              <h3 className="text-sm font-black text-slate-800 group-hover:text-blue-600 transition-colors tracking-tight leading-snug">
+                Smart Syllabus
+              </h3>
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
+                Curriculum Scope & PCTB Guidelines
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-blue-700 transition-colors">
+              <span>Curriculum Scope</span>
+              <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-blue-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
+                <ChevronRight className="w-3.5 h-3.5" />
+              </div>
+            </div>
+          </div>
+
+          {/* Tool 8: Model Papers */}
+          <div 
+            onClick={() => handleNav('model_papers')}
+            className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-orange-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
+          >
+            {/* Elegant glowing top-right badge */}
+            <div className="flex items-start justify-between gap-2.5">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-orange-500/25 group-hover:scale-110 transition-transform duration-300">
+                <FileSignature className="w-5 h-5" />
+              </div>
+              <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black tracking-wide uppercase shadow-sm shadow-rose-500/30 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                NEW 2026
+              </span>
+            </div>
+
+            <div className="mt-3">
+              <h3 className="text-sm font-black text-slate-800 group-hover:text-orange-600 transition-colors tracking-tight leading-snug">
                 Model Papers
               </h3>
-              <p className="text-xs text-slate-500 font-semibold mt-0.5 truncate">Full Book Samples</p>
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
+                Board Standard Solved Full Papers
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-orange-700 transition-colors">
+              <span>Official Papers</span>
+              <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-orange-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
+                <ChevronRight className="w-3.5 h-3.5" />
+              </div>
             </div>
           </div>
-          <div className="w-7 h-7 rounded-full bg-slate-50 group-hover:bg-orange-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-2xs group-hover:translate-x-1 shrink-0">
-            <ChevronRight className="w-3.5 h-3.5" />
-          </div>
-        </div>
 
+        </div>
       </div>
       </div>
 

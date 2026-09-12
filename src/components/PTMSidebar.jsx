@@ -27,7 +27,6 @@ export default function PTMSidebar({
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Gauge },
     { id: 'generate_paper', label: 'Generate Paper', icon: Send },
-    { id: 'saved_papers', label: 'Saved Papers', icon: Save },
     { 
       id: 'pricing', 
       label: isAdmin ? 'Pricing & Packages' : 'Subscription Plans', 
@@ -39,15 +38,7 @@ export default function PTMSidebar({
       { id: 'upload_material', label: 'Upload Material', icon: UploadCloud, isAdmin: true }
     ] : []),
     { id: 'past_papers', label: 'Past Papers', icon: Newspaper },
-    { id: 'model_papers', label: 'Model Papers', icon: FileSignature, badge: 'New' },
     { id: 'date_sheet_planner', label: 'Date-Sheet Planner', icon: Calendar, badge: 'Planner' },
-    { id: 'papers_history', label: 'Papers History', icon: Files },
-    { 
-      id: 'login_history', 
-      label: isAdmin ? 'User Management & Audit' : 'My Activity', 
-      icon: isAdmin ? Users : Clock 
-    },
-    { id: 'default_paper_settings', label: 'Default Paper Settings', icon: Settings },
     { id: 'contact', label: 'Contact Team', icon: Headphones, badge: 'Direct' },
   ];
 
