@@ -45,7 +45,6 @@ export default function PTMSidebar({
       label: isAdmin ? 'User Management & Audit' : 'My Activity', 
       icon: isAdmin ? Users : Clock 
     },
-    { id: 'ai_assistant', label: 'AI Assistant Guide', icon: Bot, badge: 'Smart' },
     { id: 'default_paper_settings', label: 'Default Paper Settings', icon: Settings },
     { id: 'contact', label: 'Contact Team', icon: Headphones, badge: 'Direct' },
   ];
