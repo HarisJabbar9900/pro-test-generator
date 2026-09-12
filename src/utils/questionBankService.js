@@ -7,6 +7,7 @@ import { CHAPTER_5_NEW_TOPICS } from './chapter5TopicsData.js';
 import { CHAPTER_6_NEW_TOPICS } from './chapter6TopicsData.js';
 import { CHAPTER_7_NEW_TOPICS } from './chapter7TopicsData.js';
 import { CHAPTER_8_NEW_TOPICS } from './chapter8TopicsData.js';
+import { CHAPTER_9_NEW_TOPICS } from './chapter9TopicsData.js';
 import { CLASS_11_CHAPTER_1_TOPICS } from './class11Chapter1Data.js';
 import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
@@ -175,6 +176,12 @@ export const INITIAL_QUESTION_BANK = {
             "chapterNumber": 8,
             "name": "Applications of Computer Science",
             "topics": CHAPTER_8_NEW_TOPICS
+          },
+          {
+            "id": "cs-12-ch9",
+            "chapterNumber": 9,
+            "name": "Cybersecurity and Safe Digital Collaboration",
+            "topics": CHAPTER_9_NEW_TOPICS
           }
         ] 
       },
@@ -1940,6 +1947,187 @@ export function mergeChapter1NewTopics(bank) {
 
           // Sort numerically: 8.1, 8.2, 8.3, 8.4
           ch8.topics.sort((a, b) => {
+            const aParts = (a.topicNumber || '0').split('.').map(Number);
+            const bParts = (b.topicNumber || '0').split('.').map(Number);
+            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+              const av = aParts[i] || 0;
+              const bv = bParts[i] || 0;
+              if (av !== bv) return av - bv;
+            }
+            return 0;
+          });
+        }
+
+        // =====================================================================
+        // CHAPTER 9: CYBERSECURITY AND SAFE DIGITAL COLLABORATION
+        // =====================================================================
+        let ch9 = sub.chapters.find(c => 
+          c.chapterNumber === 9 || 
+          (c.name && c.name.toLowerCase().includes('cybersecurity')) ||
+          (c.name && c.name.toLowerCase().includes('chap#9'))
+        );
+
+        if (!ch9 && clsKey === '12th') {
+          ch9 = {
+            id: `${sub.id}-ch9`,
+            chapterNumber: 9,
+            name: "Cybersecurity and Safe Digital Collaboration",
+            topics: []
+          };
+          sub.chapters.push(ch9);
+          changed = true;
+        }
+
+        if (ch9 && clsKey === '12th') {
+          if (!ch9.name || !ch9.name.includes("Cybersecurity")) {
+            ch9.name = "Cybersecurity and Safe Digital Collaboration";
+            ch9.chapterNumber = 9;
+            changed = true;
+          }
+          if (!ch9.topics) ch9.topics = [];
+
+          // Remove any stale sub-topics (e.g. 9.1.1) and keep strictly 9.1, 9.2, etc.
+          const preCh9Count = ch9.topics.length;
+          ch9.topics = ch9.topics.filter(t => {
+            const parts = (t.topicNumber || '').trim().split('.');
+            return parts.length <= 2;
+          });
+          if (ch9.topics.length !== preCh9Count) changed = true;
+
+          CHAPTER_9_NEW_TOPICS.forEach(newTopic => {
+            const existingTopic = ch9.topics.find(t => 
+              t.topicNumber?.trim() === newTopic.topicNumber.trim()
+            );
+
+            if (!existingTopic) {
+              ch9.topics.push(JSON.parse(JSON.stringify(newTopic)));
+              changed = true;
+            } else {
+              existingTopic.name = newTopic.name;
+              if (!existingTopic.id || (newTopic.id && existingTopic.id !== newTopic.id)) {
+                existingTopic.id = newTopic.id;
+                changed = true;
+              }
+
+              if (!existingTopic.mcqs) existingTopic.mcqs = [];
+              (newTopic.mcqs || []).forEach(m => {
+                const normQ = (m.question || '').trim().toLowerCase();
+                const existingMcq = existingTopic.mcqs.find(em => (em.question || '').trim().toLowerCase() === normQ);
+                if (existingMcq) {
+                  if (m.category === 'exercise' && (existingMcq.category !== 'exercise' || !existingMcq.isExercise)) {
+                    existingMcq.category = 'exercise';
+                    existingMcq.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise') {
+                    existingTopic.mcqs.unshift(JSON.parse(JSON.stringify(m)));
+                  } else {
+                    existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                  }
+                  changed = true;
+                }
+              });
+
+              if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
+              (newTopic.shortQuestions || []).forEach(s => {
+                const normQ = (s.question || '').trim().toLowerCase();
+                const existingShort = existingTopic.shortQuestions.find(es => (es.question || '').trim().toLowerCase() === normQ);
+                if (existingShort) {
+                  if (s.category === 'exercise' && (existingShort.category !== 'exercise' || !existingShort.isExercise)) {
+                    existingShort.category = 'exercise';
+                    existingShort.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise') {
+                    existingTopic.shortQuestions.unshift(JSON.parse(JSON.stringify(s)));
+                  } else {
+                    existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                  }
+                  changed = true;
+                }
+              });
+            }
+          });
+
+          // Strictly enforce that ONLY the 10 official textbook exercise MCQs and 10 Shorts in Chapter 9 are marked as exercise
+          const OFFICIAL_CH9_EX_MCQ_KEYS = new Set([
+            'the following helps keep online accounts secure:',
+            'the main danger of downloading unknown software is:',
+            'the tool that adds an extra layer of login security is:',
+            'the cyber threat that tricks users into giving personal information is:',
+            'the purpose of a firewall is to:',
+            'encryption is used to:',
+            'a commonly used platform for online collaboration is:',
+            'digital etiquette means:',
+            'e-waste means:',
+            'the international law that protects user privacy is:'
+          ]);
+
+          const OFFICIAL_CH9_EX_SHORT_KEYS = new Set([
+            'what is the role of strong passwords in protecting data?',
+            'how can downloading suspicious software affect a computer?',
+            'why is it important to install software updates and security patches?',
+            'what are common types of cyber threats, such as phishing or ransomware?',
+            'how does two-factor authentication (2fa) improve online security?',
+            'who is responsible for managing privacy and security settings on online platforms?',
+            'what is intellectual property, and why should it be respected in digital use?',
+            'how does e-waste impact the environment, and what is sustainable computing?',
+            'where do international data protection laws like gdpr apply?',
+            'what is entrepreneurship?'
+          ]);
+
+          ch9.topics.forEach(t => {
+            if (Array.isArray(t.mcqs)) {
+              t.mcqs.forEach(m => {
+                const normQ = (m.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH9_EX_MCQ_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (m.category !== 'exercise' || !m.isExercise) {
+                    m.category = 'exercise';
+                    m.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise' || m.isExercise || (typeof m.id === 'string' && m.id.includes('-ex-'))) {
+                    m.category = 'topic';
+                    m.isExercise = false;
+                    if (typeof m.id === 'string' && m.id.includes('-ex-')) {
+                      m.id = m.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+
+            if (Array.isArray(t.shortQuestions)) {
+              t.shortQuestions.forEach(s => {
+                const normQ = (s.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH9_EX_SHORT_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (s.category !== 'exercise' || !s.isExercise) {
+                    s.category = 'exercise';
+                    s.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise' || s.isExercise || (typeof s.id === 'string' && s.id.includes('-ex-'))) {
+                    s.category = 'topic';
+                    s.isExercise = false;
+                    if (typeof s.id === 'string' && s.id.includes('-ex-')) {
+                      s.id = s.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+          });
+
+          // Sort numerically: 9.1, 9.2, 9.3, 9.4, 9.5
+          ch9.topics.sort((a, b) => {
             const aParts = (a.topicNumber || '0').split('.').map(Number);
             const bParts = (b.topicNumber || '0').split('.').map(Number);
             for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
