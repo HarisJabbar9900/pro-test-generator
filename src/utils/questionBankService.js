@@ -2182,10 +2182,30 @@ export function saveQuestionBank(bank) {
   _memoryCachedBank = bank;
   try {
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(bank));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bank));
+      } catch (quotaErr) {
+        // 1. Purge legacy cache versions (v1 to v24) to free browser storage quota
+        try {
+          const keysToRemove = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith('papergen_pro_question_bank_') && k !== STORAGE_KEY) {
+              keysToRemove.push(k);
+            }
+          }
+          keysToRemove.forEach(k => localStorage.removeItem(k));
+          // Retry save once
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(bank));
+        } catch (retryErr) {
+          // If total question bank content still exceeds 5MB browser storage,
+          // bank remains 100% active in runtime RAM and Firestore cloud sync.
+          console.warn("Question bank exceeds browser localStorage quota limit. Running seamlessly via runtime cache & cloud sync.");
+        }
+      }
     }
   } catch (err) {
-    console.error("Failed to save question bank to localStorage:", err);
+    console.warn("Storage write note:", err?.message || err);
   }
 }
 

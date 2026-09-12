@@ -162,7 +162,8 @@ export const MODEL_PAPERS_CATALOG = [
       section1: {
         title: "SECTION I (Short Questions)",
         marks: 36,
-        subSections: [
+        totalMarks: 36,
+        parts: [
           {
             qNum: "Q #2",
             instruction: "Write short answers of any SIX questions from the following: (6 × 2 = 12 Marks)",

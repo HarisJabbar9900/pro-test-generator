@@ -70,10 +70,11 @@ export default function PTMSecondaryViews({
       text += `${paper.subjective.title}\nTotal Marks: ${paper.subjective.marks} | Time Allowed: ${paper.subjective.time}\n`;
       text += `=====================================\n\n`;
 
-      text += `--- ${paper.subjective.section1.title} ---\n`;
-      paper.subjective.section1.parts.forEach((part) => {
+      text += `--- ${paper.subjective?.section1?.title || 'SECTION I'} ---\n`;
+      const shortParts = paper?.subjective?.section1?.parts || paper?.subjective?.section1?.subSections || [];
+      shortParts.forEach((part) => {
         text += `\n${part.qNum}: ${part.instruction}\n`;
-        part.questions.forEach((q, idx) => {
+        (part.questions || []).forEach((q, idx) => {
           const roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'][idx] || `${idx + 1}`;
           text += `  ${roman}. ${q}\n`;
         });
@@ -896,7 +897,7 @@ export default function PTMSecondaryViews({
 
               {/* MCQs Grid */}
               <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                {selectedPaper.objective.questions.map((q) => {
+                {(selectedPaper?.objective?.questions || []).map((q) => {
                   const optionLetters = ['(a)', '(b)', '(c)', '(d)'];
 
                   return (
@@ -917,7 +918,7 @@ export default function PTMSecondaryViews({
 
                         {/* Options */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3 pl-8">
-                          {q.options.map((opt, optIdx) => {
+                          {(q.options || []).map((opt, optIdx) => {
                             const isCorrect = showAnswerKeys && optIdx === q.correctIndex;
 
                             return (
@@ -970,26 +971,26 @@ export default function PTMSecondaryViews({
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
                       <h3 className="text-base font-black text-slate-900 tracking-tight">
-                        {selectedPaper.subjective.title} — {selectedPaper.subjective.section1.title}
+                        {selectedPaper?.subjective?.title || 'PART 2: SUBJECTIVE'} — {selectedPaper?.subjective?.section1?.title || 'SECTION I'}
                       </h3>
                     </div>
                     <p className="text-xs text-slate-600 font-medium mt-1">
-                      {selectedPaper.subjective.section1.totalMarks} Marks total across Q #2, Q #3, and Q #4 (Attempt any 6 from each)
+                      {selectedPaper?.subjective?.section1?.totalMarks || selectedPaper?.subjective?.section1?.marks || 36} Marks total across Q #2, Q #3, and Q #4 (Attempt any 6 from each)
                     </p>
                   </div>
                   <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
                     <span className="px-3 py-1 bg-blue-100 text-blue-900 font-black text-xs rounded-xl border border-blue-200">
-                      Total: {selectedPaper.subjective.section1.totalMarks} Marks
+                      Total: {selectedPaper?.subjective?.section1?.totalMarks || selectedPaper?.subjective?.section1?.marks || 36} Marks
                     </span>
                     <span className="px-3 py-1 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200">
-                      Time: {selectedPaper.subjective.time}
+                      Time: {selectedPaper?.subjective?.time || '2 Hours 10 Minutes'}
                     </span>
                   </div>
                 </div>
 
                 {/* Question Sets (Q2, Q3, Q4) */}
                 <div className="p-5 sm:p-6 space-y-6">
-                  {selectedPaper.subjective.section1.parts.map((part) => (
+                  {(selectedPaper?.subjective?.section1?.parts || selectedPaper?.subjective?.section1?.subSections || []).map((part) => (
                     <div key={part.qNum} className="border border-slate-200 rounded-2xl p-4 sm:p-5 bg-slate-50/40 space-y-3.5">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
                         <div className="flex items-center gap-2">
@@ -1001,12 +1002,12 @@ export default function PTMSecondaryViews({
                           </h4>
                         </div>
                         <span className="px-2.5 py-0.5 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg shrink-0 self-start sm:self-auto">
-                          Attempt {part.required} of {part.questions.length} • {part.totalMarks} Marks
+                          Attempt {part.required || 6} of {(part.questions || []).length} • {part.totalMarks || 12} Marks
                         </span>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1">
-                        {part.questions.map((qText, qIdx) => (
+                        {(part.questions || []).map((qText, qIdx) => (
                           <div 
                             key={qIdx}
                             className="p-3 bg-white rounded-xl border border-slate-200/80 hover:border-blue-300 transition-all flex items-start gap-2.5 shadow-2xs group"
@@ -1036,26 +1037,26 @@ export default function PTMSecondaryViews({
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
                       <h3 className="text-base font-black text-slate-900 tracking-tight">
-                        {selectedPaper.subjective.section2.title}
+                        {selectedPaper?.subjective?.section2?.title || 'SECTION II'}
                       </h3>
                     </div>
                     <p className="text-xs text-slate-600 font-medium mt-1">
-                      {selectedPaper.subjective.section2.instruction}
+                      {selectedPaper?.subjective?.section2?.instruction || 'Note: Attempt any THREE descriptive questions.'}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
                     <span className="px-3 py-1 bg-purple-100 text-purple-900 font-black text-xs rounded-xl border border-purple-200">
-                      Total: {selectedPaper.subjective.section2.totalMarks} Marks
+                      Total: {selectedPaper?.subjective?.section2?.totalMarks || 24} Marks
                     </span>
                     <span className="px-3 py-1 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl">
-                      Attempt {selectedPaper.subjective.section2.required} of {selectedPaper.subjective.section2.questions.length}
+                      Attempt {selectedPaper?.subjective?.section2?.required || 3} of {(selectedPaper?.subjective?.section2?.questions || []).length}
                     </span>
                   </div>
                 </div>
 
                 {/* Long Questions List */}
                 <div className="p-5 sm:p-6 space-y-3">
-                  {selectedPaper.subjective.section2.questions.map((lq) => (
+                  {(selectedPaper?.subjective?.section2?.questions || []).map((lq) => (
                     <div 
                       key={lq.qNum}
                       className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-purple-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs group"
