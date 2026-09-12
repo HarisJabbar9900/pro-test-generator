@@ -12,7 +12,116 @@ import { CLASS_11_CHAPTER_1_TOPICS } from './class11Chapter1Data.js';
 import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
 import { CLASS_11_OFFICIAL_EXERCISES } from './class11OfficialExercises.js';
-const STORAGE_KEY = 'papergen_pro_question_bank_v5';
+const STORAGE_KEY = 'papergen_pro_question_bank_v6';
+
+// Canonical builder for 11th Class Computer Science - All 9 Units
+export function buildCleanClass11Chapters(existingChapters = []) {
+  const baseChapters = [
+    {
+      id: "cs-11-ch1",
+      chapterNumber: 1,
+      name: "Software Development",
+      topics: JSON.parse(JSON.stringify(CLASS_11_CHAPTER_1_TOPICS))
+    },
+    {
+      id: "cs-11-ch2",
+      chapterNumber: 2,
+      name: "Python Programming",
+      topics: JSON.parse(JSON.stringify(CLASS_11_CHAPTER_2_TOPICS))
+    },
+    ...JSON.parse(JSON.stringify(CLASS_11_UNITS_3_TO_9_CHAPTERS))
+  ];
+
+  // 1. Reset any stray exercise flags on base topic questions
+  baseChapters.forEach(ch => {
+    (ch.topics || []).forEach(t => {
+      (t.mcqs || []).forEach(m => {
+        m.category = 'topic';
+        m.isExercise = false;
+      });
+      (t.shortQuestions || []).forEach(s => {
+        s.category = 'topic';
+        s.isExercise = false;
+      });
+      (t.longQuestions || []).forEach(l => {
+        l.category = 'topic';
+        l.isExercise = false;
+      });
+    });
+
+    // 2. Inject exact official exercise questions into their designated topic
+    const exData = CLASS_11_OFFICIAL_EXERCISES[ch.chapterNumber];
+    if (exData) {
+      (exData.mcqs || []).forEach(m => {
+        const topic = ch.topics.find(t => t.topicNumber?.trim() === m.topicNumber?.trim());
+        if (topic) {
+          if (!topic.mcqs) topic.mcqs = [];
+          const idx = topic.mcqs.findIndex(x => x.id === m.id || x.question?.trim().toLowerCase() === m.question?.trim().toLowerCase());
+          if (idx !== -1) {
+            topic.mcqs[idx] = JSON.parse(JSON.stringify(m));
+          } else {
+            topic.mcqs.push(JSON.parse(JSON.stringify(m)));
+          }
+        }
+      });
+
+      (exData.shortQuestions || []).forEach(s => {
+        const topic = ch.topics.find(t => t.topicNumber?.trim() === s.topicNumber?.trim());
+        if (topic) {
+          if (!topic.shortQuestions) topic.shortQuestions = [];
+          const idx = topic.shortQuestions.findIndex(x => x.id === s.id || x.question?.trim().toLowerCase() === s.question?.trim().toLowerCase());
+          if (idx !== -1) {
+            topic.shortQuestions[idx] = JSON.parse(JSON.stringify(s));
+          } else {
+            topic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+          }
+        }
+      });
+    }
+  });
+
+  // 3. Preserve any user custom questions from existingChapters
+  if (Array.isArray(existingChapters)) {
+    existingChapters.forEach(ech => {
+      const targetCh = baseChapters.find(c => c.chapterNumber === ech.chapterNumber);
+      if (!targetCh) return;
+      (ech.topics || []).forEach(et => {
+        const targetTopic = targetCh.topics.find(t => t.topicNumber?.trim() === et.topicNumber?.trim());
+        if (!targetTopic) return;
+
+        const customMcqs = (et.mcqs || []).filter(m => m.isCustom || m.custom || m.id?.startsWith('custom-'));
+        const customShorts = (et.shortQuestions || []).filter(s => s.isCustom || s.custom || s.id?.startsWith('custom-'));
+        const customLongs = (et.longQuestions || []).filter(l => l.isCustom || l.custom || l.id?.startsWith('custom-'));
+
+        customMcqs.forEach(cm => {
+          if (!targetTopic.mcqs.some(m => m.id === cm.id)) targetTopic.mcqs.push(cm);
+        });
+        customShorts.forEach(cs => {
+          if (!targetTopic.shortQuestions.some(s => s.id === cs.id)) targetTopic.shortQuestions.push(cs);
+        });
+        if (customLongs.length > 0) {
+          if (!targetTopic.longQuestions) targetTopic.longQuestions = [];
+          customLongs.forEach(cl => {
+            if (!targetTopic.longQuestions.some(l => l.id === cl.id)) targetTopic.longQuestions.push(cl);
+          });
+        }
+      });
+    });
+  }
+
+  // 4. Clean numerical sort of topics
+  baseChapters.forEach(ch => {
+    (ch.topics || []).sort((a, b) => {
+      const parseNum = (str) => {
+        const parts = (str || '').split('.').map(Number);
+        return (parts[0] || 0) * 100 + (parts[1] || 0);
+      };
+      return parseNum(a.topicNumber) - parseNum(b.topicNumber);
+    });
+  });
+
+  return baseChapters;
+}
 
 // Filter out dummy starter sample questions and any topics that have 0 questions
 export function stripDummyQuestions(bank) {
@@ -97,21 +206,7 @@ export const INITIAL_QUESTION_BANK = {
         "id": "cs-11", 
         "name": "Computer Science", 
         "icon": "Monitor", 
-        "chapters": [
-          {
-            "id": "cs-11-ch1",
-            "chapterNumber": 1,
-            "name": "Software Development",
-            "topics": CLASS_11_CHAPTER_1_TOPICS
-          },
-          {
-            "id": "cs-11-ch2",
-            "chapterNumber": 2,
-            "name": "Python Programming",
-            "topics": CLASS_11_CHAPTER_2_TOPICS
-          },
-          ...CLASS_11_UNITS_3_TO_9_CHAPTERS
-        ] 
+        "chapters": buildCleanClass11Chapters()
       },
       { "id": "phy-11", "name": "Physics", "icon": "Atom", "chapters": [] },
       { "id": "chem-11", "name": "Chemistry", "icon": "FlaskConical", "chapters": [] },
@@ -234,340 +329,10 @@ export function mergeChapter1NewTopics(bank) {
         normalizeSubject(sub);
         if (!sub.chapters) sub.chapters = [];
 
-        // Handle 11th Class Computer Science - Chapter 1: Software Development & Chapter 2: Python Programming
+        // Handle 11th Class Computer Science - Canonical 9 Units Architecture
         if (clsKey === '11th') {
-          // Chapter 1: Software Development
-          let ch11 = sub.chapters.find(c => 
-            c.chapterNumber === 1 || 
-            (c.name && c.name.toLowerCase().includes('software')) ||
-            (c.id && c.id.includes('cs-11-ch1'))
-          );
-          if (!ch11) {
-            ch11 = {
-              id: "cs-11-ch1",
-              chapterNumber: 1,
-              name: "Software Development",
-              topics: []
-            };
-            sub.chapters.unshift(ch11);
-            changed = true;
-          }
-          if (ch11) {
-            if (!ch11.topics) ch11.topics = [];
-            ch11.topics = ch11.topics.filter(t => t.topicNumber !== '1.9' && t.topicNumber !== 'Exercise' && !t.id?.includes('topic-exercise'));
-            CLASS_11_CHAPTER_1_TOPICS.forEach(newTopic => {
-              const existingTopic = ch11.topics.find(t => 
-                t.topicNumber?.trim() === newTopic.topicNumber.trim() || 
-                t.name?.toLowerCase().trim() === newTopic.name.toLowerCase().trim() ||
-                t.id === newTopic.id
-              );
-              if (!existingTopic) {
-                ch11.topics.push(JSON.parse(JSON.stringify(newTopic)));
-                changed = true;
-              } else {
-                if (!existingTopic.id || (newTopic.id && existingTopic.id !== newTopic.id)) {
-                  existingTopic.id = newTopic.id;
-                  changed = true;
-                }
-                if (!existingTopic.mcqs) existingTopic.mcqs = [];
-                const existingMcqSet = new Set(existingTopic.mcqs.map(m => m.question?.trim().toLowerCase()));
-                (newTopic.mcqs || []).forEach(m => {
-                  if (!existingMcqSet.has(m.question?.trim().toLowerCase())) {
-                    existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
-                    changed = true;
-                  }
-                });
-
-                if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
-                const existingShortSet = new Set(existingTopic.shortQuestions.map(s => s.question?.trim().toLowerCase()));
-                (newTopic.shortQuestions || []).forEach(s => {
-                  if (!existingShortSet.has(s.question?.trim().toLowerCase())) {
-                    existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
-                    changed = true;
-                  }
-                });
-              }
-            });
-          }
-
-          // Chapter 2: Python Programming
-          let ch11_2 = sub.chapters.find(c => 
-            c.chapterNumber === 2 || 
-            (c.name && c.name.toLowerCase().includes('python')) ||
-            (c.id && c.id.includes('cs-11-ch2'))
-          );
-          if (!ch11_2) {
-            ch11_2 = {
-              id: "cs-11-ch2",
-              chapterNumber: 2,
-              name: "Python Programming",
-              topics: []
-            };
-            const ch1Idx = sub.chapters.indexOf(ch11);
-            if (ch1Idx !== -1) {
-              sub.chapters.splice(ch1Idx + 1, 0, ch11_2);
-            } else {
-              sub.chapters.push(ch11_2);
-            }
-            changed = true;
-          }
-          if (ch11_2) {
-            if (!ch11_2.name || !ch11_2.name.includes("Python")) {
-              ch11_2.name = "Python Programming";
-              ch11_2.chapterNumber = 2;
-              changed = true;
-            }
-            if (!ch11_2.topics) ch11_2.topics = [];
-            ch11_2.topics = ch11_2.topics.filter(t => t.topicNumber !== 'Exercise' && !t.id?.includes('topic-exercise'));
-            CLASS_11_CHAPTER_2_TOPICS.forEach(newTopic => {
-              const existingTopic = ch11_2.topics.find(t => 
-                t.topicNumber?.trim() === newTopic.topicNumber.trim() || 
-                t.name?.toLowerCase().trim() === newTopic.name.toLowerCase().trim() ||
-                t.id === newTopic.id
-              );
-              if (!existingTopic) {
-                ch11_2.topics.push(JSON.parse(JSON.stringify(newTopic)));
-                changed = true;
-              } else {
-                if (!existingTopic.id || (newTopic.id && existingTopic.id !== newTopic.id)) {
-                  existingTopic.id = newTopic.id;
-                  changed = true;
-                }
-                if (!existingTopic.mcqs) existingTopic.mcqs = [];
-                const existingMcqSet = new Set(existingTopic.mcqs.map(m => m.question?.trim().toLowerCase()));
-                (newTopic.mcqs || []).forEach(m => {
-                  if (!existingMcqSet.has(m.question?.trim().toLowerCase())) {
-                    existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
-                    changed = true;
-                  }
-                });
-
-                if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
-                const existingShortSet = new Set(existingTopic.shortQuestions.map(s => s.question?.trim().toLowerCase()));
-                (newTopic.shortQuestions || []).forEach(s => {
-                  if (!existingShortSet.has(s.question?.trim().toLowerCase())) {
-                    existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
-                    changed = true;
-                  }
-                });
-              }
-            });
-          }
-
-          // Units 3 to 9
-          CLASS_11_UNITS_3_TO_9_CHAPTERS.forEach(newChapter => {
-            let existingCh = sub.chapters.find(c =>
-              c.chapterNumber === newChapter.chapterNumber ||
-              c.id === newChapter.id ||
-              (c.name && newChapter.name && c.name.toLowerCase().trim() === newChapter.name.toLowerCase().trim())
-            );
-
-            if (!existingCh) {
-              sub.chapters.push(JSON.parse(JSON.stringify(newChapter)));
-              changed = true;
-            } else {
-              if (existingCh.name !== newChapter.name) {
-                existingCh.name = newChapter.name;
-                changed = true;
-              }
-              if (!existingCh.id) {
-                existingCh.id = newChapter.id;
-                changed = true;
-              }
-              if (!existingCh.topics) existingCh.topics = [];
-
-              // Clean up legacy unstructured placeholder topics if any
-              existingCh.topics = existingCh.topics.filter(t => t.topicNumber !== 'Exercise' && !t.id?.includes('topic-exercise'));
-
-              (newChapter.topics || []).forEach(newTopic => {
-                const existingTopic = existingCh.topics.find(t =>
-                  t.topicNumber?.trim() === newTopic.topicNumber?.trim() ||
-                  t.id === newTopic.id ||
-                  (t.name && newTopic.name && t.name.toLowerCase().trim() === newTopic.name.toLowerCase().trim())
-                );
-
-                if (!existingTopic) {
-                  existingCh.topics.push(JSON.parse(JSON.stringify(newTopic)));
-                  changed = true;
-                } else {
-                  if (!existingTopic.id || existingTopic.id !== newTopic.id) {
-                    existingTopic.id = newTopic.id;
-                    changed = true;
-                  }
-                  if (existingTopic.name !== newTopic.name) {
-                    existingTopic.name = newTopic.name;
-                    changed = true;
-                  }
-                  if (newTopic.isExercise) {
-                    existingTopic.isExercise = true;
-                    existingTopic.category = 'exercise';
-                  } else {
-                    delete existingTopic.isExercise;
-                    delete existingTopic.category;
-                  }
-
-                  if (!existingTopic.mcqs) existingTopic.mcqs = [];
-                  const existingMcqSet = new Set(existingTopic.mcqs.map(m => m.question?.trim().toLowerCase()));
-                  (newTopic.mcqs || []).forEach(m => {
-                    if (!existingMcqSet.has(m.question?.trim().toLowerCase())) {
-                      existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
-                      changed = true;
-                    }
-                  });
-
-                  if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
-                  const existingShortSet = new Set(existingTopic.shortQuestions.map(s => s.question?.trim().toLowerCase()));
-                  (newTopic.shortQuestions || []).forEach(s => {
-                    if (!existingShortSet.has(s.question?.trim().toLowerCase())) {
-                      existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
-                      changed = true;
-                    }
-                  });
-                }
-              });
-            }
-          });
-
-          // Merge Official Exercises for all 9 Units into their corresponding topics (strictly 2-segment topic format)
-          Object.entries(CLASS_11_OFFICIAL_EXERCISES).forEach(([unitKey, unitData]) => {
-            const unitNum = Number(unitKey);
-            const targetCh = sub.chapters.find(c => c.chapterNumber === unitNum || (c.id && c.id.includes(`cs-11-ch${unitNum}`)));
-            if (!targetCh) return;
-
-            if (!targetCh.topics) targetCh.topics = [];
-
-            // Remove legacy unstructured placeholder topics or 3-segment subtopics
-            targetCh.topics = targetCh.topics.filter(t => 
-              t.topicNumber !== 'Exercise' && 
-              t.topicNumber !== '1.9' &&
-              !t.id?.includes('topic-exercise') &&
-              !/^\d+\.\d+\.\d+/.test(t.topicNumber || '')
-            );
-
-            // Filter out old legacy draft questions from earlier iterations
-            targetCh.topics.forEach(t => {
-              if (t.mcqs) {
-                t.mcqs = t.mcqs.filter(m => !/^cs11-ch\d+-(m\d+|tex-m\d+)$/.test(m.id || ''));
-              }
-              if (t.shortQuestions) {
-                t.shortQuestions = t.shortQuestions.filter(s => !/^cs11-ch\d+-(s\d+|tex-s\d+)$/.test(s.id || ''));
-              }
-            });
-
-            // Map of official exercise questions for this unit
-            const officialMcqMap = new Map();
-            (unitData.mcqs || []).forEach(m => {
-              officialMcqMap.set(m.question.trim().toLowerCase(), m);
-            });
-
-            const officialShortMap = new Map();
-            (unitData.shortQuestions || []).forEach(s => {
-              officialShortMap.set(s.question.trim().toLowerCase(), s);
-            });
-
-            // Merge MCQs
-            (unitData.mcqs || []).forEach(m => {
-              const targetTopic = targetCh.topics.find(t => t.topicNumber?.trim() === m.topicNumber?.trim());
-              if (targetTopic) {
-                if (!targetTopic.mcqs) targetTopic.mcqs = [];
-                const normQ = (m.question || '').trim().toLowerCase();
-                const existingIndex = targetTopic.mcqs.findIndex(em => (em.question || '').trim().toLowerCase() === normQ);
-                if (existingIndex !== -1) {
-                  const existing = targetTopic.mcqs[existingIndex];
-                  if (existing.category !== 'exercise' || !existing.isExercise || !existing.answerKey) {
-                    targetTopic.mcqs[existingIndex] = {
-                      ...existing,
-                      ...m,
-                      category: 'exercise',
-                      isExercise: true
-                    };
-                    changed = true;
-                  }
-                } else {
-                  targetTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
-                  changed = true;
-                }
-              }
-            });
-
-            // Strictly set isExercise: true only for official exercise MCQs, topic for others
-            targetCh.topics.forEach(t => {
-              (t.mcqs || []).forEach(m => {
-                const normQ = (m.question || '').trim().toLowerCase();
-                if (officialMcqMap.has(normQ)) {
-                  if (m.category !== 'exercise' || !m.isExercise) {
-                    m.category = 'exercise';
-                    m.isExercise = true;
-                    changed = true;
-                  }
-                } else {
-                  if (m.category === 'exercise' || m.isExercise) {
-                    m.category = 'topic';
-                    m.isExercise = false;
-                    changed = true;
-                  }
-                }
-              });
-            });
-
-            // Merge Short Questions
-            (unitData.shortQuestions || []).forEach(s => {
-              const targetTopic = targetCh.topics.find(t => t.topicNumber?.trim() === s.topicNumber?.trim());
-              if (targetTopic) {
-                if (!targetTopic.shortQuestions) targetTopic.shortQuestions = [];
-                const normQ = (s.question || '').trim().toLowerCase();
-                const existingIndex = targetTopic.shortQuestions.findIndex(es => (es.question || '').trim().toLowerCase() === normQ);
-                if (existingIndex !== -1) {
-                  const existing = targetTopic.shortQuestions[existingIndex];
-                  if (existing.category !== 'exercise' || !existing.isExercise) {
-                    targetTopic.shortQuestions[existingIndex] = {
-                      ...existing,
-                      ...s,
-                      category: 'exercise',
-                      isExercise: true
-                    };
-                    changed = true;
-                  }
-                } else {
-                  targetTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
-                  changed = true;
-                }
-              }
-            });
-
-            // Strictly set isExercise: true only for official exercise Shorts, topic for others
-            targetCh.topics.forEach(t => {
-              (t.shortQuestions || []).forEach(s => {
-                const normQ = (s.question || '').trim().toLowerCase();
-                if (officialShortMap.has(normQ)) {
-                  if (s.category !== 'exercise' || !s.isExercise) {
-                    s.category = 'exercise';
-                    s.isExercise = true;
-                    changed = true;
-                  }
-                } else {
-                  if (s.category === 'exercise' || s.isExercise) {
-                    s.category = 'topic';
-                    s.isExercise = false;
-                    changed = true;
-                  }
-                }
-              });
-            });
-
-            // Ensure topics are cleanly sorted numerically by topicNumber
-            targetCh.topics.sort((a, b) => {
-              const parseNum = (str) => {
-                const parts = (str || '').split('.').map(Number);
-                return (parts[0] || 0) * 100 + (parts[1] || 0);
-              };
-              return parseNum(a.topicNumber) - parseNum(b.topicNumber);
-            });
-          });
-
-          // Keep chapters ordered numerically
-          sub.chapters.sort((a, b) => (a.chapterNumber || 0) - (b.chapterNumber || 0));
-
+          sub.chapters = buildCleanClass11Chapters(sub.chapters);
+          changed = true;
           return;
         }
 

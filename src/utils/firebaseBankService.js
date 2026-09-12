@@ -3,7 +3,7 @@ import {
   query, where, getDocs, deleteDoc 
 } from "firebase/firestore";
 import { db } from "../firebase";
-import { getQuestionBank, saveQuestionBank, stripDummyQuestions } from "./questionBankService";
+import { getQuestionBank, saveQuestionBank, stripDummyQuestions, mergeChapter1NewTopics } from "./questionBankService";
 
 const BANK_DOC_REF = () => doc(db, "question_banks", "main_bank");
 
@@ -155,6 +155,7 @@ export async function fetchBankFromFirebase() {
     const snap = await getDoc(BANK_DOC_REF());
     if (snap.exists() && snap.data()?.data) {
       const cloudBank = stripDummyQuestions(snap.data().data);
+      mergeChapter1NewTopics(cloudBank);
       saveQuestionBank(cloudBank);
       return { success: true, bank: cloudBank };
     }
@@ -173,6 +174,7 @@ export function subscribeToCloudBank(onBankChange) {
     return onSnapshot(BANK_DOC_REF(), (snap) => {
       if (snap.exists() && snap.data()?.data) {
         const cloudBank = stripDummyQuestions(snap.data().data);
+        mergeChapter1NewTopics(cloudBank);
         saveQuestionBank(cloudBank);
         if (onBankChange) {
           onBankChange(cloudBank);
