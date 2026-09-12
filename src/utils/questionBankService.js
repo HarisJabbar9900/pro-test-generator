@@ -13,9 +13,10 @@ import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_CHAPTER_3_TOPICS } from './class11Chapter3Data.js';
 import { CLASS_11_CHAPTER_4_TOPICS } from './class11Chapter4Data.js';
 import { CLASS_11_CHAPTER_5_TOPICS } from './class11Chapter5Data.js';
+import { CLASS_11_CHAPTER_6_TOPICS } from './class11Chapter6Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
 import { CLASS_11_OFFICIAL_EXERCISES } from './class11OfficialExercises.js';
-const STORAGE_KEY = 'papergen_pro_question_bank_v12';
+const STORAGE_KEY = 'papergen_pro_question_bank_v13';
 
 // Canonical builder for 11th Class Computer Science - All 9 Units
 export function buildCleanClass11Chapters(existingChapters = []) {
@@ -50,7 +51,13 @@ export function buildCleanClass11Chapters(existingChapters = []) {
       name: "Data Analytics",
       topics: JSON.parse(JSON.stringify(CLASS_11_CHAPTER_5_TOPICS))
     },
-    ...JSON.parse(JSON.stringify(CLASS_11_UNITS_3_TO_9_CHAPTERS.filter(c => c.chapterNumber > 5)))
+    {
+      id: "cs-11-ch6",
+      chapterNumber: 6,
+      name: "Emerging Technologies",
+      topics: JSON.parse(JSON.stringify(CLASS_11_CHAPTER_6_TOPICS))
+    },
+    ...JSON.parse(JSON.stringify(CLASS_11_UNITS_3_TO_9_CHAPTERS.filter(c => c.chapterNumber > 6)))
   ];
 
   // 1. Reset any stray exercise flags on base topic questions
