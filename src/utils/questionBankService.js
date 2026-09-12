@@ -685,6 +685,11 @@ export function mergeChapter1NewTopics(bank) {
           }
           if (!ch2.topics) ch2.topics = [];
 
+          // Remove old synthetic topic 2.12 if present
+          const preTopicCount = ch2.topics.length;
+          ch2.topics = ch2.topics.filter(t => t.topicNumber !== '2.12');
+          if (ch2.topics.length !== preTopicCount) changed = true;
+
           CHAPTER_2_NEW_TOPICS.forEach(newTopic => {
             const existingTopic = ch2.topics.find(t => 
               t.topicNumber?.trim() === newTopic.topicNumber.trim() || 
@@ -701,20 +706,127 @@ export function mergeChapter1NewTopics(bank) {
               }
 
               if (!existingTopic.mcqs) existingTopic.mcqs = [];
-              const existingMcqSet = new Set(existingTopic.mcqs.map(m => m.question?.trim().toLowerCase()));
               (newTopic.mcqs || []).forEach(m => {
-                if (!existingMcqSet.has(m.question?.trim().toLowerCase())) {
-                  existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                const normQ = (m.question || '').trim().toLowerCase();
+                const existingMcq = existingTopic.mcqs.find(em => (em.question || '').trim().toLowerCase() === normQ);
+                if (existingMcq) {
+                  if (m.category === 'exercise' && (existingMcq.category !== 'exercise' || !existingMcq.isExercise)) {
+                    existingMcq.category = 'exercise';
+                    existingMcq.isExercise = true;
+                    changed = true;
+                  } else if (m.category === 'topic' && (existingMcq.category === 'exercise' || existingMcq.isExercise)) {
+                    existingMcq.category = 'topic';
+                    existingMcq.isExercise = false;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise') {
+                    existingTopic.mcqs.unshift(JSON.parse(JSON.stringify(m)));
+                  } else {
+                    existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                  }
                   changed = true;
                 }
               });
 
               if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
-              const existingShortSet = new Set(existingTopic.shortQuestions.map(s => s.question?.trim().toLowerCase()));
               (newTopic.shortQuestions || []).forEach(s => {
-                if (!existingShortSet.has(s.question?.trim().toLowerCase())) {
-                  existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                const normQ = (s.question || '').trim().toLowerCase();
+                const existingShort = existingTopic.shortQuestions.find(es => (es.question || '').trim().toLowerCase() === normQ);
+                if (existingShort) {
+                  if (s.category === 'exercise' && (existingShort.category !== 'exercise' || !existingShort.isExercise)) {
+                    existingShort.category = 'exercise';
+                    existingShort.isExercise = true;
+                    changed = true;
+                  } else if (s.category === 'topic' && (existingShort.category === 'exercise' || existingShort.isExercise)) {
+                    existingShort.category = 'topic';
+                    existingShort.isExercise = false;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise') {
+                    existingTopic.shortQuestions.unshift(JSON.parse(JSON.stringify(s)));
+                  } else {
+                    existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                  }
                   changed = true;
+                }
+              });
+            }
+          });
+
+          // Strictly enforce that ONLY the 11 official textbook exercise MCQs and 11 Shorts in Chapter 2 are marked as exercise
+          const OFFICIAL_CH2_EX_MCQ_KEYS = new Set([
+            'breaking a large, complex problem into smaller, simpler, and more manageable parts is called:',
+            'what is the main purpose of evaluating an algorithm after arriving at a solution?',
+            'logic in computer science is defined as:',
+            'which of the following is a valid proposition in logic?',
+            'how many rows are required in a truth table for a logical expression containing 3 propositions (n = 3)?',
+            'two logical statements are said to be propositionally equivalent if:',
+            'a logical expression is classified as unsatisfiable when:',
+            'predicate logic is more expressive than propositional logic because it allows us to:',
+            'which symbol represents the universal quantifier, meaning "for all"?',
+            'in a predicate logic representation of a library system, borrows(x, y) represents:',
+            'deriving a specific, guaranteed conclusion from general rules using "if-then" statements is called:'
+          ]);
+
+          const OFFICIAL_CH2_EX_SHORT_KEYS = new Set([
+            'define computational thinking and list its four main techniques/pillars.',
+            'what is an algorithm, and why is evaluating a solution important in problem-solving?',
+            'explain the role of logic in computer reasoning and decision-making systems.',
+            'define a proposition and differentiate between a simple proposition and a compound proposition.',
+            'what is a truth table, and how do you calculate the number of rows needed for n propositions?',
+            'what is propositional equivalence, and how does it help optimize code in programming?',
+            'differentiate between a satisfiable proposition and an unsatisfiable proposition with an example of each.',
+            'define predicate logic and explain how a predicate differs from a variable.',
+            'differentiate between the universal quantifier (∀) and the existential quantifier (∃) with examples.',
+            'how can predicate logic be used to represent real-world relationships in automated systems (e.g., a library system)?',
+            'define logical inference and explain how deductive reasoning works.'
+          ]);
+
+          ch2.topics.forEach(t => {
+            if (Array.isArray(t.mcqs)) {
+              t.mcqs.forEach(m => {
+                const normQ = (m.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH2_EX_MCQ_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (m.category !== 'exercise' || !m.isExercise) {
+                    m.category = 'exercise';
+                    m.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise' || m.isExercise || (typeof m.id === 'string' && m.id.includes('-ex-'))) {
+                    m.category = 'topic';
+                    m.isExercise = false;
+                    if (typeof m.id === 'string' && m.id.includes('-ex-')) {
+                      m.id = m.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+
+            if (Array.isArray(t.shortQuestions)) {
+              t.shortQuestions.forEach(s => {
+                const normQ = (s.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH2_EX_SHORT_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (s.category !== 'exercise' || !s.isExercise) {
+                    s.category = 'exercise';
+                    s.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise' || s.isExercise || (typeof s.id === 'string' && s.id.includes('-ex-'))) {
+                    s.category = 'topic';
+                    s.isExercise = false;
+                    if (typeof s.id === 'string' && s.id.includes('-ex-')) {
+                      s.id = s.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
                 }
               });
             }
@@ -728,7 +840,7 @@ export function mergeChapter1NewTopics(bank) {
             }
           });
 
-          // Sort numerically: 2.1, 2.2, ..., 2.12
+          // Sort numerically: 2.1, 2.2, ..., 2.11
           ch2.topics.sort((a, b) => {
             const aParts = (a.topicNumber || '0').split('.').map(Number);
             const bParts = (b.topicNumber || '0').split('.').map(Number);
