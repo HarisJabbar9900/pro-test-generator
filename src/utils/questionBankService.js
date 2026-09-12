@@ -15,9 +15,10 @@ import { CLASS_11_CHAPTER_4_TOPICS } from './class11Chapter4Data.js';
 import { CLASS_11_CHAPTER_5_TOPICS } from './class11Chapter5Data.js';
 import { CLASS_11_CHAPTER_6_TOPICS } from './class11Chapter6Data.js';
 import { CLASS_11_CHAPTER_7_TOPICS } from './class11Chapter7Data.js';
+import { CLASS_11_CHAPTER_8_TOPICS } from './class11Chapter8Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
 import { CLASS_11_OFFICIAL_EXERCISES } from './class11OfficialExercises.js';
-const STORAGE_KEY = 'papergen_pro_question_bank_v14';
+const STORAGE_KEY = 'papergen_pro_question_bank_v15';
 
 // Canonical builder for 11th Class Computer Science - All 9 Units
 export function buildCleanClass11Chapters(existingChapters = []) {
@@ -64,7 +65,13 @@ export function buildCleanClass11Chapters(existingChapters = []) {
       name: "Legal and Ethical Aspects of Computing System",
       topics: JSON.parse(JSON.stringify(CLASS_11_CHAPTER_7_TOPICS))
     },
-    ...JSON.parse(JSON.stringify(CLASS_11_UNITS_3_TO_9_CHAPTERS.filter(c => c.chapterNumber > 7)))
+    {
+      id: "cs-11-ch8",
+      chapterNumber: 8,
+      name: "Online Research and Digital Literacy",
+      topics: JSON.parse(JSON.stringify(CLASS_11_CHAPTER_8_TOPICS))
+    },
+    ...JSON.parse(JSON.stringify(CLASS_11_UNITS_3_TO_9_CHAPTERS.filter(c => c.chapterNumber > 8)))
   ];
 
   // 1. Reset any stray exercise flags on base topic questions
