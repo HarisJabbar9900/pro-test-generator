@@ -26,6 +26,12 @@ export default defineConfig({
           if (id.includes('node_modules/lucide-react')) {
             return 'vendor-icons';
           }
+          if (id.includes('node_modules/jspdf') || id.includes('node_modules/html2canvas')) {
+            return 'vendor-pdf-gen';
+          }
+          if (id.includes('node_modules/pdfjs-dist') || id.includes('node_modules/tesseract.js') || id.includes('node_modules/mammoth')) {
+            return 'vendor-doc-parsers';
+          }
         }
       }
     }

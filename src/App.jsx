@@ -352,29 +352,17 @@ export default function App() {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showAiBotModal, setShowAiBotModal] = useState(false);
 
-  // Sync Question Bank with Firebase Cloud Firestore
+  // Sync Question Bank with Firebase Cloud Firestore (real-time single subscription)
   useEffect(() => {
-    fetchBankFromFirebase().then(res => {
-      if (res && res.success && res.bank) {
-        const { bank: merged, changed } = mergeChapter1NewTopics(res.bank);
-        setBank(merged);
-        if (changed) {
-          syncBankToFirebase(merged).catch(() => {});
-        }
-      }
-    });
-
+    let isMounted = true;
     const unsubscribe = subscribeToCloudBank((cloudBank) => {
-      if (cloudBank) {
-        const { bank: merged, changed } = mergeChapter1NewTopics(cloudBank);
-        setBank(merged);
-        if (changed) {
-          syncBankToFirebase(merged).catch(() => {});
-        }
-      }
+      if (!isMounted || !cloudBank) return;
+      const { bank: merged } = mergeChapter1NewTopics(cloudBank);
+      setBank(merged);
     });
 
     return () => {
+      isMounted = false;
       if (typeof unsubscribe === 'function') unsubscribe();
     };
   }, []);

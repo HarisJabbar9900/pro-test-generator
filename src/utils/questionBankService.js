@@ -473,16 +473,20 @@ export function mergeChapter1NewTopics(bank) {
                 const normQ = (m.question || '').trim().toLowerCase();
                 const existingIndex = targetTopic.mcqs.findIndex(em => (em.question || '').trim().toLowerCase() === normQ);
                 if (existingIndex !== -1) {
-                  targetTopic.mcqs[existingIndex] = {
-                    ...targetTopic.mcqs[existingIndex],
-                    ...m,
-                    category: 'exercise',
-                    isExercise: true
-                  };
+                  const existing = targetTopic.mcqs[existingIndex];
+                  if (existing.category !== 'exercise' || !existing.isExercise || !existing.answerKey) {
+                    targetTopic.mcqs[existingIndex] = {
+                      ...existing,
+                      ...m,
+                      category: 'exercise',
+                      isExercise: true
+                    };
+                    changed = true;
+                  }
                 } else {
                   targetTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                  changed = true;
                 }
-                changed = true;
               }
             });
 
@@ -491,11 +495,17 @@ export function mergeChapter1NewTopics(bank) {
               (t.mcqs || []).forEach(m => {
                 const normQ = (m.question || '').trim().toLowerCase();
                 if (officialMcqMap.has(normQ)) {
-                  m.category = 'exercise';
-                  m.isExercise = true;
+                  if (m.category !== 'exercise' || !m.isExercise) {
+                    m.category = 'exercise';
+                    m.isExercise = true;
+                    changed = true;
+                  }
                 } else {
-                  m.category = 'topic';
-                  m.isExercise = false;
+                  if (m.category === 'exercise' || m.isExercise) {
+                    m.category = 'topic';
+                    m.isExercise = false;
+                    changed = true;
+                  }
                 }
               });
             });
@@ -508,16 +518,20 @@ export function mergeChapter1NewTopics(bank) {
                 const normQ = (s.question || '').trim().toLowerCase();
                 const existingIndex = targetTopic.shortQuestions.findIndex(es => (es.question || '').trim().toLowerCase() === normQ);
                 if (existingIndex !== -1) {
-                  targetTopic.shortQuestions[existingIndex] = {
-                    ...targetTopic.shortQuestions[existingIndex],
-                    ...s,
-                    category: 'exercise',
-                    isExercise: true
-                  };
+                  const existing = targetTopic.shortQuestions[existingIndex];
+                  if (existing.category !== 'exercise' || !existing.isExercise) {
+                    targetTopic.shortQuestions[existingIndex] = {
+                      ...existing,
+                      ...s,
+                      category: 'exercise',
+                      isExercise: true
+                    };
+                    changed = true;
+                  }
                 } else {
                   targetTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                  changed = true;
                 }
-                changed = true;
               }
             });
 
@@ -526,11 +540,17 @@ export function mergeChapter1NewTopics(bank) {
               (t.shortQuestions || []).forEach(s => {
                 const normQ = (s.question || '').trim().toLowerCase();
                 if (officialShortMap.has(normQ)) {
-                  s.category = 'exercise';
-                  s.isExercise = true;
+                  if (s.category !== 'exercise' || !s.isExercise) {
+                    s.category = 'exercise';
+                    s.isExercise = true;
+                    changed = true;
+                  }
                 } else {
-                  s.category = 'topic';
-                  s.isExercise = false;
+                  if (s.category === 'exercise' || s.isExercise) {
+                    s.category = 'topic';
+                    s.isExercise = false;
+                    changed = true;
+                  }
                 }
               });
             });
@@ -2268,8 +2288,17 @@ export function mergeChapter1NewTopics(bank) {
   return { bank, changed };
 }
 
-// Retrieve bank from localStorage or set initial
-export function getQuestionBank() {
+let _memoryCachedBank = null;
+
+export function clearBankCache() {
+  _memoryCachedBank = null;
+}
+
+// Retrieve bank from memory cache (instantaneous) or localStorage on first load
+export function getQuestionBank(forceReload = false) {
+  if (_memoryCachedBank && !forceReload) {
+    return _memoryCachedBank;
+  }
   try {
     const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
     let parsed;
@@ -2310,21 +2339,26 @@ export function getQuestionBank() {
     // Merge Chapter 1 new topics (1.7 to 1.16)
     const { changed: ch1Changed } = mergeChapter1NewTopics(parsed);
 
+    _memoryCachedBank = parsed;
+
     if (hasMergedUpdates || ch1Changed || !raw) {
       saveQuestionBank(parsed);
     }
 
-    return parsed;
+    return _memoryCachedBank;
   } catch (err) {
     console.error("Failed to load question bank:", err);
     return INITIAL_QUESTION_BANK;
   }
 }
 
-// Save bank to localStorage
+// Save bank to memory cache and localStorage
 export function saveQuestionBank(bank) {
+  _memoryCachedBank = bank;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(bank));
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bank));
+    }
   } catch (err) {
     console.error("Failed to save question bank to localStorage:", err);
   }
