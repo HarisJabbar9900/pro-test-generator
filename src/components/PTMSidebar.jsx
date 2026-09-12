@@ -254,7 +254,11 @@ export default function PTMSidebar({
                 </span>
               ) : item.badge ? (
                 <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                  item.id === 'model_papers'
+                    ? 'bg-rose-500 text-white shadow-xs animate-heartbeat'
+                    : isActive 
+                    ? 'bg-white/20 text-white' 
+                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                 }`}>
                   {item.badge}
                 </span>

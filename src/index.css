@@ -50,5 +50,21 @@
   background: rgba(99, 102, 241, 0.8);
 }
 
+/* Heartbeat Pulse Animation for Highlights / New Badges */
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 6px -1px rgba(244, 63, 94, 0.4);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 4px 14px 2px rgba(244, 63, 94, 0.6);
+  }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
 /* Print CSS MUST be imported after Tailwind to take precedence during window.print() */
 @import "./styles/print.css";

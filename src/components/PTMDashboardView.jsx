@@ -339,22 +339,25 @@ export default function PTMDashboardView({
           </div>
         </div>
 
-        {/* Tool 8: Model Papers (With 'New' Badge) */}
+        {/* Tool 8: Model Papers (With Floating Beating 'New' Badge on Top) */}
         <div 
           onClick={() => handleNav('model_papers')}
           className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-orange-400/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center justify-between gap-3 group relative"
         >
+          {/* Floating Beating NEW Badge On Top */}
+          <div className="absolute -top-2.5 right-4 z-10 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-rose-500 via-rose-600 to-red-600 text-white text-[10px] font-black tracking-wider uppercase shadow-md shadow-rose-500/40 border border-white select-none animate-heartbeat">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+            NEW
+          </div>
+
           <div className="flex items-center gap-3.5 min-w-0">
             <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
               <FileSignature className="w-6 h-6" />
             </div>
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-orange-600 transition-colors">
-                  Model Papers
-                </h3>
-                <span className="px-1.5 py-0.5 bg-rose-500 text-white text-[9px] font-black rounded-full shadow-2xs">New</span>
-              </div>
+              <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-orange-600 transition-colors">
+                Model Papers
+              </h3>
               <p className="text-xs text-slate-500 font-semibold mt-0.5 truncate">Full Book Samples</p>
             </div>
           </div>
