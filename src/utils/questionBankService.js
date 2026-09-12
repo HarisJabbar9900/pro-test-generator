@@ -444,6 +444,27 @@ export function mergeChapter1NewTopics(bank) {
               !/^\d+\.\d+\.\d+/.test(t.topicNumber || '')
             );
 
+            // Filter out old legacy draft questions from earlier iterations
+            targetCh.topics.forEach(t => {
+              if (t.mcqs) {
+                t.mcqs = t.mcqs.filter(m => !/^cs11-ch\d+-(m\d+|tex-m\d+)$/.test(m.id || ''));
+              }
+              if (t.shortQuestions) {
+                t.shortQuestions = t.shortQuestions.filter(s => !/^cs11-ch\d+-(s\d+|tex-s\d+)$/.test(s.id || ''));
+              }
+            });
+
+            // Map of official exercise questions for this unit
+            const officialMcqMap = new Map();
+            (unitData.mcqs || []).forEach(m => {
+              officialMcqMap.set(m.question.trim().toLowerCase(), m);
+            });
+
+            const officialShortMap = new Map();
+            (unitData.shortQuestions || []).forEach(s => {
+              officialShortMap.set(s.question.trim().toLowerCase(), s);
+            });
+
             // Merge MCQs
             (unitData.mcqs || []).forEach(m => {
               const targetTopic = targetCh.topics.find(t => t.topicNumber?.trim() === m.topicNumber?.trim());
@@ -465,6 +486,20 @@ export function mergeChapter1NewTopics(bank) {
               }
             });
 
+            // Strictly set isExercise: true only for official exercise MCQs, topic for others
+            targetCh.topics.forEach(t => {
+              (t.mcqs || []).forEach(m => {
+                const normQ = (m.question || '').trim().toLowerCase();
+                if (officialMcqMap.has(normQ)) {
+                  m.category = 'exercise';
+                  m.isExercise = true;
+                } else {
+                  m.category = 'topic';
+                  m.isExercise = false;
+                }
+              });
+            });
+
             // Merge Short Questions
             (unitData.shortQuestions || []).forEach(s => {
               const targetTopic = targetCh.topics.find(t => t.topicNumber?.trim() === s.topicNumber?.trim());
@@ -484,6 +519,20 @@ export function mergeChapter1NewTopics(bank) {
                 }
                 changed = true;
               }
+            });
+
+            // Strictly set isExercise: true only for official exercise Shorts, topic for others
+            targetCh.topics.forEach(t => {
+              (t.shortQuestions || []).forEach(s => {
+                const normQ = (s.question || '').trim().toLowerCase();
+                if (officialShortMap.has(normQ)) {
+                  s.category = 'exercise';
+                  s.isExercise = true;
+                } else {
+                  s.category = 'topic';
+                  s.isExercise = false;
+                }
+              });
             });
 
             // Ensure topics are cleanly sorted numerically by topicNumber
