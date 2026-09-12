@@ -3,6 +3,7 @@ import { CHAPTER_1_NEW_TOPICS, CHAPTER_1_EXERCISE_LONGS } from './chapter1Topics
 import { CHAPTER_2_NEW_TOPICS } from './chapter2TopicsData.js';
 import { CHAPTER_3_NEW_TOPICS } from './chapter3TopicsData.js';
 import { CHAPTER_4_NEW_TOPICS } from './chapter4TopicsData.js';
+import { CHAPTER_5_NEW_TOPICS } from './chapter5TopicsData.js';
 import { CLASS_11_CHAPTER_1_TOPICS } from './class11Chapter1Data.js';
 import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
@@ -135,6 +136,24 @@ export const INITIAL_QUESTION_BANK = {
             "chapterNumber": 2,
             "name": "Computational Thinking & Algorithms",
             "topics": CHAPTER_2_NEW_TOPICS
+          },
+          {
+            "id": "cs-12-ch3",
+            "chapterNumber": 3,
+            "name": "Object Oriented Programming Using Python",
+            "topics": CHAPTER_3_NEW_TOPICS
+          },
+          {
+            "id": "cs-12-ch4",
+            "chapterNumber": 4,
+            "name": "Applications of Python",
+            "topics": CHAPTER_4_NEW_TOPICS
+          },
+          {
+            "id": "cs-12-ch5",
+            "chapterNumber": 5,
+            "name": "Code Testing and Debugging",
+            "topics": CHAPTER_5_NEW_TOPICS
           }
         ] 
       },
@@ -1180,6 +1199,180 @@ export function mergeChapter1NewTopics(bank) {
             const bParts = (b.topicNumber || '0').split('.').map(Number);
             if (aParts[0] !== bParts[0]) return aParts[0] - bParts[0];
             return (aParts[1] || 0) - (bParts[1] || 0);
+          });
+        }
+
+        // =====================================================================
+        // CHAPTER 5: CODE TESTING AND DEBUGGING
+        // =====================================================================
+        let ch5 = sub.chapters.find(c => 
+          c.chapterNumber === 5 || 
+          (c.name && c.name.toLowerCase().includes('code testing')) ||
+          (c.name && c.name.toLowerCase().includes('testing and debugging')) ||
+          (c.name && c.name.toLowerCase().includes('chap#5'))
+        );
+
+        if (!ch5 && clsKey === '12th') {
+          ch5 = {
+            id: `${sub.id}-ch5`,
+            chapterNumber: 5,
+            name: "Code Testing and Debugging",
+            topics: []
+          };
+          sub.chapters.push(ch5);
+          changed = true;
+        }
+
+        if (ch5 && clsKey === '12th') {
+          if (!ch5.name || !ch5.name.includes("Code Testing")) {
+            ch5.name = "Code Testing and Debugging";
+            ch5.chapterNumber = 5;
+            changed = true;
+          }
+          if (!ch5.topics) ch5.topics = [];
+
+          CHAPTER_5_NEW_TOPICS.forEach(newTopic => {
+            const existingTopic = ch5.topics.find(t => 
+              t.topicNumber?.trim() === newTopic.topicNumber.trim() || 
+              t.name?.toLowerCase().trim() === newTopic.name.toLowerCase().trim()
+            );
+
+            if (!existingTopic) {
+              ch5.topics.push(JSON.parse(JSON.stringify(newTopic)));
+              changed = true;
+            } else {
+              if (!existingTopic.id || (newTopic.id && existingTopic.id !== newTopic.id)) {
+                existingTopic.id = newTopic.id;
+                changed = true;
+              }
+
+              if (!existingTopic.mcqs) existingTopic.mcqs = [];
+              (newTopic.mcqs || []).forEach(m => {
+                const normQ = (m.question || '').trim().toLowerCase();
+                const existingMcq = existingTopic.mcqs.find(em => (em.question || '').trim().toLowerCase() === normQ);
+                if (existingMcq) {
+                  if (m.category === 'exercise' && (existingMcq.category !== 'exercise' || !existingMcq.isExercise)) {
+                    existingMcq.category = 'exercise';
+                    existingMcq.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise') {
+                    existingTopic.mcqs.unshift(JSON.parse(JSON.stringify(m)));
+                  } else {
+                    existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                  }
+                  changed = true;
+                }
+              });
+
+              if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
+              (newTopic.shortQuestions || []).forEach(s => {
+                const normQ = (s.question || '').trim().toLowerCase();
+                const existingShort = existingTopic.shortQuestions.find(es => (es.question || '').trim().toLowerCase() === normQ);
+                if (existingShort) {
+                  if (s.category === 'exercise' && (existingShort.category !== 'exercise' || !existingShort.isExercise)) {
+                    existingShort.category = 'exercise';
+                    existingShort.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise') {
+                    existingTopic.shortQuestions.unshift(JSON.parse(JSON.stringify(s)));
+                  } else {
+                    existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                  }
+                  changed = true;
+                }
+              });
+            }
+          });
+
+          // Strictly enforce that ONLY the 10 official textbook exercise MCQs and 10 Shorts in Chapter 5 are marked as exercise
+          const OFFICIAL_CH5_EX_MCQ_KEYS = new Set([
+            'testing is essential for reliable applications because it helps to:',
+            'common types of programming errors include:',
+            'unit testing focuses on:',
+            'the python module used for unit testing is:',
+            'the main purpose of using testing tools like unittest and pytest is:',
+            'breakpoints in debugging are used to:',
+            'watch expressions in debugging are used to:',
+            'step-by-step debugging is used to:',
+            'the python keyword pair used for exception handling is:',
+            'profiling in programming is used to:'
+          ]);
+
+          const OFFICIAL_CH5_EX_SHORT_KEYS = new Set([
+            'why is testing essential for ensuring reliable applications?',
+            'what are some common types of programming errors and bugs?',
+            'what is unit testing, and why is it important in programming?',
+            "how do python's unittest and pytest modules help in unit testing?",
+            'what is the purpose of writing and executing test cases?',
+            'how do you set breakpoints in ides like pycharm or vs code?',
+            'what is the role of monitoring variable values with watch expressions during debugging?',
+            'what is the step-by-step debugging process in ides?',
+            'how does exception handling help in managing multiple exception types effectively?',
+            'what tools can be used for profiling and measuring performance in python?'
+          ]);
+
+          ch5.topics.forEach(t => {
+            if (Array.isArray(t.mcqs)) {
+              t.mcqs.forEach(m => {
+                const normQ = (m.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH5_EX_MCQ_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (m.category !== 'exercise' || !m.isExercise) {
+                    m.category = 'exercise';
+                    m.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise' || m.isExercise || (typeof m.id === 'string' && m.id.includes('-ex-'))) {
+                    m.category = 'topic';
+                    m.isExercise = false;
+                    if (typeof m.id === 'string' && m.id.includes('-ex-')) {
+                      m.id = m.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+
+            if (Array.isArray(t.shortQuestions)) {
+              t.shortQuestions.forEach(s => {
+                const normQ = (s.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH5_EX_SHORT_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (s.category !== 'exercise' || !s.isExercise) {
+                    s.category = 'exercise';
+                    s.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise' || s.isExercise || (typeof s.id === 'string' && s.id.includes('-ex-'))) {
+                    s.category = 'topic';
+                    s.isExercise = false;
+                    if (typeof s.id === 'string' && s.id.includes('-ex-')) {
+                      s.id = s.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+          });
+
+          // Sort numerically: 5.2.1, 5.2.2, 5.2.3, 5.2.4, 5.3
+          ch5.topics.sort((a, b) => {
+            const aParts = (a.topicNumber || '0').split('.').map(Number);
+            const bParts = (b.topicNumber || '0').split('.').map(Number);
+            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+              const av = aParts[i] || 0;
+              const bv = bParts[i] || 0;
+              if (av !== bv) return av - bv;
+            }
+            return 0;
           });
         }
 
