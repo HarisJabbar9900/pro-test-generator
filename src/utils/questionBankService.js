@@ -44,17 +44,8 @@ export function stripDummyQuestions(bank) {
                 top.longQuestions = [];
               }
             });
-
-            // Filter out empty dummy topics (only keep topics that have questions)
-            ch.topics = ch.topics.filter(top => {
-              const totalQ = (top.mcqs?.length || 0) + (top.shortQuestions?.length || 0) + (top.longQuestions?.length || 0);
-              return totalQ > 0;
-            });
           }
         });
-
-        // Filter out chapters that have no topics
-        sub.chapters = sub.chapters.filter(ch => (ch.topics || []).length > 0);
       }
     });
   });
@@ -848,6 +839,35 @@ export function mergeChapter1NewTopics(bank) {
           });
         }
 
+        // =====================================================================
+        // CHAPTER 3: OBJECT ORIENTED PROGRAMMING USING PYTHON
+        // =====================================================================
+        let ch3 = sub.chapters.find(c => 
+          c.chapterNumber === 3 || 
+          (c.name && c.name.toLowerCase().includes('object oriented')) ||
+          (c.name && c.name.toLowerCase().includes('oop'))
+        );
+
+        if (!ch3 && clsKey === '12th') {
+          ch3 = {
+            id: `${sub.id}-ch3`,
+            chapterNumber: 3,
+            name: "Object Oriented Programming Using Python",
+            topics: []
+          };
+          sub.chapters.push(ch3);
+          changed = true;
+        }
+
+        if (ch3 && clsKey === '12th') {
+          if (!ch3.name || !ch3.name.includes("Object Oriented")) {
+            ch3.name = "Object Oriented Programming Using Python";
+            ch3.chapterNumber = 3;
+            changed = true;
+          }
+          if (!ch3.topics) ch3.topics = [];
+        }
+
         // Keep chapters sorted by chapterNumber
         sub.chapters.sort((a, b) => (a.chapterNumber || 0) - (b.chapterNumber || 0));
       }
@@ -987,6 +1007,7 @@ export function addChapterToSubject(classId, subjectId, chapterNumber, chapterNa
   };
 
   subject.chapters.push(newChapter);
+  subject.chapters.sort((a, b) => (a.chapterNumber || 0) - (b.chapterNumber || 0));
   saveQuestionBank(bank);
   return bank;
 }

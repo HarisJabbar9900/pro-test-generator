@@ -134,7 +134,8 @@ export default function UploadMaterialSection({
     if (updated) {
       onBankUpdated(updated);
       syncBankToFirebase(updated).catch(e => console.warn(e));
-      const newlyAddedCh = updated[selectedClass]?.subjects?.find(s => s.id === currentSubject.id)?.chapters?.slice(-1)[0];
+      const subChapters = updated[selectedClass]?.subjects?.find(s => s.id === currentSubject.id)?.chapters || [];
+      const newlyAddedCh = subChapters.find(c => c.chapterNumber === chNum || c.name.toLowerCase().trim() === newChapterName.trim().toLowerCase()) || subChapters[subChapters.length - 1];
       if (newlyAddedCh) {
         setSelectedChapterId(newlyAddedCh.id);
         setTopicNumber(`${newlyAddedCh.chapterNumber}.1`);
