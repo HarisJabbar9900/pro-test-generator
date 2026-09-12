@@ -321,7 +321,7 @@ export default function AdminQuestionBankManagerView({
     return groups;
   }, [localBank, selectedClass, selectedSubjectId, selectedChapterId, selectedTopicId, activeTypeFilter, searchQuery]);
 
-  // Compute total counts
+  // Compute total counts of filtered items
   const totalFilteredCounts = useMemo(() => {
     let m = 0, s = 0, l = 0;
     filteredQuestionGroups.forEach(g => {
@@ -331,6 +331,85 @@ export default function AdminQuestionBankManagerView({
     });
     return { mcqs: m, shorts: s, longs: l, total: m + s + l };
   }, [filteredQuestionGroups]);
+
+  // Compute overall counts for current selected scope (Class, Subject, Chapter, Topic, Search)
+  // before activeTypeFilter is applied, so button counts and stats remain 100% STABLE
+  const scopeCounts = useMemo(() => {
+    let mcqs = 0;
+    let shorts = 0;
+    let longs = 0;
+    let exercise = 0;
+    let exerciseMcqs = 0;
+    let exerciseShorts = 0;
+    let exerciseLongs = 0;
+
+    const qLower = searchQuery.toLowerCase().trim();
+    const targetClasses = selectedClass === 'ALL' ? Object.keys(localBank) : [selectedClass];
+
+    targetClasses.forEach(clsKey => {
+      const cls = localBank[clsKey];
+      if (!cls || !Array.isArray(cls.subjects)) return;
+
+      cls.subjects.forEach(sub => {
+        if (selectedSubjectId !== 'ALL' && sub.id !== selectedSubjectId) return;
+
+        (sub.chapters || []).forEach(ch => {
+          if (selectedChapterId !== 'ALL' && ch.id !== selectedChapterId) return;
+
+          (ch.topics || []).forEach(top => {
+            if (selectedTopicId !== 'ALL' && top.id !== selectedTopicId) return;
+
+            // MCQs
+            (top.mcqs || []).forEach(q => {
+              if (qLower) {
+                const inQ = (q.question || '').toLowerCase().includes(qLower);
+                const inOpts = (q.options || []).some(opt => opt.toLowerCase().includes(qLower));
+                const inAns = (q.answerKey || '').toLowerCase().includes(qLower);
+                if (!inQ && !inOpts && !inAns) return;
+              }
+              mcqs++;
+              if (isExerciseQuestion(q, top)) {
+                exercise++;
+                exerciseMcqs++;
+              }
+            });
+
+            // Shorts
+            (top.shortQuestions || []).forEach(q => {
+              if (qLower && !(q.question || '').toLowerCase().includes(qLower)) return;
+              shorts++;
+              if (isExerciseQuestion(q, top)) {
+                exercise++;
+                exerciseShorts++;
+              }
+            });
+
+            // Longs
+            (top.longQuestions || []).forEach(q => {
+              if (qLower && !(q.question || '').toLowerCase().includes(qLower)) return;
+              longs++;
+              if (isExerciseQuestion(q, top)) {
+                exercise++;
+                exerciseLongs++;
+              }
+            });
+          });
+        });
+      });
+    });
+
+    const total = mcqs + shorts + longs;
+    return {
+      mcqs,
+      shorts,
+      longs,
+      total,
+      exercise,
+      exerciseMcqs,
+      exerciseShorts,
+      exerciseLongs
+    };
+  }, [localBank, selectedClass, selectedSubjectId, selectedChapterId, selectedTopicId, searchQuery]);
 
   return (
     <div className="flex-1 flex flex-col bg-slate-100 min-h-screen">
@@ -513,14 +592,15 @@ export default function AdminQuestionBankManagerView({
           </div>
 
           {/* Filter Pills & Stats Row */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-100">
-            <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 pt-2 border-t border-slate-100">
+            {/* Filter Buttons */}
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               {[
-                { id: 'ALL', label: 'All Questions' },
-                { id: 'mcqs', label: 'MCQs Only' },
-                { id: 'shortQuestions', label: 'Short Qs Only' },
-                { id: 'longQuestions', label: 'Long Qs Only' },
-                { id: 'exercise', label: 'Exercise Questions' }
+                { id: 'ALL', label: 'All Questions', count: scopeCounts.total },
+                { id: 'mcqs', label: 'MCQs Only', count: scopeCounts.mcqs },
+                { id: 'shortQuestions', label: 'Short Qs Only', count: scopeCounts.shorts },
+                { id: 'longQuestions', label: 'Long Qs Only', count: scopeCounts.longs },
+                { id: 'exercise', label: 'Exercise Questions', count: scopeCounts.exercise }
               ].map(f => {
                 const isActive = f.id === 'exercise' ? activeTypeFilter.startsWith('exercise') : activeTypeFilter === f.id;
                 return (
@@ -528,61 +608,80 @@ export default function AdminQuestionBankManagerView({
                     key={f.id}
                     type="button"
                     onClick={() => setActiveTypeFilter(f.id)}
-                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${
+                    className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 select-none ${
                       isActive
                         ? f.id === 'exercise'
-                          ? 'bg-emerald-700 text-white shadow-xs'
-                          : 'bg-slate-800 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          ? 'bg-emerald-700 text-white shadow-xs ring-1 ring-emerald-700'
+                          : 'bg-slate-900 text-white shadow-xs ring-1 ring-slate-900'
+                        : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs hover:border-slate-300'
                     }`}
                   >
-                    {f.label}
+                    <span>{f.label}</span>
+                    <span
+                      className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black ${
+                        isActive
+                          ? f.id === 'exercise'
+                            ? 'bg-emerald-900/60 text-emerald-100'
+                            : 'bg-slate-800 text-cyan-300'
+                          : 'bg-slate-100 text-slate-600'
+                      }`}
+                    >
+                      {f.count}
+                    </span>
                   </button>
                 );
               })}
 
               {/* Sub-filters when Exercise is selected */}
               {activeTypeFilter.startsWith('exercise') && (
-                <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-300/80 px-2 py-0.5 rounded-md text-[11px] animate-fadeIn">
-                  <span className="text-emerald-900 font-black text-[10px] uppercase tracking-wider px-1">
+                <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-300 px-2 py-1 rounded-lg text-xs animate-fadeIn">
+                  <span className="text-emerald-950 font-black text-[10px] uppercase tracking-wider px-1">
                     Exercise:
                   </span>
                   {[
-                    { id: 'exercise', label: 'All' },
-                    { id: 'exercise_mcqs', label: 'MCQs Only' },
-                    { id: 'exercise_shorts', label: 'Shorts Only' },
-                    { id: 'exercise_longs', label: 'Longs Only' }
+                    { id: 'exercise', label: 'All', count: scopeCounts.exercise },
+                    { id: 'exercise_mcqs', label: 'MCQs', count: scopeCounts.exerciseMcqs },
+                    { id: 'exercise_shorts', label: 'Shorts', count: scopeCounts.exerciseShorts },
+                    { id: 'exercise_longs', label: 'Longs', count: scopeCounts.exerciseLongs }
                   ].map(sub => (
                     <button
                       key={sub.id}
                       type="button"
                       onClick={() => setActiveTypeFilter(sub.id)}
-                      className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                      className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 ${
                         activeTypeFilter === sub.id
                           ? 'bg-emerald-700 text-white shadow-xs'
                           : 'bg-white text-emerald-800 hover:bg-emerald-100 border border-emerald-200'
                       }`}
                     >
-                      {sub.label}
+                      <span>{sub.label}</span>
+                      <span className={`text-[10px] font-mono font-black ${
+                        activeTypeFilter === sub.id ? 'text-emerald-200' : 'text-emerald-700'
+                      }`}>
+                        ({sub.count})
+                      </span>
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Counts Badge */}
-            <div className="flex items-center gap-2 font-mono text-xs">
-              <span className="text-cyan-700 font-bold bg-cyan-50 border border-cyan-200 px-2 py-0.5 rounded">
-                {totalFilteredCounts.mcqs} MCQs
+            {/* Stable Overall Counts Badge */}
+            <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs shrink-0 self-start lg:self-center">
+              <span className="text-cyan-800 font-bold bg-cyan-50 border border-cyan-200 px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+                <span>{scopeCounts.mcqs} MCQs</span>
               </span>
-              <span className="text-indigo-700 font-bold bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded">
-                {totalFilteredCounts.shorts} Shorts
+              <span className="text-indigo-800 font-bold bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                <span>{scopeCounts.shorts} Shorts</span>
               </span>
-              <span className="text-purple-700 font-bold bg-purple-50 border border-purple-200 px-2 py-0.5 rounded">
-                {totalFilteredCounts.longs} Longs
+              <span className="text-purple-800 font-bold bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-md flex items-center gap-1.5 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                <span>{scopeCounts.longs} Longs</span>
               </span>
-              <span className="bg-slate-900 text-white font-black px-2.5 py-0.5 rounded shadow-2xs">
-                Total: {totalFilteredCounts.total} Qs
+              <span className="bg-slate-900 text-white font-black px-3 py-1 rounded-md shadow-2xs">
+                Total: {scopeCounts.total} Qs
               </span>
             </div>
           </div>
