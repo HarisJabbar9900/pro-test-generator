@@ -5,8 +5,10 @@ import {
   ArrowRight, X, Sparkles, Landmark, Award, BookOpen,
   Plus, Search, Edit3, Trash2, UserPlus, Mail, Phone, Filter,
   RotateCw, School, Calendar, Activity, CheckCircle,
-  Laptop, LogIn, UserCheck, Timer, KeyRound, Ban, Check, Sliders, Lock
+  Laptop, LogIn, UserCheck, Timer, KeyRound, Ban, Check, Sliders, Lock,
+  FileSignature, Eye, EyeOff, Copy, FileText, CheckSquare
 } from 'lucide-react';
+import { MODEL_PAPERS_CATALOG } from '../utils/modelPapersData';
 import { db } from '../firebase';
 import { collection, getDocs, query, limit, orderBy } from 'firebase/firestore';
 import { notify } from '../utils/notify';
@@ -41,6 +43,59 @@ export default function PTMSecondaryViews({
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [selectedPastPaperBoard, setSelectedPastPaperBoard] = useState(null);
+
+  // Model Papers States
+  const [selectedModelPaperId, setSelectedModelPaperId] = useState(MODEL_PAPERS_CATALOG[0]?.id || 'grade-12-cs-model-paper-2025-26');
+  const [modelPaperTab, setModelPaperTab] = useState('all'); // 'all' | 'objective' | 'subjective'
+  const [showAnswerKeys, setShowAnswerKeys] = useState(false);
+  const [copiedPaperText, setCopiedPaperText] = useState(false);
+  const [selectedClassFilter, setSelectedClassFilter] = useState('12th');
+
+  const handleCopyModelPaper = (paper) => {
+    if (!paper) return;
+    try {
+      let text = `${paper.fullTitle}\n${paper.class} | Session: ${paper.session}\nTotal Marks: ${paper.totalMarks} | Time Allowed: ${paper.totalTime}\n\n`;
+      text += `=====================================\n`;
+      text += `${paper.objective.title}\nTotal Marks: ${paper.objective.marks} | Time Allowed: ${paper.objective.time}\n`;
+      text += `${paper.objective.instructions}\n`;
+      text += `=====================================\n\n`;
+      
+      paper.objective.questions.forEach((q) => {
+        text += `Q${q.qNum}: ${q.question}\n`;
+        text += `(a) ${q.options[0]}   (b) ${q.options[1]}   (c) ${q.options[2]}   (d) ${q.options[3]}\n`;
+        text += `Correct Answer: ${q.answer} ${q.answerKey}\n\n`;
+      });
+
+      text += `=====================================\n`;
+      text += `${paper.subjective.title}\nTotal Marks: ${paper.subjective.marks} | Time Allowed: ${paper.subjective.time}\n`;
+      text += `=====================================\n\n`;
+
+      text += `--- ${paper.subjective.section1.title} ---\n`;
+      paper.subjective.section1.parts.forEach((part) => {
+        text += `\n${part.qNum}: ${part.instruction}\n`;
+        part.questions.forEach((q, idx) => {
+          const roman = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'][idx] || `${idx + 1}`;
+          text += `  ${roman}. ${q}\n`;
+        });
+      });
+
+      text += `\n--- ${paper.subjective.section2.title} ---\n`;
+      text += `${paper.subjective.section2.instruction}\n\n`;
+      paper.subjective.section2.questions.forEach((q) => {
+        text += `${q.qNum}: ${q.question} (${q.marks} Marks)\n`;
+      });
+
+      navigator.clipboard.writeText(text).then(() => {
+        setCopiedPaperText(true);
+        notify.success("Grade 12 Model Paper copied to clipboard!");
+        setTimeout(() => setCopiedPaperText(false), 2500);
+      }).catch(() => {
+        notify.error("Failed to copy paper text");
+      });
+    } catch (e) {
+      notify.error("Error copying paper: " + e.message);
+    }
+  };
 
   // Admin User Management States
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -606,6 +661,444 @@ export default function PTMSecondaryViews({
       iconBg: 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white'
     }
   ];
+
+  // ==========================================
+  // MODEL PAPERS ARCHIVE VIEW (GRADE 12 BOARD SPEC)
+  // ==========================================
+  if (activeNav === 'model_papers') {
+    const selectedPaper = MODEL_PAPERS_CATALOG.find(p => p.id === selectedModelPaperId) || MODEL_PAPERS_CATALOG[0];
+
+    const romanNumerals = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
+
+    return (
+      <div className="p-3 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 font-sans">
+        {/* HEADER & TOP CONTROLS */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center shadow-xs shrink-0">
+              <FileSignature className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                  Official Model Papers
+                </h1>
+                <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 text-xs font-black border border-orange-200 shadow-2xs">
+                  2025 - 2026 Session
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200">
+                  Full Book Syllabus
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                Authentic Punjab & Federal Board examination standard model papers with complete objective & subjective questions.
+              </p>
+            </div>
+          </div>
+
+          {/* QUICK ACTIONS BAR */}
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <button
+              type="button"
+              onClick={() => setShowAnswerKeys(!showAnswerKeys)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+                showAnswerKeys 
+                  ? 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700' 
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              {showAnswerKeys ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              <span>{showAnswerKeys ? 'Hide Answers' : 'Reveal Answers'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleCopyModelPaper(selectedPaper)}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            >
+              {copiedPaperText ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-slate-500" />}
+              <span>{copiedPaperText ? 'Copied!' : 'Copy Paper'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white hover:bg-slate-800 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+            >
+              <Printer className="w-4 h-4" />
+              <span>Print Paper</span>
+            </button>
+          </div>
+        </div>
+
+        {/* CLASS SELECTION TABS */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          {[
+            { key: '12th', label: '12th Class (Inter Part-II)', available: true, count: '1 Model Paper' },
+            { key: '11th', label: '11th Class (Inter Part-I)', available: false, count: 'Coming Soon' },
+            { key: '10th', label: '10th Class (Matric Part-II)', available: false, count: 'Coming Soon' },
+            { key: '9th', label: '9th Class (Matric Part-I)', available: false, count: 'Coming Soon' }
+          ].map((cls) => (
+            <button
+              key={cls.key}
+              type="button"
+              onClick={() => {
+                if (cls.available) setSelectedClassFilter(cls.key);
+                else notify.info(`${cls.label} model papers are being compiled according to the 2026 syllabus.`);
+              }}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer shadow-2xs ${
+                selectedClassFilter === cls.key
+                  ? 'bg-orange-600 text-white shadow-md'
+                  : cls.available
+                  ? 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
+                  : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed opacity-75'
+              }`}
+            >
+              <span>{cls.label}</span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                selectedClassFilter === cls.key 
+                  ? 'bg-white/20 text-white' 
+                  : cls.available 
+                  ? 'bg-orange-100 text-orange-700' 
+                  : 'bg-slate-200 text-slate-500'
+              }`}>
+                {cls.count}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* PAPER HERO BANNER */}
+        <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden border border-slate-800">
+          <div className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute -left-10 -top-10 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-3 py-1 bg-orange-500 text-white text-[11px] font-black rounded-full uppercase tracking-wider shadow-sm">
+                  {selectedPaper.badge}
+                </span>
+                <span className="px-3 py-1 bg-white/10 text-white/90 text-[11px] font-bold rounded-full border border-white/20">
+                  {selectedPaper.board}
+                </span>
+                <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-[11px] font-bold rounded-full border border-emerald-500/30">
+                  Session {selectedPaper.session}
+                </span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                {selectedPaper.subject}
+              </h2>
+              <p className="text-indigo-200 text-sm font-medium max-w-2xl">
+                {selectedPaper.class} — {selectedPaper.description}
+              </p>
+            </div>
+
+            {/* MARKS & DURATION STATS */}
+            <div className="flex items-center gap-3 shrink-0 flex-wrap">
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3.5 text-center min-w-[100px]">
+                <div className="text-2xl font-black text-orange-400">{selectedPaper.totalMarks}</div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Total Marks</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3.5 text-center min-w-[100px]">
+                <div className="text-xl font-black text-white">{selectedPaper.objectiveMarks}</div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Part 1 (MCQs)</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3.5 text-center min-w-[100px]">
+                <div className="text-xl font-black text-white">{selectedPaper.subjectiveMarks}</div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Part 2 (Subj)</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3.5 text-center min-w-[110px]">
+                <div className="text-sm font-black text-emerald-400">2h 30m</div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Total Time</div>
+              </div>
+            </div>
+          </div>
+
+          {/* VIEW TAB SWITCHER */}
+          <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-1.5 bg-black/30 p-1.5 rounded-xl border border-white/10">
+              <button
+                type="button"
+                onClick={() => setModelPaperTab('all')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  modelPaperTab === 'all' 
+                    ? 'bg-orange-500 text-white shadow-sm' 
+                    : 'text-white/80 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                Complete Paper (All 75 Marks)
+              </button>
+              <button
+                type="button"
+                onClick={() => setModelPaperTab('objective')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  modelPaperTab === 'objective' 
+                    ? 'bg-orange-500 text-white shadow-sm' 
+                    : 'text-white/80 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                Part 1: Objective (15 MCQs)
+              </button>
+              <button
+                type="button"
+                onClick={() => setModelPaperTab('subjective')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  modelPaperTab === 'subjective' 
+                    ? 'bg-orange-500 text-white shadow-sm' 
+                    : 'text-white/80 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                Part 2: Subjective (60 Marks)
+              </button>
+            </div>
+
+            <div className="text-xs text-indigo-200 font-semibold flex items-center gap-1.5">
+              <span>Section:</span>
+              <strong className="text-white">
+                {modelPaperTab === 'all' ? 'Objective + Subjective' : modelPaperTab === 'objective' ? '15 MCQs Only' : 'Shorts & Longs Only'}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        {/* PRINTABLE PAPER CONTAINER */}
+        <div className="space-y-6">
+
+          {/* ========================================================= */}
+          {/* PART 1: OBJECTIVE (15 MARKS)                              */}
+          {/* ========================================================= */}
+          {(modelPaperTab === 'all' || modelPaperTab === 'objective') && (
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              {/* Objective Header */}
+              <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-transparent p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
+                    <h3 className="text-base font-black text-slate-900 tracking-tight">
+                      {selectedPaper.objective.title} — MULTIPLE CHOICE QUESTIONS
+                    </h3>
+                  </div>
+                  <p className="text-xs text-slate-600 font-medium mt-1">
+                    {selectedPaper.objective.instructions}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                  <span className="px-3 py-1 bg-amber-100 text-amber-900 font-black text-xs rounded-xl border border-amber-200">
+                    Marks: {selectedPaper.objective.marks}
+                  </span>
+                  <span className="px-3 py-1 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200">
+                    Time: {selectedPaper.objective.time}
+                  </span>
+                </div>
+              </div>
+
+              {/* MCQs Grid */}
+              <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                {selectedPaper.objective.questions.map((q) => {
+                  const optionLetters = ['(a)', '(b)', '(c)', '(d)'];
+
+                  return (
+                    <div 
+                      key={q.qNum}
+                      className="p-4 rounded-xl border border-slate-200/90 bg-slate-50/50 hover:bg-white hover:border-orange-300 transition-all space-y-3 shadow-2xs group flex flex-col justify-between"
+                    >
+                      <div>
+                        {/* Question Statement */}
+                        <div className="flex items-start gap-2.5">
+                          <span className="w-6 h-6 rounded-lg bg-orange-100 text-orange-700 font-black text-xs flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                            {q.qNum}
+                          </span>
+                          <h4 className="text-sm font-bold text-slate-800 leading-snug">
+                            {q.question}
+                          </h4>
+                        </div>
+
+                        {/* Options */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3 pl-8">
+                          {q.options.map((opt, optIdx) => {
+                            const isCorrect = showAnswerKeys && optIdx === q.correctIndex;
+
+                            return (
+                              <div
+                                key={optIdx}
+                                className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                                  isCorrect
+                                    ? 'bg-emerald-100 border-emerald-400 text-emerald-900 font-bold shadow-2xs'
+                                    : 'bg-white border-slate-200 text-slate-700'
+                                }`}
+                              >
+                                <span className={`text-[11px] font-bold ${isCorrect ? 'text-emerald-700' : 'text-slate-400'}`}>
+                                  {optionLetters[optIdx]}
+                                </span>
+                                <span className="truncate">{opt}</span>
+                                {isCorrect && <Check className="w-3.5 h-3.5 text-emerald-600 ml-auto shrink-0" />}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Answer Key Footer */}
+                      {showAnswerKeys && (
+                        <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] pl-8">
+                          <span className="text-emerald-700 font-bold flex items-center gap-1">
+                            <Check className="w-3.5 h-3.5" /> Correct: <strong>{q.answer} {q.answerKey}</strong>
+                          </span>
+                          <span className="text-slate-400 font-mono text-[10px]">1 Mark</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================= */}
+          {/* PART 2: SUBJECTIVE (60 MARKS)                             */}
+          {/* ========================================================= */}
+          {(modelPaperTab === 'all' || modelPaperTab === 'subjective') && (
+            <div className="space-y-6">
+              
+              {/* SECTION I: SHORT QUESTIONS */}
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                {/* Subjective Section I Header */}
+                <div className="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-transparent p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                      <h3 className="text-base font-black text-slate-900 tracking-tight">
+                        {selectedPaper.subjective.title} — {selectedPaper.subjective.section1.title}
+                      </h3>
+                    </div>
+                    <p className="text-xs text-slate-600 font-medium mt-1">
+                      {selectedPaper.subjective.section1.totalMarks} Marks total across Q #2, Q #3, and Q #4 (Attempt any 6 from each)
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                    <span className="px-3 py-1 bg-blue-100 text-blue-900 font-black text-xs rounded-xl border border-blue-200">
+                      Total: {selectedPaper.subjective.section1.totalMarks} Marks
+                    </span>
+                    <span className="px-3 py-1 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200">
+                      Time: {selectedPaper.subjective.time}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Question Sets (Q2, Q3, Q4) */}
+                <div className="p-5 sm:p-6 space-y-6">
+                  {selectedPaper.subjective.section1.parts.map((part) => (
+                    <div key={part.qNum} className="border border-slate-200 rounded-2xl p-4 sm:p-5 bg-slate-50/40 space-y-3.5">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2.5 py-1 bg-blue-600 text-white font-black text-xs rounded-lg shadow-2xs">
+                            {part.qNum}
+                          </span>
+                          <h4 className="text-sm font-black text-slate-800">
+                            {part.instruction}
+                          </h4>
+                        </div>
+                        <span className="px-2.5 py-0.5 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg shrink-0 self-start sm:self-auto">
+                          Attempt {part.required} of {part.questions.length} • {part.totalMarks} Marks
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1">
+                        {part.questions.map((qText, qIdx) => (
+                          <div 
+                            key={qIdx}
+                            className="p-3 bg-white rounded-xl border border-slate-200/80 hover:border-blue-300 transition-all flex items-start gap-2.5 shadow-2xs group"
+                          >
+                            <span className="w-5 h-5 rounded-md bg-blue-50 text-blue-700 font-black text-[11px] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                              {romanNumerals[qIdx] || qIdx + 1}
+                            </span>
+                            <p className="text-xs font-semibold text-slate-800 leading-relaxed">
+                              {qText}
+                            </p>
+                            <span className="ml-auto text-[10px] text-slate-400 font-bold shrink-0">
+                              2M
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* SECTION II: LONG / DESCRIPTIVE QUESTIONS */}
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                {/* Subjective Section II Header */}
+                <div className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-transparent p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
+                      <h3 className="text-base font-black text-slate-900 tracking-tight">
+                        {selectedPaper.subjective.section2.title}
+                      </h3>
+                    </div>
+                    <p className="text-xs text-slate-600 font-medium mt-1">
+                      {selectedPaper.subjective.section2.instruction}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                    <span className="px-3 py-1 bg-purple-100 text-purple-900 font-black text-xs rounded-xl border border-purple-200">
+                      Total: {selectedPaper.subjective.section2.totalMarks} Marks
+                    </span>
+                    <span className="px-3 py-1 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl">
+                      Attempt {selectedPaper.subjective.section2.required} of {selectedPaper.subjective.section2.questions.length}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Long Questions List */}
+                <div className="p-5 sm:p-6 space-y-3">
+                  {selectedPaper.subjective.section2.questions.map((lq) => (
+                    <div 
+                      key={lq.qNum}
+                      className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-purple-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs group"
+                    >
+                      <div className="flex items-start gap-3">
+                        <span className="px-2.5 py-1 rounded-lg bg-purple-100 text-purple-800 font-black text-xs group-hover:bg-purple-600 group-hover:text-white transition-colors shrink-0">
+                          {lq.qNum}
+                        </span>
+                        <p className="text-sm font-bold text-slate-800 leading-snug">
+                          {lq.question}
+                        </p>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-black border border-purple-200 shrink-0 self-start sm:self-auto">
+                        {lq.marks} Marks
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          )}
+
+        </div>
+
+        {/* FOOTER NOTICE */}
+        <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+          <div className="flex items-center gap-2">
+            <CheckSquare className="w-4 h-4 text-orange-600 shrink-0" />
+            <span>Compiled strictly in accordance with Punjab & Federal Curriculum & Textbook Board (PCTB/FBISE) 2025-2026.</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => onGoToGenerate?.()}
+            className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+          >
+            Create Custom Paper From Bank &rarr;
+          </button>
+        </div>
+
+      </div>
+    );
+  }
 
   if (activeNav === 'past_papers') {
     return (

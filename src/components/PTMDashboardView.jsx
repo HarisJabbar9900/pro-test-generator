@@ -341,7 +341,7 @@ export default function PTMDashboardView({
 
         {/* Tool 8: Model Papers (With 'New' Badge) */}
         <div 
-          onClick={() => notify.info("Model Papers: Full Book Samples available")}
+          onClick={() => handleNav('model_papers')}
           className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-orange-400/80 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex items-center justify-between gap-3 group relative"
         >
           <div className="flex items-center gap-3.5 min-w-0">

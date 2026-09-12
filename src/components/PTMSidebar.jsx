@@ -2,7 +2,8 @@ import React from 'react';
 import { 
   Gauge, Send, Save, Newspaper, Users, 
   Files, Clock, Settings, LogOut, CheckCircle2, X,
-  UploadCloud, ShieldCheck, KeyRound, School, Calendar, Sparkles, Lock, Headphones, Database, Bot
+  UploadCloud, ShieldCheck, KeyRound, School, Calendar, Sparkles, Lock, Headphones, Database, Bot,
+  FileSignature
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 import { isSuperAdmin } from '../utils/pricingPlansService';
@@ -38,6 +39,7 @@ export default function PTMSidebar({
       { id: 'upload_material', label: 'Upload Material', icon: UploadCloud, isAdmin: true }
     ] : []),
     { id: 'past_papers', label: 'Past Papers', icon: Newspaper },
+    { id: 'model_papers', label: 'Model Papers', icon: FileSignature, badge: 'New' },
     { id: 'date_sheet_planner', label: 'Date-Sheet Planner', icon: Calendar, badge: 'Planner' },
     { id: 'papers_history', label: 'Papers History', icon: Files },
     { 

@@ -1276,8 +1276,8 @@ export default function App() {
             </div>
           )}
 
-          {/* 5. SECONDARY PTM VIEWS (Saved Papers, Past Papers, Teachers, etc.) */}
-          {['saved_papers', 'past_papers', 'teachers', 'papers_history', 'login_history', 'default_paper_settings'].includes(activeNav) && (
+          {/* 5. SECONDARY PTM VIEWS (Saved Papers, Past Papers, Model Papers, Teachers, etc.) */}
+          {['saved_papers', 'past_papers', 'model_papers', 'teachers', 'papers_history', 'login_history', 'default_paper_settings'].includes(activeNav) && (
             <PTMSecondaryViews
               activeNav={activeNav}
               currentUser={currentUser}
