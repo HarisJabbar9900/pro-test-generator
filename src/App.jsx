@@ -41,7 +41,7 @@ import {
   testFirebaseConnection
 } from './utils/firebaseBankService';
 import { ArrowLeft, CheckCircle2, AlertTriangle, X, Cloud, Bot } from 'lucide-react';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 import { notify } from './utils/notify';
 
 import { db } from './firebase';
@@ -135,6 +135,7 @@ export default function App() {
           localStorage.removeItem('ptm_active_paper_data');
           localStorage.removeItem('ptm_active_paper_step');
         } catch (e) {}
+        try { toast.dismiss(); } catch (e) {}
         setPaperData({ mcqs: [], shortQuestions: [], longQuestions: [] });
         setSelectedTopicIds([]);
         setPaperStep('course');
@@ -146,14 +147,13 @@ export default function App() {
     });
   };
 
-  // Inactivity Auto-Logout: Strict Session Security (15 min for Admin, 10 min for Teachers)
+  // Inactivity Auto-Logout (Exempt for Admin - Unlimited Session)
   useEffect(() => {
-    if (!currentUser) return;
+    // Admin has permanent unlimited active session
+    if (!currentUser || currentUser?.isAdmin) return;
 
     let timeoutId;
-    const INACTIVITY_LIMIT = currentUser?.isAdmin 
-      ? 15 * 60 * 1000  // 15 minutes for Admin
-      : 10 * 60 * 1000; // 10 minutes for Teachers
+    const INACTIVITY_LIMIT = 20 * 60 * 1000; // 20 minutes for Teachers
 
     const performAutoLogout = () => {
       try {
@@ -169,7 +169,7 @@ export default function App() {
       setSavedPapers([]);
       setCurrentUser(null);
       notify.warning("Session Expired (سیشن ختم ہو گیا)", {
-        description: "سیکیورٹی وجوہات کی بنا پر غیر حاضری کی وجہ سے آپ کا سیشن ختم کر دیا گیا ہے۔ برائے مہربانی دوبارہ لاگ ان کریں۔"
+        description: "غیر حاضری کی وجہ سے آپ کا سیشن ختم کر دیا گیا ہے۔ برائے مہربانی دوبارہ لاگ ان کریں۔"
       });
     };
 
@@ -462,6 +462,11 @@ export default function App() {
 
   // Handle Login Success: Guarantees a fresh empty paper for every login
   const handleLoginSuccess = (user, isNewRegistration = false) => {
+    // Dismiss any old stale/queued toasts (e.g. past session expiry or logout notices)
+    try {
+      toast.dismiss();
+    } catch (e) {}
+
     // 1. Fresh empty paper state for every login (new user never sees old paper)
     setPaperData({ mcqs: [], shortQuestions: [], longQuestions: [] });
     setSelectedTopicIds([]);
@@ -980,7 +985,25 @@ export default function App() {
 
   // Require Authentication before opening application
   if (!currentUser) {
-    return <AuthPortal onLoginSuccess={handleLoginSuccess} />;
+    return (
+      <>
+        <Toaster 
+          position="top-right" 
+          richColors 
+          closeButton 
+          theme="light"
+          duration={3500}
+          toastOptions={{
+            style: {
+              borderRadius: '16px',
+              boxShadow: '0 20px 30px -10px rgba(0, 0, 0, 0.15), 0 0 1px 1px rgba(0,0,0,0.05)',
+              fontFamily: 'inherit'
+            }
+          }}
+        />
+        <AuthPortal onLoginSuccess={handleLoginSuccess} />
+      </>
+    );
   }
 
   return (
