@@ -1,6 +1,6 @@
 /**
  * Chapter 5: Code Testing and Debugging (12th Class Computer Science)
- * Official Exercise Questions (MCQs & Short Questions) & Board-Style Topic-Wise MCQs
+ * Official Exercise Questions (MCQs & Short Questions) & Board-Style Topic-Wise MCQs & Shorts
  * Topics: 5.1, 5.2, 5.3
  */
 
@@ -180,6 +180,46 @@ export const CHAPTER_5_NEW_TOPICS = [
         "marks": 2,
         "category": "exercise",
         "isExercise": true
+      },
+      {
+        "id": "ch5-t5.1-s1",
+        "topicNumber": "5.1",
+        "question": "Differentiate between software testing and debugging in application development.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.1-s2",
+        "topicNumber": "5.1",
+        "question": "Compare Syntax Errors and Logic Errors with a simple code example for each.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.1-s3",
+        "topicNumber": "5.1",
+        "question": "What is a Runtime Error? State two common operations in Python that trigger runtime exceptions.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.1-s4",
+        "topicNumber": "5.1",
+        "question": "Define a Resource Leak in software development and explain why it is harmful to system performance.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.1-s5",
+        "topicNumber": "5.1",
+        "question": "What is a Data Error, and how does it affect application execution?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
       }
     ],
     "longQuestions": []
@@ -637,6 +677,118 @@ export const CHAPTER_5_NEW_TOPICS = [
         "marks": 2,
         "category": "exercise",
         "isExercise": true
+      },
+      {
+        "id": "ch5-t5.2-s6",
+        "topicNumber": "5.2",
+        "question": "What is a Test Case, and what two essential pieces of information must it contain?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s7",
+        "topicNumber": "5.2",
+        "question": "Explain how the pytest framework automatically detects and executes test functions in a Python file.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s8",
+        "topicNumber": "5.2",
+        "question": "What is the role of the assert statement in Python unit testing?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s9",
+        "topicNumber": "5.2",
+        "question": "State two key differences between Python's built-in unittest module and the pytest framework.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s10",
+        "topicNumber": "5.2",
+        "question": "Why is automated unit testing essential when updating or expanding an existing codebase?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s11",
+        "topicNumber": "5.2",
+        "question": "Explain how setting a Breakpoint in an IDE (such as PyCharm or VS Code) helps locate bugs in source code.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s12",
+        "topicNumber": "5.2",
+        "question": "What is a Watch Expression, and how does it assist developers during step-by-step execution?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s13",
+        "topicNumber": "5.2",
+        "question": "Differentiate between the Step Into and Step Over debugging commands.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s14",
+        "topicNumber": "5.2",
+        "question": "What occurs when a programmer clicks the Continue button while execution is paused at a breakpoint?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s15",
+        "topicNumber": "5.2",
+        "question": "What is the primary objective of Exception Handling in Python, and what happens if an error is left unhandled?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s16",
+        "topicNumber": "5.2",
+        "question": "Describe the specific functions of the try and except blocks in error management.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s17",
+        "topicNumber": "5.2",
+        "question": "Why is connection.rollback() called inside an except block during database operations?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s18",
+        "topicNumber": "5.2",
+        "question": "What is the purpose of the finally block in Python exception handling?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.2-s19",
+        "topicNumber": "5.2",
+        "question": "How does catching multiple exception types separately improve application stability and user feedback?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
       }
     ],
     "longQuestions": []
@@ -791,6 +943,46 @@ export const CHAPTER_5_NEW_TOPICS = [
         "marks": 2,
         "category": "exercise",
         "isExercise": true
+      },
+      {
+        "id": "ch5-t5.3-s20",
+        "topicNumber": "5.3",
+        "question": "What is Program Profiling, and why should it be performed before optimizing code?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.3-s21",
+        "topicNumber": "5.3",
+        "question": "Define a Performance Bottleneck in software execution and give an example of code that causes it.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.3-s22",
+        "topicNumber": "5.3",
+        "question": "Differentiate between the uses of Python's built-in cProfile and timeit modules.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.3-s23",
+        "topicNumber": "5.3",
+        "question": "How does replacing a manual Python for loop with a built-in function (such as sum()) optimize program performance?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch5-t5.3-s24",
+        "topicNumber": "5.3",
+        "question": "Explain why a nested loop executing 10,000 x 10,000 iterations creates a severe bottleneck in Python.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
       }
     ],
     "longQuestions": []
