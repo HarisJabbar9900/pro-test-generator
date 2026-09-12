@@ -11,6 +11,7 @@ import { CHAPTER_9_NEW_TOPICS } from './chapter9TopicsData.js';
 import { CLASS_11_CHAPTER_1_TOPICS } from './class11Chapter1Data.js';
 import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
+import { CLASS_11_OFFICIAL_EXERCISES } from './class11OfficialExercises.js';
 const STORAGE_KEY = 'papergen_pro_question_bank_v5';
 
 // Filter out dummy starter sample questions and any topics that have 0 questions
@@ -253,6 +254,7 @@ export function mergeChapter1NewTopics(bank) {
           }
           if (ch11) {
             if (!ch11.topics) ch11.topics = [];
+            ch11.topics = ch11.topics.filter(t => t.topicNumber !== '1.9' && t.topicNumber !== 'Exercise' && !t.id?.includes('topic-exercise'));
             CLASS_11_CHAPTER_1_TOPICS.forEach(newTopic => {
               const existingTopic = ch11.topics.find(t => 
                 t.topicNumber?.trim() === newTopic.topicNumber.trim() || 
@@ -316,6 +318,7 @@ export function mergeChapter1NewTopics(bank) {
               changed = true;
             }
             if (!ch11_2.topics) ch11_2.topics = [];
+            ch11_2.topics = ch11_2.topics.filter(t => t.topicNumber !== 'Exercise' && !t.id?.includes('topic-exercise'));
             CLASS_11_CHAPTER_2_TOPICS.forEach(newTopic => {
               const existingTopic = ch11_2.topics.find(t => 
                 t.topicNumber?.trim() === newTopic.topicNumber.trim() || 
@@ -423,6 +426,74 @@ export function mergeChapter1NewTopics(bank) {
                 }
               });
             }
+          });
+
+          // Merge Official Exercises for all 9 Units into their corresponding topics (strictly 2-segment topic format)
+          Object.entries(CLASS_11_OFFICIAL_EXERCISES).forEach(([unitKey, unitData]) => {
+            const unitNum = Number(unitKey);
+            const targetCh = sub.chapters.find(c => c.chapterNumber === unitNum || (c.id && c.id.includes(`cs-11-ch${unitNum}`)));
+            if (!targetCh) return;
+
+            if (!targetCh.topics) targetCh.topics = [];
+
+            // Remove legacy unstructured placeholder topics or 3-segment subtopics
+            targetCh.topics = targetCh.topics.filter(t => 
+              t.topicNumber !== 'Exercise' && 
+              t.topicNumber !== '1.9' &&
+              !t.id?.includes('topic-exercise') &&
+              !/^\d+\.\d+\.\d+/.test(t.topicNumber || '')
+            );
+
+            // Merge MCQs
+            (unitData.mcqs || []).forEach(m => {
+              const targetTopic = targetCh.topics.find(t => t.topicNumber?.trim() === m.topicNumber?.trim());
+              if (targetTopic) {
+                if (!targetTopic.mcqs) targetTopic.mcqs = [];
+                const normQ = (m.question || '').trim().toLowerCase();
+                const existingIndex = targetTopic.mcqs.findIndex(em => (em.question || '').trim().toLowerCase() === normQ);
+                if (existingIndex !== -1) {
+                  targetTopic.mcqs[existingIndex] = {
+                    ...targetTopic.mcqs[existingIndex],
+                    ...m,
+                    category: 'exercise',
+                    isExercise: true
+                  };
+                } else {
+                  targetTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                }
+                changed = true;
+              }
+            });
+
+            // Merge Short Questions
+            (unitData.shortQuestions || []).forEach(s => {
+              const targetTopic = targetCh.topics.find(t => t.topicNumber?.trim() === s.topicNumber?.trim());
+              if (targetTopic) {
+                if (!targetTopic.shortQuestions) targetTopic.shortQuestions = [];
+                const normQ = (s.question || '').trim().toLowerCase();
+                const existingIndex = targetTopic.shortQuestions.findIndex(es => (es.question || '').trim().toLowerCase() === normQ);
+                if (existingIndex !== -1) {
+                  targetTopic.shortQuestions[existingIndex] = {
+                    ...targetTopic.shortQuestions[existingIndex],
+                    ...s,
+                    category: 'exercise',
+                    isExercise: true
+                  };
+                } else {
+                  targetTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                }
+                changed = true;
+              }
+            });
+
+            // Ensure topics are cleanly sorted numerically by topicNumber
+            targetCh.topics.sort((a, b) => {
+              const parseNum = (str) => {
+                const parts = (str || '').split('.').map(Number);
+                return (parts[0] || 0) * 100 + (parts[1] || 0);
+              };
+              return parseNum(a.topicNumber) - parseNum(b.topicNumber);
+            });
           });
 
           // Keep chapters ordered numerically

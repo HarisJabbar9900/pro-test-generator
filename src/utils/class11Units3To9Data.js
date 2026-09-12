@@ -1,7 +1,7 @@
 /**
  * Class 11th Computer Science & Entrepreneurship
  * Units 3 to 9 - Comprehensive Question Bank
- * (Board-Style Topic-Wise MCQs, Topic-Wise Short Questions, Exercise MCQs & Exercise Short Questions)
+ * Strictly mapped to 2-segment topic format (e.g. 3.1, 4.2, 5.3, 6.6, 9.8)
  */
 
 export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
@@ -64,61 +64,51 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
             category: "topic"
           },
           {
-            id: "cs11-ch3-m1",
-            question: "The characteristic of a well-defined problem is:",
+            id: "cs11-ch3-t3.1-m4",
+            question: "A problem that lacks clarity regarding initial requirements, success criteria, or expected output is known as an:",
             options: [
-              "Ambiguous goals and unclear requirements",
-              "Vague processes and inputs",
-              "Clear goals, inputs, processes, and outputs",
-              "Undefined solutions"
+              "Ill-defined problem",
+              "Intractable problem",
+              "Optimized problem",
+              "Algorithmic problem"
             ],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Clear goals, inputs, processes, and outputs",
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Ill-defined problem",
             marks: 1,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         shortQuestions: [
           {
             id: "cs11-ch3-t3.1-sq1",
-            question: "Define a computational problem and state its three core components (Input, Process, Output).",
+            question: "Define a computational problem and state its three fundamental components (Input, Processing, Output).",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.1-sq2",
-            question: "Differentiate between Decision Problems, Search Problems, Optimization Problems, and Counting Problems.",
+            question: "Differentiate between Decision Problems, Search Problems, Counting Problems, and Optimization Problems.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.1-sq3",
-            question: "Differentiate between Well-defined Problems and Ill-defined Problems with an example of each.",
+            question: "Differentiate between Well-defined and Ill-defined problems in computational thinking.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch3-t3.1-s1",
-            question: "Differentiate between well-defined and ill-defined problems within the realm of computational problem-solving.",
+            id: "cs11-ch3-t3.1-sq4",
+            question: "What are Constraints in problem formulation, and why must they be identified early?",
             marks: 2,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           },
           {
-            id: "cs11-ch3-t3.1-s2",
-            question: "Outline the main steps involved in the Generate-and-Test method.",
+            id: "cs11-ch3-t3.1-sq5",
+            question: "Why is problem decomposition essential when solving complex computing tasks?",
             marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch3-t3.1-s3",
-            question: "Compare tractable and intractable problems in the context of computational complexity.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         longQuestions: []
@@ -130,45 +120,45 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch3-t3.2-m1",
-            question: "The problem-solving method that works by repeatedly producing potential solutions and testing each one until a valid solution is found is:",
+            question: "Which problem-solving strategy generates all potential candidate solutions and tests each against a verification predicate?",
             options: [
-              "Divide and Conquer",
-              "Generate-and-Test Method",
+              "Generate-and-Test (Trial and Error)",
               "Dynamic Programming",
-              "Backtracking"
+              "Greedy Heuristics",
+              "Binary Divide and Conquer"
             ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Generate-and-Test Method",
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Generate-and-Test (Trial and Error)",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.2-m2",
-            question: "What is used in the Generate-and-Test method to reduce the number of generated solutions and increase efficiency?",
+            question: "The primary limitation of the Generate-and-Test method for problems with large search spaces is:",
             options: [
-              "Random guesses",
-              "Heuristics or rules",
-              "Hardware timers",
-              "Compiler directives"
+              "Inability to find an optimal solution",
+              "Combinatorial explosion of test states",
+              "Need for recursive data structures",
+              "Requirement of a deterministic compiler"
             ],
             answer: "(b)",
             correctIndex: 1,
-            answerKey: "Heuristics or rules",
+            answerKey: "Combinatorial explosion of test states",
             marks: 1,
             category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch3-t3.2-sq4",
-            question: "Explain the working mechanism of the Generate-and-Test method in algorithmic problem solving.",
+            id: "cs11-ch3-t3.2-sq6",
+            question: "Explain the working principle of the Generate-and-Test algorithmic technique.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch3-t3.2-sq5",
-            question: "How do heuristics or rules help reduce the solution space in the Generate-and-Test approach?",
+            id: "cs11-ch3-t3.2-sq7",
+            question: "State two advantages and two disadvantages of using Generate-and-Test for computational search.",
             marks: 2,
             category: "topic"
           }
@@ -182,130 +172,87 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch3-t3.3-m1",
-            question: "A problem is classified as unsolvable if:",
+            question: "Problems for which no algorithm can ever be designed that will always provide a correct answer for all inputs are:",
             options: [
-              "It takes more than 1 hour to execute",
-              "No algorithm can be created that guarantees a solution for all possible inputs",
-              "It requires more than 1 GB of RAM",
-              "It uses recursive function calls"
+              "Unsolvable / Undecidable Problems",
+              "NP-Complete Problems",
+              "Intractable Problems",
+              "Polynomial-time Problems"
             ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "No algorithm can be created that guarantees a solution for all possible inputs",
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Unsolvable / Undecidable Problems",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.3-m2",
-            question: "Which famous problem proved by Alan Turing serves as a classic example of an unsolvable problem?",
+            question: "A classic example of an undecidable/unsolvable problem in computer science is the:",
             options: [
-              "Traveling Salesman Problem",
-              "Knapsack Problem",
-              "Halting Problem",
-              "Sudoku Puzzle"
+              "Halting Problem (Turing)",
+              "Traveling Salesperson Problem",
+              "Sorting Problem",
+              "Tower of Hanoi"
             ],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Halting Problem",
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Halting Problem (Turing)",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.3-m3",
-            question: "Problems that can be solved in polynomial time O(n^k) are categorized as:",
+            question: "Problems that can theoretically be solved by an algorithm, but require exponential or factorial time (e.g. O(2^n)), making them practically impossible for large n, are:",
             options: [
               "Intractable Problems",
               "Tractable Problems",
               "Unsolvable Problems",
-              "NP-Hard Problems"
+              "Linear Problems"
             ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Tractable Problems",
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Intractable Problems",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.3-m4",
-            question: "Which complexity class includes problems whose solutions can be verified quickly by a computer, even if finding the solution is difficult?",
+            question: "The computational complexity class \"P\" consists of all decision problems that can be solved by a deterministic algorithm in:",
             options: [
-              "Class P",
-              "Class NP",
-              "Class NP-Hard",
-              "Class Intractable"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Class NP",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch3-m2",
-            question: "Complexity class representing problems solvable efficiently by a deterministic algorithm:",
-            options: ["NP", "NP-hard", "NP-complete", "P"],
-            answer: "(d)",
-            correctIndex: 3,
-            answerKey: "P",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch3-m3",
-            question: "The statement that applies to unsolvable problems:",
-            options: [
-              "They can be solved in polynomial time",
-              "They cannot be solved by any algorithm",
-              "They are always in NP class",
-              "They require exponential time to solve"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "They cannot be solved by any algorithm",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch3-m4",
-            question: "The meaning of NP in computational complexity is:",
-            options: [
-              "Non-deterministic Polynomial time",
-              "Negative Polynomial time",
-              "Non-trivial Polynomial time",
-              "Numerical Polynomial time"
+              "Polynomial time O(n^k)",
+              "Exponential time O(k^n)",
+              "Factorial time O(n!)",
+              "Infinite time"
             ],
             answer: "(a)",
             correctIndex: 0,
-            answerKey: "Non-deterministic Polynomial time",
+            answerKey: "Polynomial time O(n^k)",
             marks: 1,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch3-t3.3-sq6",
-            question: "Differentiate between Solvable Problems and Unsolvable Problems.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch3-t3.3-sq7",
-            question: "What is the Halting Problem, and why is it considered a classic example of an unsolvable problem?",
-            marks: 2,
-            category: "topic"
-          },
-          {
             id: "cs11-ch3-t3.3-sq8",
-            question: "Differentiate between Tractable Problems and Intractable Problems based on computational complexity.",
+            question: "Differentiate between Solvable and Unsolvable problems in computer science.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.3-sq9",
-            question: "Compare the complexity classes P, NP, NP-Hard, and NP-Complete.",
+            question: "Briefly explain Turing's Halting Problem and why it is undecidable.",
+            marks: 2,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch3-t3.3-sq10",
+            question: "Compare Tractable and Intractable problems with suitable examples.",
+            marks: 2,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch3-t3.3-sq11",
+            question: "Differentiate between Complexity Class P and Complexity Class NP.",
             marks: 2,
             category: "topic"
           }
@@ -319,100 +266,53 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch3-t3.4-m1",
-            question: "Big O notation is used in algorithm analysis to describe:",
-            options: [
-              "The minimum memory required by a program",
-              "The upper bound of an algorithm's time complexity in the worst-case scenario",
-              "The exact line count of source code",
-              "The network bandwidth speed"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "The upper bound of an algorithm's time complexity in the worst-case scenario",
+            question: "Which asymptotic notation represents the upper bound (worst-case scenario) of an algorithm's running time?",
+            options: ["Big-O (O)", "Big-Omega (Ω)", "Big-Theta (Θ)", "Little-o"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Big-O (O)",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.4-m2",
-            question: "What is the time complexity of an algorithm where the execution time remains unchanged regardless of input size?",
-            options: ["O(n)", "O(n^2)", "O(1)", "O(log n)"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "O(1)",
+            question: "The time complexity of Binary Search on a sorted array of n elements is:",
+            options: ["O(log n)", "O(n)", "O(n log n)", "O(1)"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "O(log n)",
             marks: 1,
             category: "topic"
           },
           {
-            id: "cs11-ch3-m8",
-            question: "Time complexity of Depth-First Search (DFS) in a graph is:",
-            options: ["O(n log n)", "O(V)", "O(V + E)", "O(n)"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "O(V + E)",
+            id: "cs11-ch3-t3.4-m3",
+            question: "If an algorithm's running time doubles each time the input size increases by 1, its time complexity is:",
+            options: ["Exponential O(2^n)", "Quadratic O(n^2)", "Linear O(n)", "Logarithmic O(log n)"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Exponential O(2^n)",
             marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch3-m9",
-            question: "Best description of time complexity:",
-            options: [
-              "Amount of memory an algorithm needs",
-              "Time taken as a function of input size",
-              "Efficiency as input size grows",
-              "Upper bound of space requirements"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Time taken as a function of input size",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch3-m10",
-            question: "An algorithm with a time complexity of O(n log n):",
-            options: ["Bubble Sort", "Binary Search", "Merge Sort", "Insertion Sort"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Binary Search",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch3-t3.4-sq10",
-            question: "Define Big O notation and explain its importance in predicting algorithm performance.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch3-t3.4-sq11",
-            question: "Compare O(1), O(n), O(n^2), and O(log n) runtimes in terms of execution efficiency.",
-            marks: 2,
-            category: "topic"
-          },
-          {
             id: "cs11-ch3-t3.4-sq12",
-            question: "Differentiate between Time Complexity and Space Complexity.",
+            question: "Define Time Complexity and Space Complexity of an algorithm.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch3-t3.4-s1",
-            question: "Explain the importance of breaking down a problem into smaller components in algorithmic thinking.",
+            id: "cs11-ch3-t3.4-sq13",
+            question: "Explain Big-O notation and why constants and lower-order terms are ignored.",
             marks: 2,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           },
           {
-            id: "cs11-ch3-t3.4-s2",
-            question: "Identify the key factors used to evaluate the performance of an algorithm.",
+            id: "cs11-ch3-t3.4-sq14",
+            question: "Differentiate between Worst-case, Best-case, and Average-case time complexities.",
             marks: 2,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         longQuestions: []
@@ -424,104 +324,43 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch3-t3.5-m1",
-            question: "Which algorithm design technique breaks a large problem into smaller subproblems, solves them independently, and combines their results?",
-            options: [
-              "Greedy Algorithm",
-              "Divide and Conquer",
-              "Dynamic Programming",
-              "Backtracking"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
+            question: "The algorithm design paradigm that divides a problem into subproblems, solves them recursively, and combines results is:",
+            options: ["Divide and Conquer", "Greedy Method", "Brute Force", "Backtracking"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Divide and Conquer",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.5-m2",
-            question: "An algorithm technique that makes locally optimal choices at each step with the hope of finding a global optimum is called:",
-            options: [
-              "Dynamic Programming",
-              "Greedy Algorithm",
-              "Backtracking",
-              "Divide and Conquer"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
+            question: "An algorithmic approach that makes the locally optimal choice at each step hoping for a global optimum is called:",
+            options: ["Greedy Algorithm", "Dynamic Programming", "Generate-and-Test", "Exhaustive Search"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Greedy Algorithm",
             marks: 1,
             category: "topic"
-          },
-          {
-            id: "cs11-ch3-t3.5-m3",
-            question: "Dynamic Programming (DP) optimizes problem-solving by:",
-            options: [
-              "Trying all possible combinations randomly",
-              "Storing the results of overlapping subproblems to avoid redundant calculations",
-              "Dropping input values that are negative",
-              "Executing code on multiple servers simultaneously"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Storing the results of overlapping subproblems to avoid redundant calculations",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch3-m6",
-            question: "A scenario where Dynamic Programming proves most useful:",
-            options: [
-              "Problems without overlapping subproblems",
-              "Problems solved by making local choices",
-              "Problems with overlapping subproblems and optimal substructure",
-              "Problems divided into independent subproblems"
-            ],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Problems with overlapping subproblems and optimal substructure",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch3-t3.5-sq13",
-            question: "Explain the working steps of the Divide and Conquer algorithm design technique.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch3-t3.5-sq14",
-            question: "Describe the Greedy Algorithm approach using the Coin Change problem example.",
-            marks: 2,
-            category: "topic"
-          },
-          {
             id: "cs11-ch3-t3.5-sq15",
-            question: "Discuss how Dynamic Programming (DP) optimizes problem solving using overlapping subproblems.",
+            question: "Explain the three phases of the Divide-and-Conquer strategy.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.5-sq16",
-            question: "Define Backtracking and state a practical scenario where it is applied.",
+            question: "How do Greedy Algorithms work? Mention one limitation of this approach.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch3-t3.5-s1",
-            question: "Summarize the key idea behind Greedy Algorithms.",
+            id: "cs11-ch3-t3.5-sq17",
+            question: "Define Dynamic Programming and explain how it differs from Divide and Conquer.",
             marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch3-t3.5-s2",
-            question: "Discuss the advantages of using Dynamic Programming.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         longQuestions: []
@@ -533,98 +372,52 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch3-t3.6-m1",
-            question: "Which sorting algorithm repeatedly compares adjacent elements and swaps them if they are in the wrong order?",
-            options: ["Selection Sort", "Merge Sort", "Bubble Sort", "Quick Sort"],
-            answer: "(c)",
-            correctIndex: 2,
+            question: "Which sorting algorithm repeatedly steps through the list, compares adjacent items, and swaps them if in wrong order?",
+            options: ["Bubble Sort", "Selection Sort", "Insertion Sort", "Quick Sort"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Bubble Sort",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.6-m2",
-            question: "What is the prerequisite condition required before applying Binary Search on a dataset?",
-            options: [
-              "The dataset must be stored in a stack",
-              "The dataset must be sorted",
-              "The dataset size must be an even number",
-              "The elements must be strings"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "The dataset must be sorted",
+            question: "The worst-case time complexity of Bubble Sort on an array of size n is:",
+            options: ["O(n^2)", "O(n log n)", "O(n)", "O(log n)"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "O(n^2)",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.6-m3",
-            question: "Which graph traversal algorithm explores nodes level-by-level using a Queue data structure?",
+            question: "Which graph traversal algorithm uses a Queue data structure to explore nodes level-by-level?",
             options: [
-              "Depth-First Search (DFS)",
               "Breadth-First Search (BFS)",
-              "Selection Search",
-              "Binary Search"
+              "Depth-First Search (DFS)",
+              "Binary Search",
+              "Dijkstra's Algorithm"
             ],
-            answer: "(b)",
-            correctIndex: 1,
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Breadth-First Search (BFS)",
             marks: 1,
             category: "topic"
-          },
-          {
-            id: "cs11-ch3-m5",
-            question: "Search algorithm more efficient for large datasets:",
-            options: ["Bubble Sort", "Merge Sort", "Selection Sort", "Quick Sort"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Merge Sort",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch3-m7",
-            question: "An algorithm that sorts data by stepping through the list and swapping adjacent elements if needed is:",
-            options: ["Selection Sort", "Quick Sort", "Bubble Sort", "Merge Sort"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Bubble Sort",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch3-t3.6-sq17",
-            question: "Explain the step-by-step process of Bubble Sort and state its worst-case time complexity.",
-            marks: 2,
-            category: "topic"
-          },
-          {
             id: "cs11-ch3-t3.6-sq18",
-            question: "Describe how Selection Sort works to arrange elements in ascending order.",
+            question: "Explain the working of Bubble Sort with a short example.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch3-t3.6-sq19",
-            question: "Compare Linear Search and Binary Search in terms of prerequisites and performance.",
+            question: "Compare Breadth-First Search (BFS) and Depth-First Search (DFS).",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch3-t3.6-sq20",
-            question: "Compare Breadth-First Search (BFS) and Depth-First Search (DFS) in graph traversal.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch3-t3.6-s1",
-            question: "Compare the advantages of Breadth-First Search (BFS) with Depth-First Search (DFS) in graph traversal.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -647,84 +440,37 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch4-t4.1-m1",
-            question: "Which property of a Python List allows it to expand or shrink automatically as items are added or removed?",
-            options: [
-              "Fixed Allocation",
-              "Dynamic Size",
-              "Static Memory",
-              "Immutable Length"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Dynamic Size",
+            question: "In Python, lists are classified as data structures that are:",
+            options: ["Mutable and ordered", "Immutable and ordered", "Mutable and unordered", "Immutable and unordered"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Mutable and ordered",
             marks: 1,
             category: "topic"
           },
           {
-            id: "cs11-ch4-m1",
-            question: "A data structure used to store multiple pieces of data in a specific sequence:",
-            options: ["Stack", "List", "Queue", "Tree"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "List",
+            id: "cs11-ch4-t4.1-m2",
+            question: "When two variables reference the exact same list object in memory, this situation is termed:",
+            options: ["Aliasing", "Cloning", "Slicing", "Deep Copying"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Aliasing",
             marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch4-m2",
-            question: "Which property allows a list to change its size dynamically:",
-            options: [
-              "Index-Based Access",
-              "Dynamic Size",
-              "Ordered Collection",
-              "Random Access"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Dynamic Size",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch4-m3",
-            question: "In Python, removing an item from a list is done using:",
-            options: ["delete()", "remove()", "pop()", "clear()"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "remove()",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         shortQuestions: [
           {
             id: "cs11-ch4-t4.1-sq1",
-            question: "Describe the dynamic size and index-based access properties of Python lists.",
+            question: "Define a computational structure and explain the difference between primitive and non-primitive structures.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch4-t4.1-sq2",
-            question: "Differentiate between deleting items by value (remove()) and deleting items by index (pop()) in Python lists.",
+            question: "Explain Aliasing in Python lists and how it differs from Cloning using slice [:] or copy().",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch4-t4.1-s1",
-            question: "Explain how the 'insert()' function works in python lists. Provide an example.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch4-t4.1-s2",
-            question: "Explain the potential issues which could arise when two variables reference the same list in a program? Provide an example.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -736,83 +482,37 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch4-t4.2-m1",
-            question: "A Stack is a linear computational structure that operates on which operational principle?",
-            options: [
-              "First-In, First-Out (FIFO)",
-              "Last-In, First-Out (LIFO)",
-              "Random Access",
-              "Highest-Priority First"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Last-In, First-Out (LIFO)",
+            question: "Which data structure operates strictly on the Last-In, First-Out (LIFO) principle?",
+            options: ["Stack", "Queue", "Tree", "Graph"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Stack",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch4-t4.2-m2",
-            question: "What is the operation called when an item is removed from the top of a stack?",
-            options: ["Push", "Enqueue", "Pop", "Dequeue"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Pop",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch4-m4",
-            question: "LIFO principle stands for:",
-            options: [
-              "Last In First Out",
-              "Linear Input First Output",
-              "List Item File Output",
-              "Load Input Format Output"
-            ],
+            question: "The operation that checks the value at the top of a stack without removing it is:",
+            options: ["Peek / Top", "Pop", "Push", "Enqueue"],
             answer: "(a)",
             correctIndex: 0,
-            answerKey: "Last In First Out",
+            answerKey: "Peek / Top",
             marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch4-m5",
-            question: "A stack operation that adds an element to the top:",
-            options: ["Pop", "Peek", "Push", "Pull"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Push",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         shortQuestions: [
           {
             id: "cs11-ch4-t4.2-sq3",
-            question: "Define a Stack and explain the Last-In, First-Out (LIFO) operational principle.",
+            question: "Define a Stack and explain its Last-In, First-Out (LIFO) principle.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch4-t4.2-sq4",
-            question: "Differentiate between push and pop operations on a stack.",
+            question: "Describe Push, Pop, and Peek operations on a stack with Python examples.",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch4-t4.2-s1",
-            question: "Define a stack and explain the Last-In, First-Out (LIFO) principle.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch4-t4.2-s2",
-            question: "Name two basic operations performed on stack.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -824,73 +524,37 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch4-t4.3-m1",
-            question: "A Queue data structure operates on which principle?",
-            options: [
-              "Last-In, First-Out (LIFO)",
-              "First-In, First-Out (FIFO)",
-              "Bottom-Up Execution",
-              "Hierarchical Access"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "First-In, First-Out (FIFO)",
+            question: "Which data structure operates on the First-In, First-Out (FIFO) principle?",
+            options: ["Queue", "Stack", "Binary Tree", "Graph"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Queue",
             marks: 1,
             category: "topic"
           },
           {
-            id: "cs11-ch4-m6",
-            question: "FIFO principle in queues means:",
-            options: [
-              "First In First Out",
-              "File Input Format Output",
-              "Fast In First Output",
-              "First In Final Output"
-            ],
+            id: "cs11-ch4-t4.3-m2",
+            question: "Removing an element from the front of a queue is called:",
+            options: ["Dequeue", "Enqueue", "Pop", "Peek"],
             answer: "(a)",
             correctIndex: 0,
-            answerKey: "First In First Out",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch4-m7",
-            question: "Queue operation that removes an element from the front:",
-            options: ["Enqueue", "Dequeue", "Peek", "Push"],
-            answer: "(b)",
-            correctIndex: 1,
             answerKey: "Dequeue",
             marks: 1,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         shortQuestions: [
           {
             id: "cs11-ch4-t4.3-sq5",
-            question: "Define a Queue and explain the First-In, First-Out (FIFO) operational principle.",
+            question: "Define a Queue and explain its First-In, First-Out (FIFO) principle.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch4-t4.3-sq6",
-            question: "Differentiate between enqueue and dequeue operations in a queue.",
+            question: "Differentiate between Enqueue and Dequeue operations of a queue.",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch4-t4.3-s1",
-            question: "Differentiate between the Enqueue and Dequeue operations of queue.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch4-t4.3-s2",
-            question: "What is difference between enqueue ( ) and dequeue ( ).",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -902,96 +566,35 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch4-t4.4-m1",
-            question: "In a Tree structure, a node that has no child nodes attached to it is known as a:",
-            options: ["Root Node", "Leaf Node", "Parent Node", "Ancestor Node"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Leaf Node",
+            question: "In a tree data structure, the topmost node that has no parent is called the:",
+            options: ["Root node", "Leaf node", "Child node", "Subtree"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Root node",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch4-t4.4-m2",
-            question: "The number of edges connected to a specific vertex in a Graph structure is called its:",
-            options: ["Height", "Weight", "Degree", "Path"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Degree",
+            question: "A non-linear computational structure consisting of vertices (nodes) connected by edges is a:",
+            options: ["Graph", "Linear Array", "Queue", "Stack"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Graph",
             marks: 1,
             category: "topic"
-          },
-          {
-            id: "cs11-ch4-m8",
-            question: "A tree is a special kind of graph with:",
-            options: [
-              "Multiple root nodes",
-              "Cycles allowed",
-              "Single root node and no cycles",
-              "No connections between nodes"
-            ],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Single root node and no cycles",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch4-m9",
-            question: "Pre-order tree traversal visits nodes in sequence:",
-            options: [
-              "Left, Root, Right",
-              "Root, Left, Right",
-              "Left, Right, Root",
-              "Right, Root, Left"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Root, Left, Right",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch4-m10",
-            question: "Time complexity of searching in a balanced binary search tree:",
-            options: ["O(n)", "O(log n)", "O(n²)", "O(2ⁿ)"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "O(log n)",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         shortQuestions: [
           {
             id: "cs11-ch4-t4.4-sq7",
-            question: "Define a Tree data structure and explain the terms: Root Node, Leaf Node, and Height.",
+            question: "Define a Tree data structure and define Root, Leaf, Height, and Depth.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch4-t4.4-sq8",
-            question: "What is a Balanced Tree, and why is structural balance important?",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch4-t4.4-sq9",
-            question: "Define a Graph data structure and differentiate between Vertices (Nodes) and Edges.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch4-t4.4-sq10",
-            question: "Differentiate between Directed Graphs, Undirected Graphs, and Weighted Graphs.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch4-t4.4-sq11",
-            question: "Compare a Tree and a Graph data structure based on hierarchy and presence of cycles.",
+            question: "Explain Graph representations: Adjacency Matrix vs Adjacency List.",
             marks: 2,
             category: "topic"
           }
@@ -1016,8 +619,8 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch5-t5.1-m1",
-            question: "The measure of central tendency that represents the middle value in an ordered dataset is the:",
-            options: ["Mean", "Median", "Mode", "Variance"],
+            question: "The measure of central tendency that represents the middle value in a sorted dataset is the:",
+            options: ["Mean", "Median", "Mode", "Standard Deviation"],
             answer: "(b)",
             correctIndex: 1,
             answerKey: "Median",
@@ -1027,15 +630,10 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
           {
             id: "cs11-ch5-t5.1-m2",
             question: "How is Standard Deviation calculated in relation to Variance?",
-            options: [
-              "By multiplying Variance by 2",
-              "By taking the square root of Variance",
-              "By dividing Variance by total sample size",
-              "By squaring the Variance value"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "By taking the square root of Variance",
+            options: ["Square root of variance", "Square of variance", "Double the variance", "Variance divided by mean"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Square root of variance",
             marks: 1,
             category: "topic"
           }
@@ -1043,13 +641,13 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         shortQuestions: [
           {
             id: "cs11-ch5-t5.1-sq1",
-            question: "Differentiate between Mean, Median, and Mode as measures of central tendency.",
+            question: "Differentiate between Mean, Median, and Mode with simple examples.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch5-t5.1-sq2",
-            question: "Define Variance and Standard Deviation. How is Standard Deviation mathematically derived from Variance?",
+            question: "Define Variance and Standard Deviation and explain why dispersion measures are important.",
             marks: 2,
             category: "topic"
           }
@@ -1059,14 +657,14 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch5-topic-5.2",
         topicNumber: "5.2",
-        name: "Data Collection and Preparation",
+        name: "Data Collection, Preparation & Experiments",
         mcqs: [
           {
             id: "cs11-ch5-t5.2-m1",
-            question: "The data cleaning technique where a missing value is estimated using existing data (such as assigning the class average) is called:",
-            options: ["Removal", "Flagging", "Imputation", "Interpolation"],
-            answer: "(c)",
-            correctIndex: 2,
+            question: "The data cleaning technique where a missing numerical value is replaced with the mean or median is called:",
+            options: ["Imputation", "Normalization", "Binarization", "Standardization"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Imputation",
             marks: 1,
             category: "topic"
@@ -1075,19 +673,13 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         shortQuestions: [
           {
             id: "cs11-ch5-t5.2-sq3",
-            question: "Compare Surveys, Observations, and Experiments as primary data collection methods.",
+            question: "Compare Surveys, Observations, and Experiments as data collection methodologies.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch5-t5.2-sq4",
-            question: "Explain three main strategies for handling missing data: Imputation, Flagging, and Removal.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch5-t5.2-sq5",
-            question: "Differentiate between Data Cleaning and Data Transformation.",
+            question: "Explain three main strategies for handling missing values during data preparation.",
             marks: 2,
             category: "topic"
           }
@@ -1101,94 +693,53 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch5-t5.3-m1",
-            question: "In the simple linear regression formula Y = \u03b2\u2080 + \u03b2\u2081X + \u03b5, what does \u03b2\u2081 represent?",
-            options: [
-              "The dependent variable",
-              "The y-intercept",
-              "The slope of the line",
-              "The error term"
-            ],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "The slope of the line",
+            question: "In the simple linear regression formula y = mx + c, the symbol m represents the:",
+            options: ["Slope of the regression line", "Y-intercept", "Error term", "Mean of x"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Slope of the regression line",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch5-t5.3-m2",
-            question: "Which statistical modeling technique is specifically used when predicting a categorical binary outcome (such as \"pass\" or \"fail\")?",
-            options: [
-              "Linear Regression",
-              "Logistic Regression",
-              "Time-Series Smoothing",
-              "Boxplot Analysis"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
+            question: "Which statistical modeling technique is most appropriate for predicting binary categorical outcomes (e.g. Yes/No)?",
+            options: ["Logistic Regression", "Linear Regression", "Polynomial Regression", "K-Means Clustering"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Logistic Regression",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch5-t5.3-m3",
-            question: "K-means clustering is an unsupervised learning technique whose main purpose is to:",
-            options: [
-              "Predict future numeric sales figures",
-              "Group similar data points into K distinct clusters based on feature similarity",
-              "Calculate variance of a sample",
-              "Clean missing string entries"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Group similar data points into K distinct clusters based on feature similarity",
+            question: "K-means clustering is an unsupervised learning algorithm designed to partition data into K clusters based on:",
+            options: ["Centroid distance / similarity", "Regression coefficients", "Predefined category labels", "Hypothesis p-values"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Centroid distance / similarity",
             marks: 1,
             category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch5-t5.3-sq6",
+            id: "cs11-ch5-t5.3-sq5",
             question: "State the 5 basic steps involved in developing a statistical model.",
             marks: 2,
             category: "topic"
           },
           {
+            id: "cs11-ch5-t5.3-sq6",
+            question: "Explain the Simple Linear Regression formula y = mx + c and describe slope and intercept.",
+            marks: 2,
+            category: "topic"
+          },
+          {
             id: "cs11-ch5-t5.3-sq7",
-            question: "Explain the Simple Linear Regression formula (Y = \u03b2\u2080 + \u03b2\u2081X + \u03b5) and define each variable.",
+            question: "What is K-Means Clustering, and how does the centroid update mechanism function?",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch5-t5.3-sq8",
-            question: "How does Logistic Regression differ from Linear Regression in terms of predicted output?",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch5-t5.3-sq9",
-            question: "What is K-Means Clustering, and how does it group data points into clusters?",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch5-t5.3-sq10",
-            question: "Discuss two ethical considerations (Fairness/Bias and Data Privacy) when building data models.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch5-t5.3-s1",
-            question: "What is the importance of building statistical models in real-world applications?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch5-t5.3-s2",
-            question: "Name one basic statistical model used for predicting outcomes and explain its purpose.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -1196,29 +747,24 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch5-topic-5.4",
         topicNumber: "5.4",
-        name: "Data Visualization and Tools",
+        name: "Introduction to Data Visualization",
         mcqs: [
           {
             id: "cs11-ch5-t5.4-m1",
-            question: "Which type of data visualization is specifically designed to show trends and changes over time?",
-            options: ["Bar Chart", "Line Graph", "Histogram", "Boxplot"],
-            answer: "(b)",
-            correctIndex: 1,
+            question: "Which type of data visualization is specifically suited for showing continuous trends over time?",
+            options: ["Line Graph", "Scatter Plot", "Pie Chart", "Heatmap"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Line Graph",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch5-t5.4-m2",
-            question: "Which plot summarizes data distribution by displaying the median, quartiles, and potential outliers?",
-            options: [
-              "Scatterplot",
-              "Boxplot (Whisker plot)",
-              "Line Graph",
-              "Bar Chart"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
+            question: "Which plot summarizes data distribution through five summary numbers (Min, Q1, Median, Q3, Max)?",
+            options: ["Boxplot (Whisker plot)", "Histogram", "Bar Chart", "Scatter Plot"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Boxplot (Whisker plot)",
             marks: 1,
             category: "topic"
@@ -1226,30 +772,16 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         ],
         shortQuestions: [
           {
-            id: "cs11-ch5-t5.4-sq11",
+            id: "cs11-ch5-t5.4-sq8",
             question: "Compare Bar Charts, Line Graphs, and Histograms regarding their visual analysis purposes.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch5-t5.4-sq12",
+            id: "cs11-ch5-t5.4-sq9",
             question: "Explain how a Boxplot (Whisker plot) summarizes data distribution using quartiles and median.",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch5-t5.4-s1",
-            question: "List two types of data visualizations and describe when you would use each.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch5-t5.4-s2",
-            question: "How does visualizing data help in understanding descriptive statistics?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -1257,99 +789,23 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch5-topic-5.5",
         topicNumber: "5.5",
-        name: "Object-Oriented Programming (OOP)",
-        mcqs: [
+        name: "Tools for Data Visualization",
+        mcqs: [],
+        shortQuestions: [
           {
-            id: "cs11-ch5-m1",
-            question: "Encapsulation in OOP means:",
-            options: [
-              "Bundling data and methods together",
-              "Creating multiple objects",
-              "Inheriting from parent classes",
-              "Making all variables public"
-            ],
-            answer: "(a)",
-            correctIndex: 0,
-            answerKey: "Bundling data and methods together",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch5-m2",
-            question: "The concept where a class inherits properties from another class:",
-            options: ["Polymorphism", "Inheritance", "Encapsulation", "Abstraction"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Inheritance",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch5-m3",
-            question: "A method that has multiple implementations based on the object type is:",
-            options: ["Encapsulation", "Inheritance", "Polymorphism", "Abstraction"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Polymorphism",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch5-m4",
-            question: "The process of hiding unnecessary details is called:",
-            options: ["Polymorphism", "Inheritance", "Encapsulation", "Abstraction"],
-            answer: "(d)",
-            correctIndex: 3,
-            answerKey: "Abstraction",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch5-m5",
-            question: "A class that cannot be instantiated directly:",
-            options: ["Concrete class", "Abstract class", "Parent class", "Child class"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Abstract class",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch5-m6",
-            question: "In Python, a method that acts on both class and instance data:",
-            options: ["Static method", "Class method", "Instance method", "Private method"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Class method",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch5-m7",
-            question: "A method that defines the behavior when an object is created:",
-            options: ["__str__()", "__init__()", "__del__()", "__call__()"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "__init__()",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
+            id: "cs11-ch5-t5.5-sq1",
+            question: "Name two modern tools or Python libraries used for creating data visualizations.",
+            marks: 2,
+            category: "topic"
           }
         ],
-        shortQuestions: [],
         longQuestions: []
       }
     ]
   },
 
   // =========================================================================
-  // UNIT 6: EMERGING TECHNOLOGIES & CLOUD COMPUTING
+  // UNIT 6: EMERGING TECHNOLOGIES
   // =========================================================================
   {
     id: "cs-11-ch6",
@@ -1359,60 +815,15 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch6-topic-6.1",
         topicNumber: "6.1",
-        name: "Overview & Cloud Computing",
+        name: "Introduction to Emerging Technologies & Virtualization",
         mcqs: [
           {
             id: "cs11-ch6-t6.1-m1",
             question: "Which technology allows a single physical computer to act as multiple independent virtual machines running their own operating systems?",
-            options: [
-              "Containerization",
-              "Virtualization",
-              "Quantum Tunneling",
-              "Edge Routing"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
+            options: ["Virtualization", "Containerization", "Quantum Tunneling", "Edge Routing"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Virtualization",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.1-m2",
-            question: "The cloud computing characteristic that refers to the system's ability to automatically scale resources up or down based on real-time demand is:",
-            options: ["On-Demand Access", "Elasticity", "Virtualization", "Multi-Tenancy"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Elasticity",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.1-m3",
-            question: "Google Workspace (Gmail, Google Docs) and Microsoft Office 365 are examples of which cloud service model?",
-            options: [
-              "Infrastructure as a Service (IaaS)",
-              "Platform as a Service (PaaS)",
-              "Software as a Service (SaaS)",
-              "Data as a Service (DaaS)"
-            ],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Software as a Service (SaaS)",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.1-m4",
-            question: "A cloud deployment model that combines both public and private cloud features to share data and applications is a:",
-            options: [
-              "Community Cloud",
-              "Hybrid Cloud",
-              "Distributed Cloud",
-              "Multi-Tenant Cloud"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Hybrid Cloud",
             marks: 1,
             category: "topic"
           }
@@ -1420,46 +831,9 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         shortQuestions: [
           {
             id: "cs11-ch6-t6.1-sq1",
-            question: "Define Virtualization and explain how it allows one physical server to host multiple virtual machines.",
+            question: "Define Virtualization and explain how it helps maximize hardware resource utilization.",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.1-sq2",
-            question: "Differentiate between Scalability and Elasticity in cloud computing environments.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.1-sq3",
-            question: "Compare the three cloud service models: IaaS, PaaS, and SaaS, with real-world examples.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.1-sq4",
-            question: "Compare Public, Private, Hybrid, and Multi-Cloud deployment models.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.1-sq5",
-            question: "List three major business applications of cloud computing.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.1-sq6",
-            question: "Discuss two security challenges in cloud data storage and strategies to mitigate them.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.1-s1",
-            question: "Differentiate between Elasticity and On-Demand access in cloud computing.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -1467,27 +841,85 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch6-topic-6.2",
         topicNumber: "6.2",
-        name: "Blockchain Technology & P2P Networks",
+        name: "Cloud Computing & Deployment Models",
         mcqs: [
           {
             id: "cs11-ch6-t6.2-m1",
-            question: "What property of Blockchain ensures that once a transaction block is added, it cannot be altered or deleted?",
-            options: ["Decentralization", "Immutability", "Scalability", "Elasticity"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Immutability",
+            question: "The cloud computing characteristic that refers to the system's ability to automatically scale resources up or down based on real-time demand is:",
+            options: ["Elasticity", "Virtualization", "Multi-Tenancy", "On-Demand Access"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Elasticity",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch6-t6.2-m2",
-            question: "Automated digital agreements written in code that execute themselves on a blockchain when specific conditions are met are called:",
-            options: [
-              "Smart Contracts",
-              "Consensus Protocols",
-              "Ledger Rules",
-              "Distributed Signatures"
-            ],
+            question: "Google Workspace (Gmail, Google Docs) and Microsoft Office 365 are examples of which cloud service model?",
+            options: ["Software as a Service (SaaS)", "Platform as a Service (PaaS)", "Infrastructure as a Service (IaaS)", "Data as a Service (DaaS)"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Software as a Service (SaaS)",
+            marks: 1,
+            category: "topic"
+          }
+        ],
+        shortQuestions: [
+          {
+            id: "cs11-ch6-t6.2-sq2",
+            question: "Differentiate between Scalability and Elasticity in cloud computing environments.",
+            marks: 2,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch6-t6.2-sq3",
+            question: "Compare the three cloud service models: IaaS, PaaS, and SaaS with examples.",
+            marks: 2,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch6-t6.2-sq4",
+            question: "Compare Public, Private, Hybrid, and Community cloud deployment models.",
+            marks: 2,
+            category: "topic"
+          }
+        ],
+        longQuestions: []
+      },
+      {
+        id: "cs-11-ch6-topic-6.3",
+        topicNumber: "6.3",
+        name: "Cloud Architecture & Scalability",
+        mcqs: [],
+        shortQuestions: [
+          {
+            id: "cs11-ch6-t6.3-sq1",
+            question: "List three major business advantages of adopting cloud infrastructure.",
+            marks: 2,
+            category: "topic"
+          }
+        ],
+        longQuestions: []
+      },
+      {
+        id: "cs-11-ch6-topic-6.4",
+        topicNumber: "6.4",
+        name: "Blockchain Technology, P2P Networks & Smart Contracts",
+        mcqs: [
+          {
+            id: "cs11-ch6-t6.4-m1",
+            question: "What property of Blockchain ensures that recorded transaction blocks cannot be altered or deleted retroactively?",
+            options: ["Immutability", "Centralization", "Ephemeral Storage", "Anonymity"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Immutability",
+            marks: 1,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch6-t6.4-m2",
+            question: "Automated digital agreements written in code that execute immediately when predetermined conditions are met are:",
+            options: ["Smart Contracts", "Legal Writs", "Block Hashes", "Merkle Trees"],
             answer: "(a)",
             correctIndex: 0,
             answerKey: "Smart Contracts",
@@ -1497,276 +929,104 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         ],
         shortQuestions: [
           {
-            id: "cs11-ch6-t6.2-sq7",
-            question: "Define Blockchain and explain its three core principles: Decentralization, Immutability, and Consensus.",
+            id: "cs11-ch6-t6.4-sq5",
+            question: "Define Blockchain and explain its three core elements: Decentralization, Distributed Ledger, and Cryptography.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch6-t6.2-sq8",
-            question: "Explain the roles of Nodes, Ledgers, Blocks, and Transactions in a blockchain network.",
+            id: "cs11-ch6-t6.4-sq6",
+            question: "Explain the roles of Nodes, Ledgers, Blocks, and Nonce in a Blockchain network.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch6-t6.2-sq9",
-            question: "What are Smart Contracts, and how do they automatically execute agreements?",
+            id: "cs11-ch6-t6.4-sq7",
+            question: "What are Smart Contracts, and how do they automate transactions without intermediaries?",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.2-sq10",
-            question: "Explain how cryptography and digital signatures ensure data security in blockchain.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.2-s1",
-            question: "Analyze the role of Peer-to-Peer Networks in Blockchain. How do they function and why are they essential?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-t6.2-s2",
-            question: "Describe the concept of immutability in blockchain. Why is it a critical feature?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
       },
       {
-        id: "cs-11-ch6-topic-6.3",
-        topicNumber: "6.3",
-        name: "Future Trends, Edge & Serverless Computing",
+        id: "cs-11-ch6-topic-6.5",
+        topicNumber: "6.5",
+        name: "Cryptocurrencies & Distributed Ledgers",
+        mcqs: [],
+        shortQuestions: [
+          {
+            id: "cs11-ch6-t6.5-sq1",
+            question: "Explain how distributed ledgers differ from centralized relational databases.",
+            marks: 2,
+            category: "topic"
+          }
+        ],
+        longQuestions: []
+      },
+      {
+        id: "cs-11-ch6-topic-6.6",
+        topicNumber: "6.6",
+        name: "Edge Computing & Serverless Architecture",
         mcqs: [
           {
-            id: "cs11-ch6-t6.3-m1",
-            question: "Which computing architecture processes data locally near the data source (e.g., inside autonomous vehicles) to minimize latency?",
-            options: [
-              "Serverless Architecture",
-              "Edge Computing",
-              "Mainframe Computing",
-              "Quantum Grid"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
+            id: "cs11-ch6-t6.6-m1",
+            question: "Which computing architecture processes data closer to the source device (e.g. IoT sensors) to eliminate latency?",
+            options: ["Edge Computing", "Mainframe Computing", "Centralized Data Warehousing", "Batch Processing"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Edge Computing",
             marks: 1,
             category: "topic"
           },
           {
-            id: "cs11-ch6-t6.3-m2",
-            question: "In a Serverless Architecture (e.g., AWS Lambda), developers are billed based on:",
+            id: "cs11-ch6-t6.6-m2",
+            question: "In a Serverless Architecture (e.g., AWS Lambda), developers are charged based on:",
             options: [
-              "A fixed monthly server rental fee",
-              "The actual execution time and usage of computing resources",
-              "The total bandwidth capacity reserved",
-              "The number of lines of uploaded code"
+              "Exact execution time and resources used per request",
+              "A fixed monthly server leasing rate",
+              "Number of virtual CPU cores allocated 24/7",
+              "Physical rack installation fees"
             ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "The actual execution time and usage of computing resources",
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Exact execution time and resources used per request",
             marks: 1,
             category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch6-t6.3-sq11",
-            question: "Define Edge Computing and explain how it minimizes data processing latency in autonomous vehicles.",
+            id: "cs11-ch6-t6.6-sq8",
+            question: "Define Edge Computing and explain how it solves bandwidth and latency challenges.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch6-t6.3-sq12",
-            question: "Explain Serverless Architecture and describe its resource allocation and billing model.",
+            id: "cs11-ch6-t6.6-sq9",
+            question: "Explain Serverless Architecture and describe Function-as-a-Service (FaaS).",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch6-t6.3-s1",
-            question: "What is edge computing and how does it benefit data processing?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-t6.3-s2",
-            question: "How does edge computing improve the efficiency of autonomous vehicles?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-t6.3-s3",
-            question: "Describe the concept of serverless architectures.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-t6.3-s4",
-            question: "What advantages do serverless architectures offer to developers?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
-        longQuestions: []
-      },
-      {
-        id: "cs-11-ch6-topic-6.4",
-        topicNumber: "6.4",
-        name: "Database Management Systems (DBMS)",
-        mcqs: [
-          {
-            id: "cs11-ch6-m1",
-            question: "A collection of related data organized in tables:",
-            options: ["File", "Database", "Record", "Field"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Database",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-m2",
-            question: "ACID properties in databases ensure:",
-            options: [
-              "Automatic data updates",
-              "Data reliability and consistency",
-              "Faster query execution",
-              "Security encryption"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Data reliability and consistency",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-m3",
-            question: "A unique identifier for each record in a table:",
-            options: ["Foreign Key", "Primary Key", "Candidate Key", "Composite Key"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Primary Key",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-m4",
-            question: "A relationship where one record in a table relates to many records:",
-            options: ["One-to-One", "One-to-Many", "Many-to-Many", "Many-to-One"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "One-to-Many",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-m5",
-            question: "SQL command used to retrieve data from a database:",
-            options: ["INSERT", "UPDATE", "SELECT", "DELETE"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "SELECT",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-m6",
-            question: "The process of organizing data to reduce redundancy:",
-            options: ["Denormalization", "Normalization", "Indexing", "Backup"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Normalization",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-m7",
-            question: "A table with multiple rows of the same data:",
-            options: ["Normalized table", "Denormalized table", "Indexed table", "Duplicate table"],
-            answer: "(d)",
-            correctIndex: 3,
-            answerKey: "Duplicate table",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-m8",
-            question: "SQL JOIN operation that returns all rows from both tables:",
-            options: ["INNER JOIN", "OUTER JOIN", "FULL OUTER JOIN", "LEFT JOIN"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "FULL OUTER JOIN",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch6-m9",
-            question: "A condition used in SQL to filter records:",
-            options: ["ORDER BY", "WHERE", "GROUP BY", "HAVING"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "WHERE",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          }
-        ],
-        shortQuestions: [],
         longQuestions: []
       }
     ]
   },
 
   // =========================================================================
-  // UNIT 7: LEGAL AND ETHICAL ASPECTS OF COMPUTING
+  // UNIT 7: LEGAL AND ETHICAL ASPECTS OF COMPUTING SYSTEM
   // =========================================================================
   {
     id: "cs-11-ch7",
     chapterNumber: 7,
-    name: "Legal and Ethical Aspects of Computing",
+    name: "Legal and Ethical Aspects of Computing System",
     topics: [
       {
         id: "cs-11-ch7-topic-7.1",
         topicNumber: "7.1",
-        name: "Terms of Use & Security Threats",
-        mcqs: [
-          {
-            id: "cs11-ch7-t7.1-m1",
-            question: "Small files placed on a user's device by websites to remember login details and preferences are called:",
-            options: ["Spyware", "Spam", "Cookies", "Malware"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Cookies",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch7-t7.1-m2",
-            question: "A cyber attack where users are redirected to a fake counterfeit website without their knowledge to steal login details is called:",
-            options: ["Phishing", "Pharming", "Spamming", "Adware"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Pharming",
-            marks: 1,
-            category: "topic"
-          }
-        ],
+        name: "Terms of Use & Common Clauses",
+        mcqs: [],
         shortQuestions: [
           {
             id: "cs11-ch7-t7.1-sq1",
@@ -1779,38 +1039,6 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
             question: "Explain the purpose of the \"Limitation of Liability\" clause for online service providers.",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch7-t7.1-sq3",
-            question: "Differentiate between Spam and Spyware as digital security threats.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch7-t7.1-sq4",
-            question: "Differentiate between Phishing and Pharming attack methods.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch7-t7.1-sq5",
-            question: "What are Cookies, and why is Cookie Management essential for online privacy?",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch7-t7.1-s1",
-            question: "Why is it important for users to understand Terms of Use?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch7-t7.1-s2",
-            question: "Differentiate between phishing and pharming.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -1818,44 +1046,41 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch7-topic-7.2",
         topicNumber: "7.2",
-        name: "Digital Divide & Social Impacts",
+        name: "Security Threats & Harmful Software",
         mcqs: [
           {
             id: "cs11-ch7-t7.2-m1",
-            question: "The gap between individuals and communities who have access to modern ICT tools and those who do not is known as the:",
-            options: ["Technology Barrier", "Digital Divide", "Information Lag", "Bandwidth Gap"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Digital Divide",
+            question: "Small files placed on a user's device by websites to remember login details and preferences are called:",
+            options: ["Cookies", "Spyware", "Spam", "Malware"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Cookies",
+            marks: 1,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch7-t7.2-m2",
+            question: "A cyber attack where users are redirected to a fake counterfeit website without their knowledge is called:",
+            options: ["Pharming", "Phishing", "Spamming", "Adware"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Pharming",
             marks: 1,
             category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch7-t7.2-sq6",
-            question: "Define the Digital Divide and list four key barriers (economic, geographical, educational, social) that cause it.",
+            id: "cs11-ch7-t7.2-sq3",
+            question: "Differentiate between Spam and Spyware as digital security threats.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch7-t7.2-sq7",
-            question: "Discuss the educational and economic impacts of the Digital Divide in developing countries like Pakistan.",
+            id: "cs11-ch7-t7.2-sq4",
+            question: "What are Cookies, and why is Cookie Management essential for online privacy?",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch7-t7.2-sq8",
-            question: "State three initiatives used by governments or organizations to bridge the Digital Divide.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch7-t7.2-s1",
-            question: "Identify two impacts of the digital divide on social and civic participation.",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -1863,66 +1088,31 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch7-topic-7.3",
         topicNumber: "7.3",
-        name: "Digital Citizenship and Ethics",
+        name: "Digital Divide & Educational Inequality",
         mcqs: [
           {
             id: "cs11-ch7-t7.3-m1",
-            question: "Using someone else's ideas, text, or work without giving proper credit or source attribution is called:",
-            options: [
-              "Copyright Licensing",
-              "Plagiarism",
-              "Trademark Infringement",
-              "Software Piracy"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Plagiarism",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch7-t7.3-m2",
-            question: "In Pakistan, cybersecurity awareness and online cybercrime complaints are officially managed by which agency unit?",
-            options: ["PTA", "NR3C-FIA", "PEMRA", "NADRA"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "NR3C-FIA",
+            question: "The gap between individuals and communities who have access to modern ICT and those who do not is the:",
+            options: ["Digital Divide", "Digital Footprint", "Digital Citizenship", "Cyber Boundary"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Digital Divide",
             marks: 1,
             category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch7-t7.3-sq9",
-            question: "Define Digital Citizenship and state two practices of responsible digital conduct.",
+            id: "cs11-ch7-t7.3-sq5",
+            question: "Define the Digital Divide and list four factors (e.g. income, location) that cause it.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch7-t7.3-sq10",
-            question: "Differentiate between Copyright Infringement and Plagiarism.",
+            id: "cs11-ch7-t7.3-sq6",
+            question: "Discuss the educational and economic impacts of the digital divide on developing societies.",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch7-t7.3-sq11",
-            question: "State the official role of NR3C-FIA in Pakistan regarding cybercrime reporting and awareness.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch7-t7.3-s1",
-            question: "What are the key steps involved in evaluating information sources?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch7-t7.3-s2",
-            question: "How does responsible data sharing contribute to ethical use of information?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -1930,92 +1120,58 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch7-topic-7.4",
         topicNumber: "7.4",
-        name: "Web Technologies & Networking",
-        mcqs: [
+        name: "Positive Societal Impacts of Computing Systems",
+        mcqs: [],
+        shortQuestions: [
           {
-            id: "cs11-ch7-m1",
-            question: "Protocol used for secure data transmission:",
-            options: ["HTTP", "FTP", "HTTPS", "SMTP"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "HTTPS",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch7-m2",
-            question: "A method of identifying computers on a network:",
-            options: ["MAC address", "IP address", "Port number", "URL"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "IP address",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch7-m3",
-            question: "The technology that enables responsive web design:",
-            options: ["CSS Grid", "JavaScript only", "HTML only", "Server-side rendering"],
-            answer: "(a)",
-            correctIndex: 0,
-            answerKey: "CSS Grid",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch7-m4",
-            question: "A software that intercepts and filters network traffic:",
-            options: ["Proxy server", "Firewall", "Router", "Gateway"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Firewall",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch7-m5",
-            question: "API stands for:",
-            options: [
-              "Application Programming Interface",
-              "Application Process Integration",
-              "Advanced Programming Input",
-              "Automated Processing Integration"
-            ],
-            answer: "(a)",
-            correctIndex: 0,
-            answerKey: "Application Programming Interface",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch7-m6",
-            question: "Client-side validation improves:",
-            options: ["Security", "User experience", "Server performance", "Database speed"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "User experience",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch7-m7",
-            question: "A request-response model used in web communication:",
-            options: ["Push model", "Pull model", "Broadcast model", "Multicast model"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Pull model",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
+            id: "cs11-ch7-t7.4-sq1",
+            question: "Describe three positive impacts of modern computing systems on global communication and healthcare.",
+            marks: 2,
+            category: "topic"
           }
         ],
-        shortQuestions: [],
+        longQuestions: []
+      },
+      {
+        id: "cs-11-ch7-topic-7.5",
+        topicNumber: "7.5",
+        name: "Responsible Digital Behavior & Ethical Use of Information",
+        mcqs: [
+          {
+            id: "cs11-ch7-t7.5-m1",
+            question: "Using someone else's ideas, text, or code without proper citation and claiming it as one's own is:",
+            options: ["Plagiarism", "Fair Use", "Open Source Collaboration", "Indexing"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Plagiarism",
+            marks: 1,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch7-t7.5-m2",
+            question: "In Pakistan, cybersecurity awareness and cybercrime reporting are officially managed by:",
+            options: ["NR3C (FIA)", "PTCL", "NADRA", "HEC"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "NR3C (FIA)",
+            marks: 1,
+            category: "topic"
+          }
+        ],
+        shortQuestions: [
+          {
+            id: "cs11-ch7-t7.5-sq7",
+            question: "Define Digital Citizenship and state two essential responsibilities of a good digital citizen.",
+            marks: 2,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch7-t7.5-sq8",
+            question: "Differentiate between Copyright Infringement and Plagiarism.",
+            marks: 2,
+            category: "topic"
+          }
+        ],
         longQuestions: []
       }
     ]
@@ -2027,29 +1183,19 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
   {
     id: "cs-11-ch8",
     chapterNumber: 8,
-    name: "Online Research & Digital Literacy",
+    name: "Online Research and Digital Literacy",
     topics: [
       {
         id: "cs-11-ch8-topic-8.1",
         topicNumber: "8.1",
-        name: "Research & Digital Resources",
+        name: "Digital Literacy & Evaluating Online Sources",
         mcqs: [
           {
             id: "cs11-ch8-t8.1-m1",
-            question: "Which Boolean search operator is used in search engines to combine terms so that results contain ALL specified keywords?",
-            options: ["OR", "NOT", "AND", "NEAR"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "AND",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch8-t8.1-m2",
-            question: "Articles published in academic journals that have been thoroughly checked and verified by other domain experts before publishing are called:",
-            options: ["Editorial blogs", "Peer-reviewed articles", "Press releases", "White papers"],
-            answer: "(b)",
-            correctIndex: 1,
+            question: "Articles published in academic journals after being critically vetted by fellow domain experts are:",
+            options: ["Peer-reviewed articles", "Editorial blogs", "Press releases", "White papers"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Peer-reviewed articles",
             marks: 1,
             category: "topic"
@@ -2067,18 +1213,6 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
             question: "Define Digital Literacy and list its key components.",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch8-t8.1-sq3",
-            question: "What is a Peer-Reviewed Article, and why is it considered a highly credible academic source?",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch8-t8.1-sq4",
-            question: "How do Boolean search operators (AND, OR, NOT) help refine online search queries?",
-            marks: 2,
-            category: "topic"
           }
         ],
         longQuestions: []
@@ -2086,77 +1220,29 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch8-topic-8.2",
         topicNumber: "8.2",
-        name: "Research Ethics & Intellectual Property",
+        name: "Effective Navigation, Online Libraries & Boolean Operators",
         mcqs: [
           {
             id: "cs11-ch8-t8.2-m1",
-            question: "Obtaining explicit permission from study participants after informing them about the study's purpose is known as:",
-            options: ["Confidentiality", "Informed Consent", "Integrity", "Copyright"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Informed Consent",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch8-t8.2-m2",
-            question: "An exclusive legal right granted for a new invention or technical solution that prevents others from making or selling it is a:",
-            options: ["Trademark", "Patent", "Copyright", "Industrial Design"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Patent",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch8-t8.2-m3",
-            question: "Which form of intellectual property protects brand logos, names, and slogans (e.g., National Foods logo)?",
-            options: ["Patent", "Trade Secret", "Trademark", "Copyright"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Trademark",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch8-t8.2-m4",
-            question: "In Pakistan, the official government organization responsible for registering and protecting intellectual property rights is:",
-            options: ["SECP", "IPO Pakistan", "FBR", "HEC"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "IPO Pakistan",
+            question: "Which Boolean search operator is used in search engines to combine terms so that BOTH must be present?",
+            options: ["AND", "OR", "NOT", "NEAR"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "AND",
             marks: 1,
             category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch8-t8.2-sq5",
-            question: "Explain the principles of Informed Consent and Confidentiality in research ethics.",
+            id: "cs11-ch8-t8.2-sq3",
+            question: "What is a Peer-Reviewed Article, and why is it considered a highly credible academic source?",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch8-t8.2-sq6",
-            question: "What is Integrity in academic research, and why must data falsification be avoided?",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch8-t8.2-sq7",
-            question: "Define Intellectual Property (IP) and explain its importance for creators.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch8-t8.2-sq8",
-            question: "Differentiate between a Patent, a Trademark, a Copyright, an Industrial Design, and a Trade Secret with examples.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch8-t8.2-sq9",
-            question: "What is the role of IPO Pakistan in protecting intellectual property rights?",
+            id: "cs11-ch8-t8.2-sq4",
+            question: "How do Boolean search operators (AND, OR, NOT) help refine online search queries?",
             marks: 2,
             category: "topic"
           }
@@ -2166,125 +1252,91 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch8-topic-8.3",
         topicNumber: "8.3",
-        name: "Cybersecurity & Digital Protection",
+        name: "Key Principles of Research Ethics & Integrity",
         mcqs: [
           {
-            id: "cs11-ch8-m1",
-            question: "A type of malware that replicates itself:",
-            options: ["Trojan", "Worm", "Spyware", "Ransomware"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Worm",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch8-m2",
-            question: "Encryption that uses the same key for encryption and decryption:",
-            options: [
-              "Asymmetric encryption",
-              "Public-key encryption",
-              "Symmetric encryption",
-              "Hash function"
-            ],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Symmetric encryption",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch8-m3",
-            question: "A security practice of keeping systems up-to-date:",
-            options: ["Patching", "Backing up", "Logging", "Monitoring"],
+            id: "cs11-ch8-t8.3-m1",
+            question: "Obtaining explicit permission from study participants after informing them about the study's purpose is known as:",
+            options: ["Informed Consent", "Confidentiality", "Integrity", "Copyright"],
             answer: "(a)",
             correctIndex: 0,
-            answerKey: "Patching",
+            answerKey: "Informed Consent",
             marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch8-m4",
-            question: "Unauthorized access to computer systems:",
-            options: ["Hacking", "Programming", "Debugging", "Testing"],
-            answer: "(a)",
-            correctIndex: 0,
-            answerKey: "Hacking",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch8-m5",
-            question: "Authentication factor that requires something you know:",
-            options: ["Biometrics", "Smart card", "Password", "Token"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Password",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch8-m6",
-            question: "Creating multiple copies of data for protection:",
-            options: ["Encryption", "Backup", "Compression", "Archiving"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Backup",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch8-m7",
-            question: "Protection against unauthorized data access:",
-            options: ["Availability", "Integrity", "Confidentiality", "Authenticity"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Confidentiality",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch8-m8",
-            question: "A security layer that monitors network activity:",
-            options: ["Firewall", "Router", "Gateway", "Switch"],
-            answer: "(a)",
-            correctIndex: 0,
-            answerKey: "Firewall",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch8-m9",
-            question: "Unauthorized use of someone's identity online:",
-            options: ["Phishing", "Identity theft", "Cyberstalking", "Catfishing"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Identity theft",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch8-m10",
-            question: "Use of multiple security methods together:",
-            options: ["Layering", "Encryption", "Defense in depth", "Multi-factor"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Defense in depth",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
-        shortQuestions: [],
+        shortQuestions: [
+          {
+            id: "cs11-ch8-t8.3-sq5",
+            question: "Explain the principles of Informed Consent and Confidentiality in research ethics.",
+            marks: 2,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch8-t8.3-sq6",
+            question: "What is Integrity in academic research, and why must data falsification be avoided?",
+            marks: 2,
+            category: "topic"
+          }
+        ],
+        longQuestions: []
+      },
+      {
+        id: "cs-11-ch8-topic-8.4",
+        topicNumber: "8.4",
+        name: "Types of Intellectual Property",
+        mcqs: [
+          {
+            id: "cs11-ch8-t8.4-m1",
+            question: "An exclusive legal right granted for a new invention or technical solution that prevents others from making or selling it is a:",
+            options: ["Patent", "Trademark", "Copyright", "Industrial Design"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Patent",
+            marks: 1,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch8-t8.4-m2",
+            question: "Which form of intellectual property protects brand logos, names, and slogans?",
+            options: ["Trademark", "Patent", "Trade Secret", "Copyright"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Trademark",
+            marks: 1,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch8-t8.4-m3",
+            question: "In Pakistan, the official government organization responsible for registering and protecting intellectual property rights is:",
+            options: ["IPO Pakistan", "SECP", "FBR", "HEC"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "IPO Pakistan",
+            marks: 1,
+            category: "topic"
+          }
+        ],
+        shortQuestions: [
+          {
+            id: "cs11-ch8-t8.4-sq7",
+            question: "Define Intellectual Property (IP) and explain its importance for innovators.",
+            marks: 2,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch8-t8.4-sq8",
+            question: "Differentiate between a Patent, a Trademark, a Copyright, and a Trade Secret with examples.",
+            marks: 2,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch8-t8.4-sq9",
+            question: "What is the role of IPO Pakistan in protecting intellectual property rights?",
+            marks: 2,
+            category: "topic"
+          }
+        ],
         longQuestions: []
       }
     ]
@@ -2305,25 +1357,25 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         mcqs: [
           {
             id: "cs11-ch9-t9.1-m1",
-            question: "What is the correct sequence of the 5 key steps in the Design Thinking process?",
+            question: "What is the correct sequence of the 5 key stages in Design Thinking?",
             options: [
-              "Ideate ➔ Prototype ➔ Define ➔ Empathize ➔ Test",
-              "Empathize ➔ Define ➔ Ideate ➔ Prototype ➔ Test",
-              "Define ➔ Empathize ➔ Test ➔ Prototype ➔ Ideate",
-              "Prototype ➔ Test ➔ Ideate ➔ Empathize ➔ Define"
+              "Empathize -> Define -> Ideate -> Prototype -> Test",
+              "Define -> Ideate -> Empathize -> Test -> Prototype",
+              "Ideate -> Empathize -> Prototype -> Define -> Test",
+              "Empathize -> Prototype -> Define -> Ideate -> Test"
             ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Empathize ➔ Define ➔ Ideate ➔ Prototype ➔ Test",
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Empathize -> Define -> Ideate -> Prototype -> Test",
             marks: 1,
             category: "topic"
           },
           {
             id: "cs11-ch9-t9.1-m2",
-            question: "In Design Thinking, creating a simple, quick, and low-cost model of an idea to show how it works is called:",
-            options: ["Empathizing", "Ideating", "Prototyping", "Segmenting"],
-            answer: "(c)",
-            correctIndex: 2,
+            question: "In Design Thinking, creating a simple, quick experimental version of a product to validate ideas is:",
+            options: ["Prototyping", "Ideation", "Empathizing", "Pitching"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Prototyping",
             marks: 1,
             category: "topic"
@@ -2332,19 +1384,13 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
         shortQuestions: [
           {
             id: "cs11-ch9-t9.1-sq1",
-            question: "Define Design Thinking and list its 5 key steps in correct sequential order.",
+            question: "Define Design Thinking and list its 5 key stages.",
             marks: 2,
             category: "topic"
           },
           {
             id: "cs11-ch9-t9.1-sq2",
-            question: "Differentiate between the Empathize stage and the Define stage in Design Thinking.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch9-t9.1-sq3",
-            question: "What is a Prototype, and why is prototyping crucial before launching a product?",
+            question: "What is a Prototype, and why is prototyping essential before full production?",
             marks: 2,
             category: "topic"
           }
@@ -2354,111 +1400,31 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch9-topic-9.2",
         topicNumber: "9.2",
-        name: "Creating a Business Plan & Market Insights",
+        name: "Creating a Business Plan",
         mcqs: [
           {
             id: "cs11-ch9-t9.2-m1",
-            question: "Which section of a business plan provides a high-level brief overview capturing the most important points of the entire plan?",
-            options: [
-              "Market Analysis",
-              "Financial Plan",
-              "Executive Summary",
-              "Business Description"
-            ],
-            answer: "(c)",
-            correctIndex: 2,
+            question: "Which section of a business plan provides an initial high-level snapshot of the entire business concept?",
+            options: ["Executive Summary", "Financial Plan", "Marketing Strategy", "Appendix"],
+            answer: "(a)",
+            correctIndex: 0,
             answerKey: "Executive Summary",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch9-t9.2-m2",
-            question: "Research that focuses on understanding underlying opinions and motivations using non-numerical data (such as interviews and focus groups) is:",
-            options: [
-              "Quantitative Research",
-              "Qualitative Research",
-              "Predictive Research",
-              "Statistical Research"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Qualitative Research",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch9-t9.2-m3",
-            question: "Dividing a large target market into smaller, specific groups based on age, income, or buying habits is known as:",
-            options: [
-              "Market Research",
-              "Market Segmentation",
-              "Competitor Analysis",
-              "Business Pitching"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Market Segmentation",
             marks: 1,
             category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch9-t9.2-sq4",
+            id: "cs11-ch9-t9.2-sq3",
             question: "What is a Business Plan, and why is the Executive Summary section considered its most critical part?",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch9-t9.2-sq5",
+            id: "cs11-ch9-t9.2-sq4",
             question: "List six key sections that must be included in a standard business plan.",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch9-t9.2-sq6",
-            question: "Differentiate between Qualitative Research and Quantitative Research in market analysis.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch9-t9.2-sq7",
-            question: "Differentiate between Customer Surveys and Focus Groups.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch9-t9.2-sq8",
-            question: "Define Market Segmentation and explain how it helps businesses target specific customer groups.",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch9-t9.2-sq9",
-            question: "What is a Business Pitch, and what five key steps should be followed when pitching an idea?",
-            marks: 2,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch9-t9.2-s1",
-            question: "What are the main components of a business plan?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-t9.2-s2",
-            question: "How does Design Thinking approach help in developing business solutions?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-t9.2-s3",
-            question: "What is the importance of market research in entrepreneurship?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -2466,43 +1432,47 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch9-topic-9.3",
         topicNumber: "9.3",
-        name: "Marketing, Sales & Financial Concepts",
+        name: "Collecting Market Insights & Business Pitch",
         mcqs: [
           {
             id: "cs11-ch9-t9.3-m1",
-            question: "What is the basic financial formula used to calculate business Profit?",
-            options: [
-              "Profit = Revenue + Costs",
-              "Profit = Revenue - Costs",
-              "Profit = Costs \u00f7 Revenue",
-              "Profit = Investment \u00d7 Savings"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Profit = Revenue - Costs",
+            question: "Research that focuses on understanding user motivations, feelings, and subjective feedback is:",
+            options: ["Qualitative Research", "Quantitative Research", "Secondary Research", "Statistical Modeling"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Qualitative Research",
+            marks: 1,
+            category: "topic"
+          },
+          {
+            id: "cs11-ch9-t9.3-m2",
+            question: "Dividing a large target market into smaller groups of consumers with shared characteristics is called:",
+            options: ["Market Segmentation", "Product Diversification", "Benchmarking", "Market Penetration"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Market Segmentation",
             marks: 1,
             category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch9-t9.3-sq10",
-            question: "Differentiate between Revenue, Expenses, and Profit, and state the mathematical formula for Profit.",
+            id: "cs11-ch9-t9.3-sq5",
+            question: "Differentiate between Qualitative Research and Quantitative Research in market analysis.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch9-t9.3-sq11",
-            question: "Differentiate between Investment and Savings in a business context.",
+            id: "cs11-ch9-t9.3-sq6",
+            question: "Define Market Segmentation and explain how it helps businesses target specific customer groups.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch9-t9.3-s1",
-            question: "How should financial planning be incorporated into a business plan?",
+            id: "cs11-ch9-t9.3-sq7",
+            question: "What is a Business Pitch, and what key points should be communicated to investors?",
             marks: 2,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         longQuestions: []
@@ -2510,15 +1480,14 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch9-topic-9.4",
         topicNumber: "9.4",
-        name: "Communication & Storytelling",
+        name: "Developing Effective Marketing and Sales Strategies",
         mcqs: [],
         shortQuestions: [
           {
-            id: "cs11-ch9-t9.4-s1",
-            question: "Explain the difference between effective communication and storytelling in business pitches.",
+            id: "cs11-ch9-t9.4-sq1",
+            question: "Explain the role of brand identity in developing an effective marketing strategy.",
             marks: 2,
-            isExercise: true,
-            category: "exercise"
+            category: "topic"
           }
         ],
         longQuestions: []
@@ -2526,62 +1495,36 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch9-topic-9.5",
         topicNumber: "9.5",
-        name: "Collaboration, Iteration & Innovation",
+        name: "Financial Concepts for Business",
         mcqs: [
           {
             id: "cs11-ch9-t9.5-m1",
-            question: "Repeating a process to make continuous improvements based on feedback until the final outcome is achieved is called:",
-            options: ["Innovation", "Iteration", "Collaboration", "Pitching"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Iteration",
-            marks: 1,
-            category: "topic"
-          },
-          {
-            id: "cs11-ch9-t9.5-m2",
-            question: "Developing new ideas, products, or methods that bring significant improvement or value to existing processes is defined as:",
-            options: ["Iteration", "Innovation", "Prototyping", "Budgeting"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Innovation",
+            question: "What is the basic financial formula used to calculate business Profit?",
+            options: [
+              "Profit = Revenue - Costs",
+              "Profit = Revenue + Costs",
+              "Profit = Costs / Revenue",
+              "Profit = Investment * Savings"
+            ],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Profit = Revenue - Costs",
             marks: 1,
             category: "topic"
           }
         ],
         shortQuestions: [
           {
-            id: "cs11-ch9-t9.5-sq12",
-            question: "Differentiate between Collaboration and Iteration in product development.",
+            id: "cs11-ch9-t9.5-sq8",
+            question: "Differentiate between Revenue, Expenses, and Profit with mathematical formulas.",
             marks: 2,
             category: "topic"
           },
           {
-            id: "cs11-ch9-t9.5-sq13",
-            question: "Differentiate between Innovation and Creativity with real-world examples.",
+            id: "cs11-ch9-t9.5-sq9",
+            question: "Differentiate between Investment and Savings in a business context.",
             marks: 2,
             category: "topic"
-          },
-          {
-            id: "cs11-ch9-t9.5-s1",
-            question: "What is the role of innovation and creativity in business success?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-t9.5-s2",
-            question: "How does collaboration improve the entrepreneurial process?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-t9.5-s3",
-            question: "What are the benefits of iterating on business ideas based on feedback?",
-            marks: 2,
-            isExercise: true,
-            category: "exercise"
           }
         ],
         longQuestions: []
@@ -2589,155 +1532,68 @@ export const CLASS_11_UNITS_3_TO_9_CHAPTERS = [
       {
         id: "cs-11-ch9-topic-9.6",
         topicNumber: "9.6",
-        name: "Emerging Technologies & Innovation in Business",
-        mcqs: [
+        name: "Storytelling in Business",
+        mcqs: [],
+        shortQuestions: [
           {
-            id: "cs11-ch9-m1",
-            question: "Technology that creates computer-generated environments:",
-            options: [
-              "Artificial Intelligence",
-              "Virtual Reality",
-              "Machine Learning",
-              "Augmented Reality"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Virtual Reality",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-m2",
-            question: "Computing done on remote servers accessed via internet:",
-            options: [
-              "Edge computing",
-              "Cloud computing",
-              "Fog computing",
-              "Distributed computing"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Cloud computing",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-m3",
-            question: "Technology enabling decentralized data storage:",
-            options: ["Blockchain", "Database", "File system", "Cache"],
-            answer: "(a)",
-            correctIndex: 0,
-            answerKey: "Blockchain",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-m4",
-            question: "Ability of devices to connect and communicate with each other:",
-            options: ["AI", "IoT", "ML", "AR"],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "IoT",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-m5",
-            question: "Algorithms that learn from data without explicit programming:",
-            options: [
-              "Artificial Intelligence",
-              "Deep Learning",
-              "Machine Learning",
-              "Neural Networks"
-            ],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Machine Learning",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-m6",
-            question: "Technology overlaying digital information on real world:",
-            options: [
-              "Virtual Reality",
-              "Augmented Reality",
-              "Mixed Reality",
-              "Extended Reality"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Augmented Reality",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-m7",
-            question: "Type of network spread across large geographic areas:",
-            options: ["LAN", "MAN", "WAN", "PAN"],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "WAN",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-m8",
-            question: "5G technology primarily improves:",
-            options: [
-              "Power consumption",
-              "Speed and latency",
-              "Display quality",
-              "Battery life"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Speed and latency",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-m9",
-            question: "Transfer of learning from one task to another:",
-            options: [
-              "Deep Learning",
-              "Reinforcement Learning",
-              "Transfer Learning",
-              "Supervised Learning"
-            ],
-            answer: "(c)",
-            correctIndex: 2,
-            answerKey: "Transfer Learning",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
-          },
-          {
-            id: "cs11-ch9-m10",
-            question: "Computing at the edge of the network:",
-            options: [
-              "Cloud computing",
-              "Edge computing",
-              "Fog computing",
-              "Central computing"
-            ],
-            answer: "(b)",
-            correctIndex: 1,
-            answerKey: "Edge computing",
-            marks: 1,
-            isExercise: true,
-            category: "exercise"
+            id: "cs11-ch9-t9.6-sq1",
+            question: "Why is emotional connection important in business storytelling?",
+            marks: 2,
+            category: "topic"
           }
         ],
-        shortQuestions: [],
+        longQuestions: []
+      },
+      {
+        id: "cs-11-ch9-topic-9.7",
+        topicNumber: "9.7",
+        name: "Importance of Collaboration and Iteration",
+        mcqs: [
+          {
+            id: "cs11-ch9-t9.7-m1",
+            question: "Repeating a process to make continuous improvements based on user feedback is called:",
+            options: ["Iteration", "Innovation", "Collaboration", "Pitching"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Iteration",
+            marks: 1,
+            category: "topic"
+          }
+        ],
+        shortQuestions: [
+          {
+            id: "cs11-ch9-t9.7-sq1",
+            question: "Differentiate between Collaboration and Iteration in product development.",
+            marks: 2,
+            category: "topic"
+          }
+        ],
+        longQuestions: []
+      },
+      {
+        id: "cs-11-ch9-topic-9.8",
+        topicNumber: "9.8",
+        name: "Innovation in Business",
+        mcqs: [
+          {
+            id: "cs11-ch9-t9.8-m1",
+            question: "Developing new ideas or significantly improving existing products and processes to create value is:",
+            options: ["Innovation", "Iteration", "Benchmarking", "Budgeting"],
+            answer: "(a)",
+            correctIndex: 0,
+            answerKey: "Innovation",
+            marks: 1,
+            category: "topic"
+          }
+        ],
+        shortQuestions: [
+          {
+            id: "cs11-ch9-t9.8-sq1",
+            question: "Differentiate between Innovation and Creativity with real-world examples.",
+            marks: 2,
+            category: "topic"
+          }
+        ],
         longQuestions: []
       }
     ]
