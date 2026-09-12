@@ -4,6 +4,7 @@ import { CHAPTER_2_NEW_TOPICS } from './chapter2TopicsData.js';
 import { CHAPTER_3_NEW_TOPICS } from './chapter3TopicsData.js';
 import { CHAPTER_4_NEW_TOPICS } from './chapter4TopicsData.js';
 import { CHAPTER_5_NEW_TOPICS } from './chapter5TopicsData.js';
+import { CHAPTER_6_NEW_TOPICS } from './chapter6TopicsData.js';
 import { CLASS_11_CHAPTER_1_TOPICS } from './class11Chapter1Data.js';
 import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
@@ -154,6 +155,12 @@ export const INITIAL_QUESTION_BANK = {
             "chapterNumber": 5,
             "name": "Code Testing and Debugging",
             "topics": CHAPTER_5_NEW_TOPICS
+          },
+          {
+            "id": "cs-12-ch6",
+            "chapterNumber": 6,
+            "name": "Data Science and Machine Learning",
+            "topics": CHAPTER_6_NEW_TOPICS
           }
         ] 
       },
@@ -1371,8 +1378,190 @@ export function mergeChapter1NewTopics(bank) {
             }
           });
 
-          // Sort numerically: 5.2.1, 5.2.2, 5.2.3, 5.2.4, 5.3
+          // Sort numerically: 5.1, 5.2, 5.3
           ch5.topics.sort((a, b) => {
+            const aParts = (a.topicNumber || '0').split('.').map(Number);
+            const bParts = (b.topicNumber || '0').split('.').map(Number);
+            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+              const av = aParts[i] || 0;
+              const bv = bParts[i] || 0;
+              if (av !== bv) return av - bv;
+            }
+            return 0;
+          });
+        }
+
+        // =====================================================================
+        // CHAPTER 6: DATA SCIENCE AND MACHINE LEARNING
+        // =====================================================================
+        let ch6 = sub.chapters.find(c => 
+          c.chapterNumber === 6 || 
+          (c.name && c.name.toLowerCase().includes('data science')) ||
+          (c.name && c.name.toLowerCase().includes('machine learning')) ||
+          (c.name && c.name.toLowerCase().includes('chap#6'))
+        );
+
+        if (!ch6 && clsKey === '12th') {
+          ch6 = {
+            id: `${sub.id}-ch6`,
+            chapterNumber: 6,
+            name: "Data Science and Machine Learning",
+            topics: []
+          };
+          sub.chapters.push(ch6);
+          changed = true;
+        }
+
+        if (ch6 && clsKey === '12th') {
+          if (!ch6.name || !ch6.name.includes("Data Science")) {
+            ch6.name = "Data Science and Machine Learning";
+            ch6.chapterNumber = 6;
+            changed = true;
+          }
+          if (!ch6.topics) ch6.topics = [];
+
+          // Remove any stale sub-topics (e.g. 6.2.1, 6.4.1) and keep strictly 6.1, 6.2, etc.
+          const preCh6Count = ch6.topics.length;
+          ch6.topics = ch6.topics.filter(t => {
+            const parts = (t.topicNumber || '').trim().split('.');
+            return parts.length <= 2;
+          });
+          if (ch6.topics.length !== preCh6Count) changed = true;
+
+          CHAPTER_6_NEW_TOPICS.forEach(newTopic => {
+            const existingTopic = ch6.topics.find(t => 
+              t.topicNumber?.trim() === newTopic.topicNumber.trim()
+            );
+
+            if (!existingTopic) {
+              ch6.topics.push(JSON.parse(JSON.stringify(newTopic)));
+              changed = true;
+            } else {
+              existingTopic.name = newTopic.name;
+              if (!existingTopic.id || (newTopic.id && existingTopic.id !== newTopic.id)) {
+                existingTopic.id = newTopic.id;
+                changed = true;
+              }
+
+              if (!existingTopic.mcqs) existingTopic.mcqs = [];
+              (newTopic.mcqs || []).forEach(m => {
+                const normQ = (m.question || '').trim().toLowerCase();
+                const existingMcq = existingTopic.mcqs.find(em => (em.question || '').trim().toLowerCase() === normQ);
+                if (existingMcq) {
+                  if (m.category === 'exercise' && (existingMcq.category !== 'exercise' || !existingMcq.isExercise)) {
+                    existingMcq.category = 'exercise';
+                    existingMcq.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise') {
+                    existingTopic.mcqs.unshift(JSON.parse(JSON.stringify(m)));
+                  } else {
+                    existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                  }
+                  changed = true;
+                }
+              });
+
+              if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
+              (newTopic.shortQuestions || []).forEach(s => {
+                const normQ = (s.question || '').trim().toLowerCase();
+                const existingShort = existingTopic.shortQuestions.find(es => (es.question || '').trim().toLowerCase() === normQ);
+                if (existingShort) {
+                  if (s.category === 'exercise' && (existingShort.category !== 'exercise' || !existingShort.isExercise)) {
+                    existingShort.category = 'exercise';
+                    existingShort.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise') {
+                    existingTopic.shortQuestions.unshift(JSON.parse(JSON.stringify(s)));
+                  } else {
+                    existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                  }
+                  changed = true;
+                }
+              });
+            }
+          });
+
+          // Strictly enforce that ONLY the 10 official textbook exercise MCQs and 10 Shorts in Chapter 6 are marked as exercise
+          const OFFICIAL_CH6_EX_MCQ_KEYS = new Set([
+            'data science is mainly concerned with:',
+            'data organised in rows and columns is called:',
+            'an example of unstructured data is:',
+            'machine learning allows systems to:',
+            'the type of machine learning that uses labelled data is:',
+            'the machine learning method that learns through rewards and penalties is:',
+            'feature engineering is used to:',
+            'the metric that measures the overall correctness of a model is:',
+            'train-test split is used to:',
+            'a commonly used tool for machine learning and data analysis is:'
+          ]);
+
+          const OFFICIAL_CH6_EX_SHORT_KEYS = new Set([
+            'what is data science?',
+            'what are the two main types of data?',
+            'what is the difference between structured and unstructured data?',
+            'name two common data collection methods.',
+            'what is machine learning?',
+            'what is supervised learning?',
+            'what is the purpose of feature selection in machine learning?',
+            'what does accuracy measure in a model?',
+            'what is the difference between prediction and causality?',
+            'name any one tool used for machine learning.'
+          ]);
+
+          ch6.topics.forEach(t => {
+            if (Array.isArray(t.mcqs)) {
+              t.mcqs.forEach(m => {
+                const normQ = (m.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH6_EX_MCQ_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (m.category !== 'exercise' || !m.isExercise) {
+                    m.category = 'exercise';
+                    m.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise' || m.isExercise || (typeof m.id === 'string' && m.id.includes('-ex-'))) {
+                    m.category = 'topic';
+                    m.isExercise = false;
+                    if (typeof m.id === 'string' && m.id.includes('-ex-')) {
+                      m.id = m.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+
+            if (Array.isArray(t.shortQuestions)) {
+              t.shortQuestions.forEach(s => {
+                const normQ = (s.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH6_EX_SHORT_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (s.category !== 'exercise' || !s.isExercise) {
+                    s.category = 'exercise';
+                    s.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise' || s.isExercise || (typeof s.id === 'string' && s.id.includes('-ex-'))) {
+                    s.category = 'topic';
+                    s.isExercise = false;
+                    if (typeof s.id === 'string' && s.id.includes('-ex-')) {
+                      s.id = s.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+          });
+
+          // Sort numerically: 6.1, 6.2, 6.3, 6.4, 6.6, 6.7, 6.9, 6.10
+          ch6.topics.sort((a, b) => {
             const aParts = (a.topicNumber || '0').split('.').map(Number);
             const bParts = (b.topicNumber || '0').split('.').map(Number);
             for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
