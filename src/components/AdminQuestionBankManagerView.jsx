@@ -266,9 +266,23 @@ export default function AdminQuestionBankManagerView({
             const isExFilter = activeTypeFilter.startsWith('exercise');
 
             const mcqs = (top.mcqs || []).filter(q => {
-              if (activeTypeFilter === 'shortQuestions' || activeTypeFilter === 'longQuestions') return false;
-              if (activeTypeFilter === 'exercise_shorts' || activeTypeFilter === 'exercise_longs') return false;
-              if (isExFilter && !isExerciseQuestion(q, top)) return false;
+              const isEx = isExerciseQuestion(q, top);
+
+              // Topic-wise filters
+              if (activeTypeFilter === 'topic_mcqs' || activeTypeFilter === 'mcqs') {
+                if (isEx) return false;
+              } else if (activeTypeFilter === 'topic_shorts' || activeTypeFilter === 'topic_longs' || activeTypeFilter === 'shortQuestions' || activeTypeFilter === 'longQuestions') {
+                return false;
+              }
+              // Exercise filters
+              else if (activeTypeFilter === 'exercise_mcqs') {
+                if (!isEx) return false;
+              } else if (activeTypeFilter === 'exercise_shorts' || activeTypeFilter === 'exercise_longs') {
+                return false;
+              } else if (activeTypeFilter === 'exercise_all' || activeTypeFilter === 'exercise') {
+                if (!isEx) return false;
+              }
+
               if (qLower) {
                 const inQ = (q.question || '').toLowerCase().includes(qLower);
                 const inOpts = (q.options || []).some(opt => opt.toLowerCase().includes(qLower));
@@ -279,17 +293,45 @@ export default function AdminQuestionBankManagerView({
             });
 
             const shorts = (top.shortQuestions || []).filter(q => {
-              if (activeTypeFilter === 'mcqs' || activeTypeFilter === 'longQuestions') return false;
-              if (activeTypeFilter === 'exercise_mcqs' || activeTypeFilter === 'exercise_longs') return false;
-              if (isExFilter && !isExerciseQuestion(q, top)) return false;
+              const isEx = isExerciseQuestion(q, top);
+
+              // Topic-wise filters
+              if (activeTypeFilter === 'topic_shorts' || activeTypeFilter === 'shortQuestions') {
+                if (isEx) return false;
+              } else if (activeTypeFilter === 'topic_mcqs' || activeTypeFilter === 'topic_longs' || activeTypeFilter === 'mcqs' || activeTypeFilter === 'longQuestions') {
+                return false;
+              }
+              // Exercise filters
+              else if (activeTypeFilter === 'exercise_shorts') {
+                if (!isEx) return false;
+              } else if (activeTypeFilter === 'exercise_mcqs' || activeTypeFilter === 'exercise_longs') {
+                return false;
+              } else if (activeTypeFilter === 'exercise_all' || activeTypeFilter === 'exercise') {
+                if (!isEx) return false;
+              }
+
               if (qLower && !(q.question || '').toLowerCase().includes(qLower)) return false;
               return true;
             });
 
             const longs = (top.longQuestions || []).filter(q => {
-              if (activeTypeFilter === 'mcqs' || activeTypeFilter === 'shortQuestions') return false;
-              if (activeTypeFilter === 'exercise_mcqs' || activeTypeFilter === 'exercise_shorts') return false;
-              if (isExFilter && !isExerciseQuestion(q, top)) return false;
+              const isEx = isExerciseQuestion(q, top);
+
+              // Topic-wise filters
+              if (activeTypeFilter === 'topic_longs' || activeTypeFilter === 'longQuestions') {
+                if (isEx) return false;
+              } else if (activeTypeFilter === 'topic_mcqs' || activeTypeFilter === 'topic_shorts' || activeTypeFilter === 'mcqs' || activeTypeFilter === 'shortQuestions') {
+                return false;
+              }
+              // Exercise filters
+              else if (activeTypeFilter === 'exercise_longs') {
+                if (!isEx) return false;
+              } else if (activeTypeFilter === 'exercise_mcqs' || activeTypeFilter === 'exercise_shorts') {
+                return false;
+              } else if (activeTypeFilter === 'exercise_all' || activeTypeFilter === 'exercise') {
+                if (!isEx) return false;
+              }
+
               if (qLower && !(q.question || '').toLowerCase().includes(qLower)) return false;
               return true;
             });
@@ -332,13 +374,12 @@ export default function AdminQuestionBankManagerView({
     return { mcqs: m, shorts: s, longs: l, total: m + s + l };
   }, [filteredQuestionGroups]);
 
-  // Compute overall counts for current selected scope (Class, Subject, Chapter, Topic, Search)
-  // before activeTypeFilter is applied, so button counts and stats remain 100% STABLE
+  // Compute mutually-exclusive counts for current selected scope (Class, Subject, Chapter, Topic, Search)
+  // before activeTypeFilter is applied, so button counts and stats remain 100% STABLE and non-confusing
   const scopeCounts = useMemo(() => {
-    let mcqs = 0;
-    let shorts = 0;
-    let longs = 0;
-    let exercise = 0;
+    let topicMcqs = 0;
+    let topicShorts = 0;
+    let topicLongs = 0;
     let exerciseMcqs = 0;
     let exerciseShorts = 0;
     let exerciseLongs = 0;
@@ -367,30 +408,30 @@ export default function AdminQuestionBankManagerView({
                 const inAns = (q.answerKey || '').toLowerCase().includes(qLower);
                 if (!inQ && !inOpts && !inAns) return;
               }
-              mcqs++;
               if (isExerciseQuestion(q, top)) {
-                exercise++;
                 exerciseMcqs++;
+              } else {
+                topicMcqs++;
               }
             });
 
             // Shorts
             (top.shortQuestions || []).forEach(q => {
               if (qLower && !(q.question || '').toLowerCase().includes(qLower)) return;
-              shorts++;
               if (isExerciseQuestion(q, top)) {
-                exercise++;
                 exerciseShorts++;
+              } else {
+                topicShorts++;
               }
             });
 
             // Longs
             (top.longQuestions || []).forEach(q => {
               if (qLower && !(q.question || '').toLowerCase().includes(qLower)) return;
-              longs++;
               if (isExerciseQuestion(q, top)) {
-                exercise++;
                 exerciseLongs++;
+              } else {
+                topicLongs++;
               }
             });
           });
@@ -398,16 +439,24 @@ export default function AdminQuestionBankManagerView({
       });
     });
 
-    const total = mcqs + shorts + longs;
+    const totalTopic = topicMcqs + topicShorts + topicLongs;
+    const totalExercise = exerciseMcqs + exerciseShorts + exerciseLongs;
+    const grandTotal = totalTopic + totalExercise;
+
     return {
-      mcqs,
-      shorts,
-      longs,
-      total,
-      exercise,
+      topicMcqs,
+      topicShorts,
+      topicLongs,
       exerciseMcqs,
       exerciseShorts,
-      exerciseLongs
+      exerciseLongs,
+      totalTopic,
+      totalExercise,
+      grandTotal,
+      mcqs: topicMcqs + exerciseMcqs,
+      shorts: topicShorts + exerciseShorts,
+      longs: topicLongs + exerciseLongs,
+      total: grandTotal
     };
   }, [localBank, selectedClass, selectedSubjectId, selectedChapterId, selectedTopicId, searchQuery]);
 
@@ -595,86 +644,199 @@ export default function AdminQuestionBankManagerView({
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 pt-2 border-t border-slate-100">
             {/* Filter Buttons */}
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              {[
-                { id: 'ALL', label: 'All Questions', count: scopeCounts.total },
-                { id: 'mcqs', label: 'MCQs Only', count: scopeCounts.mcqs },
-                { id: 'shortQuestions', label: 'Short Qs Only', count: scopeCounts.shorts },
-                { id: 'longQuestions', label: 'Long Qs Only', count: scopeCounts.longs },
-                { id: 'exercise', label: 'Exercise Questions', count: scopeCounts.exercise }
-              ].map(f => {
-                const isActive = f.id === 'exercise' ? activeTypeFilter.startsWith('exercise') : activeTypeFilter === f.id;
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => setActiveTypeFilter(f.id)}
-                    className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 select-none ${
-                      isActive
-                        ? f.id === 'exercise'
-                          ? 'bg-emerald-700 text-white shadow-xs ring-1 ring-emerald-700'
-                          : 'bg-slate-900 text-white shadow-xs ring-1 ring-slate-900'
-                        : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs hover:border-slate-300'
+              {/* 1. All Questions (Grand Total) */}
+              <button
+                type="button"
+                onClick={() => setActiveTypeFilter('ALL')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 select-none ${
+                  activeTypeFilter === 'ALL'
+                    ? 'bg-slate-900 text-white shadow-xs ring-1 ring-slate-900'
+                    : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-2xs hover:border-slate-300'
+                }`}
+                title="View all questions combined"
+              >
+                <span>All Questions</span>
+                <span
+                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black ${
+                    activeTypeFilter === 'ALL'
+                      ? 'bg-slate-800 text-cyan-300'
+                      : 'bg-slate-100 text-slate-600'
+                  }`}
+                >
+                  {scopeCounts.grandTotal}
+                </span>
+              </button>
+
+              <div className="h-4 w-px bg-slate-200 hidden sm:block mx-0.5" />
+
+              {/* 2. Topic-Wise Section */}
+              <button
+                type="button"
+                onClick={() => setActiveTypeFilter('topic_mcqs')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 select-none ${
+                  activeTypeFilter === 'topic_mcqs' || activeTypeFilter === 'mcqs'
+                    ? 'bg-blue-600 text-white shadow-xs ring-1 ring-blue-600'
+                    : 'bg-white text-slate-700 hover:bg-blue-50/50 border border-slate-200 shadow-2xs hover:border-blue-200'
+                }`}
+                title="Topic-wise MCQs only"
+              >
+                <span>Topic MCQs</span>
+                <span
+                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black ${
+                    activeTypeFilter === 'topic_mcqs' || activeTypeFilter === 'mcqs'
+                      ? 'bg-blue-800 text-white'
+                      : 'bg-blue-50 text-blue-700'
+                  }`}
+                >
+                  {scopeCounts.topicMcqs}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTypeFilter('topic_shorts')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 select-none ${
+                  activeTypeFilter === 'topic_shorts' || activeTypeFilter === 'shortQuestions'
+                    ? 'bg-indigo-600 text-white shadow-xs ring-1 ring-indigo-600'
+                    : 'bg-white text-slate-700 hover:bg-indigo-50/50 border border-slate-200 shadow-2xs hover:border-indigo-200'
+                }`}
+                title="Topic-wise Short Questions only"
+              >
+                <span>Topic Shorts</span>
+                <span
+                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black ${
+                    activeTypeFilter === 'topic_shorts' || activeTypeFilter === 'shortQuestions'
+                      ? 'bg-indigo-800 text-white'
+                      : 'bg-indigo-50 text-indigo-700'
+                  }`}
+                >
+                  {scopeCounts.topicShorts}
+                </span>
+              </button>
+
+              {(scopeCounts.topicLongs > 0 || scopeCounts.exerciseLongs > 0) && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTypeFilter('topic_longs')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 select-none ${
+                    activeTypeFilter === 'topic_longs' || activeTypeFilter === 'longQuestions'
+                      ? 'bg-purple-600 text-white shadow-xs ring-1 ring-purple-600'
+                      : 'bg-white text-slate-700 hover:bg-purple-50/50 border border-slate-200 shadow-2xs hover:border-purple-200'
+                  }`}
+                  title="Topic-wise Long Questions only"
+                >
+                  <span>Topic Longs</span>
+                  <span
+                    className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black ${
+                      activeTypeFilter === 'topic_longs' || activeTypeFilter === 'longQuestions'
+                        ? 'bg-purple-800 text-white'
+                        : 'bg-purple-50 text-purple-700'
                     }`}
                   >
-                    <span>{f.label}</span>
-                    <span
-                      className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black ${
-                        isActive
-                          ? f.id === 'exercise'
-                            ? 'bg-emerald-900/60 text-emerald-100'
-                            : 'bg-slate-800 text-cyan-300'
-                          : 'bg-slate-100 text-slate-600'
-                      }`}
-                    >
-                      {f.count}
-                    </span>
-                  </button>
-                );
-              })}
-
-              {/* Sub-filters when Exercise is selected */}
-              {activeTypeFilter.startsWith('exercise') && (
-                <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-300 px-2 py-1 rounded-lg text-xs animate-fadeIn">
-                  <span className="text-emerald-950 font-black text-[10px] uppercase tracking-wider px-1">
-                    Exercise:
+                    {scopeCounts.topicLongs}
                   </span>
-                  {[
-                    { id: 'exercise', label: 'All', count: scopeCounts.exercise },
-                    { id: 'exercise_mcqs', label: 'MCQs', count: scopeCounts.exerciseMcqs },
-                    { id: 'exercise_shorts', label: 'Shorts', count: scopeCounts.exerciseShorts },
-                    { id: 'exercise_longs', label: 'Longs', count: scopeCounts.exerciseLongs }
-                  ].map(sub => (
-                    <button
-                      key={sub.id}
-                      type="button"
-                      onClick={() => setActiveTypeFilter(sub.id)}
-                      className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                        activeTypeFilter === sub.id
-                          ? 'bg-emerald-700 text-white shadow-xs'
-                          : 'bg-white text-emerald-800 hover:bg-emerald-100 border border-emerald-200'
-                      }`}
-                    >
-                      <span>{sub.label}</span>
-                      <span className={`text-[10px] font-mono font-black ${
-                        activeTypeFilter === sub.id ? 'text-emerald-200' : 'text-emerald-700'
-                      }`}>
-                        ({sub.count})
-                      </span>
-                    </button>
-                  ))}
-                </div>
+                </button>
+              )}
+
+              <div className="h-4 w-px bg-slate-200 hidden sm:block mx-0.5" />
+
+              {/* 3. Separate Exercise Section */}
+              <button
+                type="button"
+                onClick={() => setActiveTypeFilter('exercise_mcqs')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 select-none ${
+                  activeTypeFilter === 'exercise_mcqs'
+                    ? 'bg-emerald-700 text-white shadow-xs ring-1 ring-emerald-700'
+                    : 'bg-emerald-50/70 text-emerald-800 hover:bg-emerald-100 border border-emerald-300/80 shadow-2xs'
+                }`}
+                title="Textbook Exercise MCQs only"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>Exercise MCQs</span>
+                <span
+                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black ${
+                    activeTypeFilter === 'exercise_mcqs'
+                      ? 'bg-emerald-900/70 text-emerald-100'
+                      : 'bg-emerald-200/80 text-emerald-900'
+                  }`}
+                >
+                  {scopeCounts.exerciseMcqs}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTypeFilter('exercise_shorts')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 select-none ${
+                  activeTypeFilter === 'exercise_shorts'
+                    ? 'bg-emerald-700 text-white shadow-xs ring-1 ring-emerald-700'
+                    : 'bg-emerald-50/70 text-emerald-800 hover:bg-emerald-100 border border-emerald-300/80 shadow-2xs'
+                }`}
+                title="Textbook Exercise Short Questions only"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>Exercise Shorts</span>
+                <span
+                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black ${
+                    activeTypeFilter === 'exercise_shorts'
+                      ? 'bg-emerald-900/70 text-emerald-100'
+                      : 'bg-emerald-200/80 text-emerald-900'
+                  }`}
+                >
+                  {scopeCounts.exerciseShorts}
+                </span>
+              </button>
+
+              {scopeCounts.exerciseLongs > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTypeFilter('exercise_longs')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 select-none ${
+                    activeTypeFilter === 'exercise_longs'
+                      ? 'bg-emerald-700 text-white shadow-xs ring-1 ring-emerald-700'
+                      : 'bg-emerald-50/70 text-emerald-800 hover:bg-emerald-100 border border-emerald-300/80 shadow-2xs'
+                  }`}
+                  title="Textbook Exercise Long Questions only"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <span>Exercise Longs</span>
+                  <span
+                    className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black ${
+                      activeTypeFilter === 'exercise_longs'
+                        ? 'bg-emerald-900/70 text-emerald-100'
+                        : 'bg-emerald-200/80 text-emerald-900'
+                    }`}
+                  >
+                    {scopeCounts.exerciseLongs}
+                  </span>
+                </button>
+              )}
+
+              {/* View all Exercise questions together */}
+              {scopeCounts.totalExercise > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTypeFilter(activeTypeFilter === 'exercise_all' || activeTypeFilter === 'exercise' ? 'ALL' : 'exercise_all')}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 select-none ${
+                    activeTypeFilter === 'exercise_all' || activeTypeFilter === 'exercise'
+                      ? 'bg-teal-700 text-white ring-1 ring-teal-700'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
+                  }`}
+                  title="View all Exercise questions together"
+                >
+                  <span>All Exercise</span>
+                  <span className="text-[10px] font-mono font-bold">({scopeCounts.totalExercise})</span>
+                </button>
               )}
             </div>
 
-            {/* Total Scope Count Badge */}
-            {scopeCounts.total > 0 && (
-              <div className="shrink-0 self-start lg:self-center">
-                <span className="bg-slate-900 text-white font-mono text-xs font-bold px-3 py-1.5 rounded-lg shadow-2xs flex items-center gap-1.5">
-                  <span className="text-slate-400 font-sans text-[11px] uppercase tracking-wider font-semibold">Total:</span>
-                  <span className="text-cyan-300 font-black">{scopeCounts.total} Qs</span>
-                </span>
-              </div>
-            )}
+            {/* Right side: Grand Total badge */}
+            <div className="shrink-0 self-start lg:self-center">
+              <span className="bg-slate-900 text-white font-mono text-xs font-bold px-3 py-1.5 rounded-lg shadow-2xs flex items-center gap-1.5">
+                <span className="text-slate-400 font-sans text-[11px] uppercase tracking-wider font-semibold">TOTAL:</span>
+                <span className="text-cyan-300 font-black">{scopeCounts.grandTotal} Qs</span>
+              </span>
+            </div>
           </div>
 
         </div>
