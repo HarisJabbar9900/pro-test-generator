@@ -14,6 +14,7 @@ const BANK_DOC_REF = () => doc(db, "question_banks", "main_bank");
 export async function syncBankToFirebase(bankData) {
   try {
     const dataToSave = bankData || getQuestionBank();
+    mergeChapter1NewTopics(dataToSave);
     await setDoc(BANK_DOC_REF(), {
       data: dataToSave,
       updatedAt: new Date().toISOString()

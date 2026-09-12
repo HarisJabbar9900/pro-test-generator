@@ -12,7 +12,7 @@ import { CLASS_11_CHAPTER_1_TOPICS } from './class11Chapter1Data.js';
 import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
 import { CLASS_11_OFFICIAL_EXERCISES } from './class11OfficialExercises.js';
-const STORAGE_KEY = 'papergen_pro_question_bank_v6';
+const STORAGE_KEY = 'papergen_pro_question_bank_v7';
 
 // Canonical builder for 11th Class Computer Science - All 9 Units
 export function buildCleanClass11Chapters(existingChapters = []) {
