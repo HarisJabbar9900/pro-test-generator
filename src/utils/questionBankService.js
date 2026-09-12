@@ -2,6 +2,7 @@
 import { CHAPTER_1_NEW_TOPICS, CHAPTER_1_EXERCISE_LONGS } from './chapter1TopicsData.js';
 import { CHAPTER_2_NEW_TOPICS } from './chapter2TopicsData.js';
 import { CHAPTER_3_NEW_TOPICS } from './chapter3TopicsData.js';
+import { CHAPTER_4_NEW_TOPICS } from './chapter4TopicsData.js';
 import { CLASS_11_CHAPTER_1_TOPICS } from './class11Chapter1Data.js';
 import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
@@ -1005,6 +1006,176 @@ export function mergeChapter1NewTopics(bank) {
 
           // Sort numerically: 3.1, 3.2
           ch3.topics.sort((a, b) => {
+            const aParts = (a.topicNumber || '0').split('.').map(Number);
+            const bParts = (b.topicNumber || '0').split('.').map(Number);
+            if (aParts[0] !== bParts[0]) return aParts[0] - bParts[0];
+            return (aParts[1] || 0) - (bParts[1] || 0);
+          });
+        }
+
+        // =====================================================================
+        // CHAPTER 4: APPLICATIONS OF PYTHON
+        // =====================================================================
+        let ch4 = sub.chapters.find(c => 
+          c.chapterNumber === 4 || 
+          (c.name && c.name.toLowerCase().includes('applications of python')) ||
+          (c.name && c.name.toLowerCase().includes('tkinter')) ||
+          (c.name && c.name.toLowerCase().includes('gui'))
+        );
+
+        if (!ch4 && clsKey === '12th') {
+          ch4 = {
+            id: `${sub.id}-ch4`,
+            chapterNumber: 4,
+            name: "Applications of Python",
+            topics: []
+          };
+          sub.chapters.push(ch4);
+          changed = true;
+        }
+
+        if (ch4 && clsKey === '12th') {
+          if (!ch4.name || !ch4.name.includes("Applications of Python")) {
+            ch4.name = "Applications of Python";
+            ch4.chapterNumber = 4;
+            changed = true;
+          }
+          if (!ch4.topics) ch4.topics = [];
+
+          CHAPTER_4_NEW_TOPICS.forEach(newTopic => {
+            const existingTopic = ch4.topics.find(t => 
+              t.topicNumber?.trim() === newTopic.topicNumber.trim() || 
+              t.name?.toLowerCase().trim() === newTopic.name.toLowerCase().trim()
+            );
+
+            if (!existingTopic) {
+              ch4.topics.push(JSON.parse(JSON.stringify(newTopic)));
+              changed = true;
+            } else {
+              if (!existingTopic.id || (newTopic.id && existingTopic.id !== newTopic.id)) {
+                existingTopic.id = newTopic.id;
+                changed = true;
+              }
+
+              if (!existingTopic.mcqs) existingTopic.mcqs = [];
+              (newTopic.mcqs || []).forEach(m => {
+                const normQ = (m.question || '').trim().toLowerCase();
+                const existingMcq = existingTopic.mcqs.find(em => (em.question || '').trim().toLowerCase() === normQ);
+                if (existingMcq) {
+                  if (m.category === 'exercise' && (existingMcq.category !== 'exercise' || !existingMcq.isExercise)) {
+                    existingMcq.category = 'exercise';
+                    existingMcq.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise') {
+                    existingTopic.mcqs.unshift(JSON.parse(JSON.stringify(m)));
+                  } else {
+                    existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                  }
+                  changed = true;
+                }
+              });
+
+              if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
+              (newTopic.shortQuestions || []).forEach(s => {
+                const normQ = (s.question || '').trim().toLowerCase();
+                const existingShort = existingTopic.shortQuestions.find(es => (es.question || '').trim().toLowerCase() === normQ);
+                if (existingShort) {
+                  if (s.category === 'exercise' && (existingShort.category !== 'exercise' || !existingShort.isExercise)) {
+                    existingShort.category = 'exercise';
+                    existingShort.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise') {
+                    existingTopic.shortQuestions.unshift(JSON.parse(JSON.stringify(s)));
+                  } else {
+                    existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                  }
+                  changed = true;
+                }
+              });
+            }
+          });
+
+          // Strictly enforce that ONLY the 10 official textbook exercise MCQs and 10 Shorts in Chapter 4 are marked as exercise
+          const OFFICIAL_CH4_EX_MCQ_KEYS = new Set([
+            'the main purpose of a gui in python programming is to:',
+            "python's built-in gui toolkit is:",
+            'the tkinter widget used to display text is:',
+            'the pack() method in tkinter is used to:',
+            'the methods used to organize widgets in tkinter include:',
+            'event-driven programming in tkinter means:',
+            'the tkinter widget used to get user input is:',
+            'the tkinter layout manager that allows precise positioning of widgets using coordinates is:',
+            'the tkinter option that connects a button click to a function is:',
+            'crud operations in databases stand for:'
+          ]);
+
+          const OFFICIAL_CH4_EX_SHORT_KEYS = new Set([
+            'what is a gui and why is it important in application development?',
+            "what is tkinter and why is it python's built-in gui toolkit?",
+            'how do you create a window and add frames in tkinter?',
+            'name two common widgets used in tkinter.',
+            'what is the purpose of layout management in tkinter?',
+            'how does the pack() method organize elements in tkinter?',
+            'what is event-driven programming and how is it used in tkinter?',
+            'how do you handle user input in tkinter?',
+            'what is the crud operation in database management?',
+            'how do you connect python to a database like sqlite?'
+          ]);
+
+          ch4.topics.forEach(t => {
+            if (Array.isArray(t.mcqs)) {
+              t.mcqs.forEach(m => {
+                const normQ = (m.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH4_EX_MCQ_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (m.category !== 'exercise' || !m.isExercise) {
+                    m.category = 'exercise';
+                    m.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise' || m.isExercise || (typeof m.id === 'string' && m.id.includes('-ex-'))) {
+                    m.category = 'topic';
+                    m.isExercise = false;
+                    if (typeof m.id === 'string' && m.id.includes('-ex-')) {
+                      m.id = m.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+
+            if (Array.isArray(t.shortQuestions)) {
+              t.shortQuestions.forEach(s => {
+                const normQ = (s.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH4_EX_SHORT_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (s.category !== 'exercise' || !s.isExercise) {
+                    s.category = 'exercise';
+                    s.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise' || s.isExercise || (typeof s.id === 'string' && s.id.includes('-ex-'))) {
+                    s.category = 'topic';
+                    s.isExercise = false;
+                    if (typeof s.id === 'string' && s.id.includes('-ex-')) {
+                      s.id = s.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+          });
+
+          // Sort numerically: 4.1, 4.2
+          ch4.topics.sort((a, b) => {
             const aParts = (a.topicNumber || '0').split('.').map(Number);
             const bParts = (b.topicNumber || '0').split('.').map(Number);
             if (aParts[0] !== bParts[0]) return aParts[0] - bParts[0];
