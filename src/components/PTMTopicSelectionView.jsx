@@ -168,8 +168,8 @@ export default function PTMTopicSelectionView({
 
   // Compute clean syllabus text for the summary
   const syllabusSummary = useMemo(() => {
-    return computeSyllabusText(currentChapters, selectedTopicIds);
-  }, [currentChapters, selectedTopicIds]);
+    return computeSyllabusText(currentChapters, selectedTopicIds, { questionType });
+  }, [currentChapters, selectedTopicIds, questionType]);
 
   const handleProceedToCriteria = () => {
     if (selectedTopicIds.length === 0) {

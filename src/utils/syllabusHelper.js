@@ -1,24 +1,79 @@
 /**
  * Utility helper to compute the syllabus / chapter / topic range for a test paper.
- * Example outputs:
- * - "Chapter 1 (Topic: 1.1 to 1.6)"
- * - "Chapter 1 (Topic: 1.1 to 1.4), Chapter 2 (Topic: 2.1 to 2.3)"
- * - "Chapter 1 (Topics: 1.1, 1.3, 1.5)"
+ * Examples:
+ * - Full Chapter:
+ *   - "Chapter 1 (Full Chapter)"
+ *   - "Chapter 1 (Full Chapter - MCQs)"
+ *   - "Chapter 1 (Full Chapter - Short Questions)"
+ *   - "Chapter 1 (Full Chapter - Long Questions)"
+ * - Partial Chapter:
+ *   - "Chapter 1 (Topic: 1.1 to 1.4)"
+ *   - "Chapter 1 (Topic: 1.1 to 1.4 - MCQs)"
+ * - Multiple Chapters:
+ *   - "Chapter 1, Chapter 2 (Full Chapter - MCQs)"
+ *   - "Chapter 1 (Full Chapter), Chapter 2 (Topic: 2.1 to 2.3)"
+ * - Full Book:
+ *   - "Full Book (Complete Syllabus)"
+ *   - "Full Book (MCQs)"
  */
-export function computeSyllabusText(chapters = [], selectedTopicIds = []) {
-  if (!chapters || !Array.isArray(chapters) || chapters.length === 0) {
-    return 'Chapter 1 (Topic: 1.1 to 1.6)';
+export function computeSyllabusText(chapters = [], selectedTopicIds = [], options = {}) {
+  // 1. Normalize options (supports string questionType or object with counts / type)
+  let qType = null;
+  let mcqCount = 0;
+  let shortCount = 0;
+  let longCount = 0;
+
+  if (typeof options === 'string') {
+    qType = options;
+  } else if (options && typeof options === 'object') {
+    qType = options.questionType || null;
+    mcqCount = options.mcqCount ?? (options.mcqs?.length ?? 0);
+    shortCount = options.shortCount ?? (options.shortQuestions?.length ?? 0);
+    longCount = options.longCount ?? (options.longQuestions?.length ?? 0);
   }
 
-  if (!selectedTopicIds || selectedTopicIds.length === 0) {
-    return 'Full Book / Complete Syllabus';
+  // 2. Determine question type suffix if paper is exclusively one type
+  let typeSuffix = '';
+  if (qType === 'MCQ' || (mcqCount > 0 && shortCount === 0 && longCount === 0)) {
+    typeSuffix = 'MCQs';
+  } else if (qType === 'SHORT' || (shortCount > 0 && mcqCount === 0 && longCount === 0)) {
+    typeSuffix = 'Short Questions';
+  } else if (qType === 'LONG' || (longCount > 0 && mcqCount === 0 && shortCount === 0)) {
+    typeSuffix = 'Long Questions';
   }
-
-  const selectedSet = new Set(selectedTopicIds);
-  const chapterEntries = [];
 
   const getTid = (ch, t) => t.id || `${ch.id || ch.chapterNumber || 'ch'}-topic-${t.topicNumber || t.name}`;
 
+  if (!chapters || !Array.isArray(chapters) || chapters.length === 0) {
+    return typeSuffix ? `Chapter 1 (Full Chapter - ${typeSuffix})` : 'Chapter 1 (Full Chapter)';
+  }
+
+  if (!selectedTopicIds || selectedTopicIds.length === 0) {
+    return typeSuffix ? `Full Book (${typeSuffix})` : 'Full Book (Complete Syllabus)';
+  }
+
+  const selectedSet = new Set(selectedTopicIds);
+
+  // 3. Check if ALL topics across ALL chapters are selected (Full Book)
+  let totalBookTopics = 0;
+  let totalMatchedBookTopics = 0;
+  chapters.forEach(ch => {
+    const chTopics = ch.topics || [];
+    totalBookTopics += chTopics.length;
+    chTopics.forEach(t => {
+      if (selectedSet.has(getTid(ch, t))) {
+        totalMatchedBookTopics++;
+      }
+    });
+  });
+
+  if (totalBookTopics > 0 && totalMatchedBookTopics === totalBookTopics && chapters.length > 1) {
+    return typeSuffix ? `Full Book (${typeSuffix})` : 'Full Book (Complete Syllabus)';
+  }
+
+  const chapterEntries = [];
+
+  // 4. Evaluate each chapter individually
   chapters.forEach(ch => {
     const chTopics = ch.topics || [];
     const matchedTopics = chTopics.filter(t => selectedSet.has(getTid(ch, t)));
@@ -26,15 +81,19 @@ export function computeSyllabusText(chapters = [], selectedTopicIds = []) {
 
     const chNum = ch.chapterNumber || ch.id || '1';
 
-    // If all topics in the chapter are selected (and more than 1 topic exists)
-    if (matchedTopics.length === chTopics.length && chTopics.length > 1) {
-      const firstNum = matchedTopics[0].topicNumber || `${chNum}.1`;
-      const lastNum = matchedTopics[matchedTopics.length - 1].topicNumber || `${chNum}.${matchedTopics.length}`;
-      chapterEntries.push(`Chapter ${chNum} (Topic: ${firstNum} to ${lastNum})`);
+    // If ALL topics in this chapter are selected (or chapter has 0 topics) -> FULL CHAPTER!
+    const isFullChapter = chTopics.length === 0 || matchedTopics.length === chTopics.length;
+
+    if (isFullChapter) {
+      chapterEntries.push({
+        chNum,
+        isFull: true,
+        text: 'Full Chapter'
+      });
       return;
     }
 
-    // Check if matched topics are contiguous within the chapter's topic array
+    // Partial chapter selection: check if matched topics are contiguous
     const indices = matchedTopics
       .map(t => chTopics.findIndex(orig => getTid(ch, orig) === getTid(ch, t)))
       .filter(idx => idx !== -1)
@@ -47,18 +106,61 @@ export function computeSyllabusText(chapters = [], selectedTopicIds = []) {
       const endTopic = chTopics[indices[indices.length - 1]];
       const startNum = startTopic.topicNumber || `${chNum}.${indices[0] + 1}`;
       const endNum = endTopic.topicNumber || `${chNum}.${indices[indices.length - 1] + 1}`;
-      chapterEntries.push(`Chapter ${chNum} (Topic: ${startNum} to ${endNum})`);
+      chapterEntries.push({
+        chNum,
+        isFull: false,
+        text: `Topic: ${startNum} to ${endNum}`
+      });
     } else if (matchedTopics.length === 1) {
       const singleNum = matchedTopics[0].topicNumber || `${chNum}.1`;
-      chapterEntries.push(`Chapter ${chNum} (Topic: ${singleNum})`);
+      chapterEntries.push({
+        chNum,
+        isFull: false,
+        text: `Topic: ${singleNum}`
+      });
     } else {
-      // Discrete topics
+      // Discrete non-contiguous topics
       const topicNumbers = matchedTopics
         .map(t => t.topicNumber || t.name)
         .filter(Boolean);
-      chapterEntries.push(`Chapter ${chNum} (Topics: ${topicNumbers.join(', ')})`);
+      chapterEntries.push({
+        chNum,
+        isFull: false,
+        text: `Topics: ${topicNumbers.join(', ')}`
+      });
     }
   });
 
-  return chapterEntries.length > 0 ? chapterEntries.join(', ') : 'Complete Syllabus';
+  if (chapterEntries.length === 0) {
+    return typeSuffix ? `Complete Syllabus (${typeSuffix})` : 'Complete Syllabus';
+  }
+
+  // 5. Build final clean syllabus text
+  // Case A: Exactly 1 chapter selected
+  if (chapterEntries.length === 1) {
+    const entry = chapterEntries[0];
+    if (entry.isFull) {
+      return typeSuffix 
+        ? `Chapter ${entry.chNum} (Full Chapter - ${typeSuffix})`
+        : `Chapter ${entry.chNum} (Full Chapter)`;
+    } else {
+      return typeSuffix
+        ? `Chapter ${entry.chNum} (${entry.text} - ${typeSuffix})`
+        : `Chapter ${entry.chNum} (${entry.text})`;
+    }
+  }
+
+  // Case B: Multiple chapters selected, all are full
+  const allFull = chapterEntries.every(e => e.isFull);
+  if (allFull) {
+    const chList = chapterEntries.map(e => `Chapter ${e.chNum}`).join(', ');
+    return typeSuffix
+      ? `${chList} (Full Chapter - ${typeSuffix})`
+      : `${chList} (Full Chapter)`;
+  }
+
+  // Case C: Mixed chapters (some full, some partial)
+  const formattedEntries = chapterEntries.map(e => `Chapter ${e.chNum} (${e.text})`);
+  const joined = formattedEntries.join(', ');
+  return typeSuffix ? `${joined} - ${typeSuffix}` : joined;
 }

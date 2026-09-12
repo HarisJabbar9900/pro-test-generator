@@ -527,7 +527,12 @@ export default function App() {
   const handleGeneratePaperFromCTM = (params) => {
     setSelectedTopicIds(params.selectedTopicIds);
 
-    const calculatedSyllabus = computeSyllabusText(currentChapters, params.selectedTopicIds);
+    const calculatedSyllabus = computeSyllabusText(currentChapters, params.selectedTopicIds, {
+      questionType: params.questionType,
+      mcqCount: params.mcqCount,
+      shortCount: params.shortCount,
+      longCount: params.longCount
+    });
 
     // Resolve accurate subject name: if currentChapters are Computer Science chapters, set Computer Science
     let resolvedSubjectName = currentSubject?.name || 'Computer Science';
@@ -704,7 +709,11 @@ export default function App() {
     // Compute descriptive download filename with chapter name and topic names
     let syllabus = (paperConfig?.syllabus || '').trim();
     if (!syllabus || syllabus === 'Complete Syllabus' || syllabus.includes('Full Book')) {
-      syllabus = computeSyllabusText(currentChapters, selectedTopicIds);
+      syllabus = computeSyllabusText(currentChapters, selectedTopicIds, {
+        mcqCount: paperData.mcqs?.length || 0,
+        shortCount: paperData.shortQuestions?.length || 0,
+        longCount: paperData.longQuestions?.length || 0
+      });
     }
 
     // Clean for filename (remove illegal filesystem chars: \ / : * ? " < > |)
@@ -850,7 +859,11 @@ export default function App() {
 
     let syllabus = (paperConfig?.syllabus || '').trim();
     if (!syllabus || syllabus === 'Complete Syllabus' || syllabus.includes('Full Book')) {
-      syllabus = computeSyllabusText(currentChapters, selectedTopicIds);
+      syllabus = computeSyllabusText(currentChapters, selectedTopicIds, {
+        mcqCount: paperData.mcqs?.length || 0,
+        shortCount: paperData.shortQuestions?.length || 0,
+        longCount: paperData.longQuestions?.length || 0
+      });
     }
 
     const newPaper = {
