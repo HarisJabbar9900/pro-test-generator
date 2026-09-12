@@ -2,7 +2,8 @@ import React from 'react';
 import { 
   Send, Save, Newspaper, Users, Settings, Trash2, 
   Copy, Clock, PenTool, BookOpen, FileSignature, ArrowRight, 
-  Cloud, Layers, ShieldCheck, ChevronRight, ListChecks, FileText
+  Cloud, Layers, ShieldCheck, ChevronRight, ListChecks, FileText,
+  Sparkles
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 import { getUserStats } from '../utils/userActivityTracker';
