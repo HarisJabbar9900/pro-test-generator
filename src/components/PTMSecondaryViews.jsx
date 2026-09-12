@@ -672,68 +672,71 @@ export default function PTMSecondaryViews({
     const romanNumerals = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
 
     return (
-      <div className="p-3 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 font-sans">
+      <div className="p-2.5 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 font-sans">
         {/* HEADER & TOP CONTROLS */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center shadow-xs shrink-0">
-              <FileSignature className="w-6 h-6" />
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 sm:gap-4 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center shadow-xs shrink-0">
+              <FileSignature className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <h1 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight">
                   Official Model Papers
                 </h1>
-                <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 text-xs font-black border border-orange-200 shadow-2xs">
+                <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] sm:text-xs font-black border border-orange-200 shadow-2xs">
                   2025 - 2026 Session
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200">
+                <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] sm:text-xs font-bold border border-blue-200">
                   Full Book Syllabus
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
+              <p className="text-[11px] sm:text-xs text-slate-500 font-medium mt-0.5 leading-relaxed">
                 Authentic Punjab & Federal Board examination standard model papers with complete objective & subjective questions.
               </p>
             </div>
           </div>
 
-          {/* QUICK ACTIONS BAR */}
-          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          {/* QUICK ACTIONS BAR (MOBILE PRIORITY: 3-COL ON PHONES, FLEX ROW ON DESKTOP) */}
+          <div className="grid grid-cols-3 gap-1.5 w-full sm:w-auto sm:flex sm:items-center sm:gap-2">
             <button
               type="button"
               onClick={() => setShowAnswerKeys(!showAnswerKeys)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+              className={`px-2 sm:px-3.5 py-2 rounded-xl text-[11px] sm:text-xs font-bold border transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-2xs ${
                 showAnswerKeys 
                   ? 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700' 
                   : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
               }`}
             >
-              {showAnswerKeys ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              <span>{showAnswerKeys ? 'Hide Answers' : 'Reveal Answers'}</span>
+              {showAnswerKeys ? <EyeOff className="w-3.5 h-3.5 shrink-0" /> : <Eye className="w-3.5 h-3.5 shrink-0" />}
+              <span className="sm:hidden">{showAnswerKeys ? 'Hide' : 'Answers'}</span>
+              <span className="hidden sm:inline">{showAnswerKeys ? 'Hide Answers' : 'Reveal Answers'}</span>
             </button>
 
             <button
               type="button"
               onClick={() => handleCopyModelPaper(selectedPaper)}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              className="px-2 sm:px-3.5 py-2 rounded-xl text-[11px] sm:text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-2xs"
             >
-              {copiedPaperText ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-slate-500" />}
-              <span>{copiedPaperText ? 'Copied!' : 'Copy Paper'}</span>
+              {copiedPaperText ? <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> : <Copy className="w-3.5 h-3.5 text-slate-500 shrink-0" />}
+              <span className="sm:hidden">{copiedPaperText ? 'Copied' : 'Copy'}</span>
+              <span className="hidden sm:inline">{copiedPaperText ? 'Copied!' : 'Copy Paper'}</span>
             </button>
 
             <button
               type="button"
               onClick={() => window.print()}
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white hover:bg-slate-800 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+              className="px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-bold bg-slate-900 text-white hover:bg-slate-800 transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-sm"
             >
-              <Printer className="w-4 h-4" />
-              <span>Print Paper</span>
+              <Printer className="w-3.5 h-3.5 shrink-0" />
+              <span className="sm:hidden">Print</span>
+              <span className="hidden sm:inline">Print Paper</span>
             </button>
           </div>
         </div>
 
-        {/* CLASS SELECTION TABS */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        {/* CLASS SELECTION TABS (TOUCH-SCROLLABLE WITH NO HORIZONTAL CUTOFF) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 pt-0.5 no-scrollbar touch-pan-x">
           {[
             { key: '12th', label: '12th Class (Inter Part-II)', available: true, count: '1 Model Paper' },
             { key: '11th', label: '11th Class (Inter Part-I)', available: false, count: 'Coming Soon' },
@@ -747,7 +750,7 @@ export default function PTMSecondaryViews({
                 if (cls.available) setSelectedClassFilter(cls.key);
                 else notify.info(`${cls.label} model papers are being compiled according to the 2026 syllabus.`);
               }}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer shadow-2xs ${
+              className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 shrink-0 whitespace-nowrap cursor-pointer shadow-2xs ${
                 selectedClassFilter === cls.key
                   ? 'bg-orange-600 text-white shadow-md'
                   : cls.available
@@ -769,93 +772,96 @@ export default function PTMSecondaryViews({
           ))}
         </div>
 
-        {/* PAPER HERO BANNER */}
-        <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden border border-slate-800">
+        {/* PAPER HERO BANNER (MOBILE-OPTIMIZED GRID & SCALING) */}
+        <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-7 md:p-8 shadow-xl relative overflow-hidden border border-slate-800">
           <div className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
           <div className="absolute -left-10 -top-10 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
           
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3 py-1 bg-orange-500 text-white text-[11px] font-black rounded-full uppercase tracking-wider shadow-sm">
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
+            <div className="space-y-1.5 sm:space-y-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-orange-500 text-white text-[10px] sm:text-[11px] font-black rounded-full uppercase tracking-wider shadow-xs">
                   {selectedPaper.badge}
                 </span>
-                <span className="px-3 py-1 bg-white/10 text-white/90 text-[11px] font-bold rounded-full border border-white/20">
+                <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-white/10 text-white/90 text-[10px] sm:text-[11px] font-bold rounded-full border border-white/20">
                   {selectedPaper.board}
                 </span>
-                <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-[11px] font-bold rounded-full border border-emerald-500/30">
+                <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-emerald-500/20 text-emerald-300 text-[10px] sm:text-[11px] font-bold rounded-full border border-emerald-500/30">
                   Session {selectedPaper.session}
                 </span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              <h2 className="text-xl sm:text-3xl font-black text-white tracking-tight leading-tight">
                 {selectedPaper.subject}
               </h2>
-              <p className="text-indigo-200 text-sm font-medium max-w-2xl">
+              <p className="text-indigo-200 text-xs sm:text-sm font-medium max-w-2xl leading-relaxed">
                 {selectedPaper.class} — {selectedPaper.description}
               </p>
             </div>
 
-            {/* MARKS & DURATION STATS */}
-            <div className="flex items-center gap-3 shrink-0 flex-wrap">
-              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3.5 text-center min-w-[100px]">
-                <div className="text-2xl font-black text-orange-400">{selectedPaper.totalMarks}</div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Total Marks</div>
+            {/* MARKS & DURATION STATS (CLEAN 2x2 ON MOBILE, 4-IN-A-ROW ON TABLET/DESKTOP) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full lg:w-auto shrink-0 mt-1 lg:mt-0">
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 text-center">
+                <div className="text-xl sm:text-2xl font-black text-orange-400 leading-tight">{selectedPaper.totalMarks}</div>
+                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-300 mt-0.5">Total Marks</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3.5 text-center min-w-[100px]">
-                <div className="text-xl font-black text-white">{selectedPaper.objectiveMarks}</div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Part 1 (MCQs)</div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 text-center">
+                <div className="text-lg sm:text-xl font-black text-white leading-tight">{selectedPaper.objectiveMarks}</div>
+                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-300 mt-0.5">Part 1 (MCQs)</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3.5 text-center min-w-[100px]">
-                <div className="text-xl font-black text-white">{selectedPaper.subjectiveMarks}</div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Part 2 (Subj)</div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 text-center">
+                <div className="text-lg sm:text-xl font-black text-white leading-tight">{selectedPaper.subjectiveMarks}</div>
+                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-300 mt-0.5">Part 2 (Subj)</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3.5 text-center min-w-[110px]">
-                <div className="text-sm font-black text-emerald-400">2h 30m</div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Total Time</div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 text-center">
+                <div className="text-sm sm:text-base font-black text-emerald-400 leading-tight">2h 30m</div>
+                <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-300 mt-0.5">Total Time</div>
               </div>
             </div>
           </div>
 
-          {/* VIEW TAB SWITCHER */}
-          <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-1.5 bg-black/30 p-1.5 rounded-xl border border-white/10">
+          {/* VIEW TAB SWITCHER (RESPONSIVE TOUCH TABS) */}
+          <div className="mt-4 sm:mt-6 pt-3 sm:pt-5 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+            <div className="grid grid-cols-3 sm:flex items-center gap-1 sm:gap-1.5 bg-black/40 p-1 sm:p-1.5 rounded-xl border border-white/10 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => setModelPaperTab('all')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2 sm:px-3.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all text-center cursor-pointer ${
                   modelPaperTab === 'all' 
-                    ? 'bg-orange-500 text-white shadow-sm' 
+                    ? 'bg-orange-500 text-white shadow-xs' 
                     : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
               >
-                Complete Paper (All 75 Marks)
+                <span className="sm:hidden">All (75M)</span>
+                <span className="hidden sm:inline">Complete Paper (All 75 Marks)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setModelPaperTab('objective')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2 sm:px-3.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all text-center cursor-pointer ${
                   modelPaperTab === 'objective' 
-                    ? 'bg-orange-500 text-white shadow-sm' 
+                    ? 'bg-orange-500 text-white shadow-xs' 
                     : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
               >
-                Part 1: Objective (15 MCQs)
+                <span className="sm:hidden">MCQs (15M)</span>
+                <span className="hidden sm:inline">Part 1: Objective (15 MCQs)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setModelPaperTab('subjective')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2 sm:px-3.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all text-center cursor-pointer ${
                   modelPaperTab === 'subjective' 
-                    ? 'bg-orange-500 text-white shadow-sm' 
+                    ? 'bg-orange-500 text-white shadow-xs' 
                     : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
               >
-                Part 2: Subjective (60 Marks)
+                <span className="sm:hidden">Subj (60M)</span>
+                <span className="hidden sm:inline">Part 2: Subjective (60 Marks)</span>
               </button>
             </div>
 
-            <div className="text-xs text-indigo-200 font-semibold flex items-center gap-1.5">
+            <div className="text-[11px] sm:text-xs text-indigo-200 font-semibold flex items-center justify-between sm:justify-start gap-1.5">
               <span>Section:</span>
               <strong className="text-white">
                 {modelPaperTab === 'all' ? 'Objective + Subjective' : modelPaperTab === 'objective' ? '15 MCQs Only' : 'Shorts & Longs Only'}
@@ -864,8 +870,8 @@ export default function PTMSecondaryViews({
           </div>
         </div>
 
-        {/* PRINTABLE PAPER CONTAINER */}
-        <div className="space-y-6">
+        {/* PRINTABLE PAPER CONTAINER (MOBILE-OPTIMIZED GAP & PADDING) */}
+        <div className="space-y-4 sm:space-y-6">
 
           {/* ========================================================= */}
           {/* PART 1: OBJECTIVE (15 MARKS)                              */}
@@ -873,68 +879,68 @@ export default function PTMSecondaryViews({
           {(modelPaperTab === 'all' || modelPaperTab === 'objective') && (
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               {/* Objective Header */}
-              <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-transparent p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-transparent p-3.5 sm:p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
-                    <h3 className="text-base font-black text-slate-900 tracking-tight">
+                    <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span>
+                    <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight leading-tight">
                       {selectedPaper.objective.title} — MULTIPLE CHOICE QUESTIONS
                     </h3>
                   </div>
-                  <p className="text-xs text-slate-600 font-medium mt-1">
+                  <p className="text-[11px] sm:text-xs text-slate-600 font-medium mt-0.5 leading-relaxed">
                     {selectedPaper.objective.instructions}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-                  <span className="px-3 py-1 bg-amber-100 text-amber-900 font-black text-xs rounded-xl border border-amber-200">
+                <div className="flex items-center gap-1.5 self-start sm:self-auto shrink-0 flex-wrap">
+                  <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-amber-100 text-amber-900 font-black text-[10px] sm:text-xs rounded-lg sm:rounded-xl border border-amber-200">
                     Marks: {selectedPaper.objective.marks}
                   </span>
-                  <span className="px-3 py-1 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200">
+                  <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-slate-100 text-slate-700 font-bold text-[10px] sm:text-xs rounded-lg sm:rounded-xl border border-slate-200">
                     Time: {selectedPaper.objective.time}
                   </span>
                 </div>
               </div>
 
-              {/* MCQs Grid */}
-              <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* MCQs Grid (1 Column on Mobile, 2 Columns on Desktop) */}
+              <div className="p-3 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {(selectedPaper?.objective?.questions || []).map((q) => {
                   const optionLetters = ['(a)', '(b)', '(c)', '(d)'];
 
                   return (
                     <div 
                       key={q.qNum}
-                      className="p-4 rounded-xl border border-slate-200/90 bg-slate-50/50 hover:bg-white hover:border-orange-300 transition-all space-y-3 shadow-2xs group flex flex-col justify-between"
+                      className="p-3 sm:p-4 rounded-xl border border-slate-200/90 bg-slate-50/50 hover:bg-white hover:border-orange-300 transition-all space-y-2.5 sm:space-y-3 shadow-2xs group flex flex-col justify-between"
                     >
                       <div>
                         {/* Question Statement */}
-                        <div className="flex items-start gap-2.5">
-                          <span className="w-6 h-6 rounded-lg bg-orange-100 text-orange-700 font-black text-xs flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                        <div className="flex items-start gap-2 sm:gap-2.5">
+                          <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-md sm:rounded-lg bg-orange-100 text-orange-700 font-black text-[10px] sm:text-xs flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-orange-600 group-hover:text-white transition-colors">
                             {q.qNum}
                           </span>
-                          <h4 className="text-sm font-bold text-slate-800 leading-snug">
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-800 leading-snug break-words flex-1">
                             {q.question}
                           </h4>
                         </div>
 
-                        {/* Options */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3 pl-8">
+                        {/* Options Grid (Mobile-friendly Wrapping & Spacing) */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 mt-2 sm:mt-3 pl-0 sm:pl-7">
                           {(q.options || []).map((opt, optIdx) => {
                             const isCorrect = showAnswerKeys && optIdx === q.correctIndex;
 
                             return (
                               <div
                                 key={optIdx}
-                                className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                                className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-start sm:items-center gap-1.5 break-words ${
                                   isCorrect
                                     ? 'bg-emerald-100 border-emerald-400 text-emerald-900 font-bold shadow-2xs'
                                     : 'bg-white border-slate-200 text-slate-700'
                                 }`}
                               >
-                                <span className={`text-[11px] font-bold ${isCorrect ? 'text-emerald-700' : 'text-slate-400'}`}>
+                                <span className={`text-[11px] font-bold shrink-0 mt-0.5 sm:mt-0 ${isCorrect ? 'text-emerald-700' : 'text-slate-400'}`}>
                                   {optionLetters[optIdx]}
                                 </span>
-                                <span className="truncate">{opt}</span>
-                                {isCorrect && <Check className="w-3.5 h-3.5 text-emerald-600 ml-auto shrink-0" />}
+                                <span className="break-words flex-1 leading-snug">{opt}</span>
+                                {isCorrect && <Check className="w-3.5 h-3.5 text-emerald-600 ml-auto shrink-0 mt-0.5 sm:mt-0" />}
                               </div>
                             );
                           })}
@@ -943,11 +949,11 @@ export default function PTMSecondaryViews({
 
                       {/* Answer Key Footer */}
                       {showAnswerKeys && (
-                        <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] pl-8">
+                        <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[10px] sm:text-[11px] pl-0 sm:pl-7">
                           <span className="text-emerald-700 font-bold flex items-center gap-1">
-                            <Check className="w-3.5 h-3.5" /> Correct: <strong>{q.answer} {q.answerKey}</strong>
+                            <Check className="w-3.5 h-3.5 shrink-0" /> Correct: <strong>{q.answer} {q.answerKey}</strong>
                           </span>
-                          <span className="text-slate-400 font-mono text-[10px]">1 Mark</span>
+                          <span className="text-slate-400 font-mono text-[9px] sm:text-[10px]">1 Mark</span>
                         </div>
                       )}
                     </div>
@@ -961,64 +967,64 @@ export default function PTMSecondaryViews({
           {/* PART 2: SUBJECTIVE (60 MARKS)                             */}
           {/* ========================================================= */}
           {(modelPaperTab === 'all' || modelPaperTab === 'subjective') && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               
               {/* SECTION I: SHORT QUESTIONS */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 {/* Subjective Section I Header */}
-                <div className="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-transparent p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-transparent p-3.5 sm:p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
-                      <h3 className="text-base font-black text-slate-900 tracking-tight">
+                      <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0"></span>
+                      <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight leading-tight">
                         {selectedPaper?.subjective?.title || 'PART 2: SUBJECTIVE'} — {selectedPaper?.subjective?.section1?.title || 'SECTION I'}
                       </h3>
                     </div>
-                    <p className="text-xs text-slate-600 font-medium mt-1">
+                    <p className="text-[11px] sm:text-xs text-slate-600 font-medium mt-0.5 leading-relaxed">
                       {selectedPaper?.subjective?.section1?.totalMarks || selectedPaper?.subjective?.section1?.marks || 36} Marks total across Q #2, Q #3, and Q #4 (Attempt any 6 from each)
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-                    <span className="px-3 py-1 bg-blue-100 text-blue-900 font-black text-xs rounded-xl border border-blue-200">
+                  <div className="flex items-center gap-1.5 self-start sm:self-auto shrink-0 flex-wrap">
+                    <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-blue-100 text-blue-900 font-black text-[10px] sm:text-xs rounded-lg sm:rounded-xl border border-blue-200">
                       Total: {selectedPaper?.subjective?.section1?.totalMarks || selectedPaper?.subjective?.section1?.marks || 36} Marks
                     </span>
-                    <span className="px-3 py-1 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200">
+                    <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-slate-100 text-slate-700 font-bold text-[10px] sm:text-xs rounded-lg sm:rounded-xl border border-slate-200">
                       Time: {selectedPaper?.subjective?.time || '2 Hours 10 Minutes'}
                     </span>
                   </div>
                 </div>
 
                 {/* Question Sets (Q2, Q3, Q4) */}
-                <div className="p-5 sm:p-6 space-y-6">
+                <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
                   {(selectedPaper?.subjective?.section1?.parts || selectedPaper?.subjective?.section1?.subSections || []).map((part) => (
-                    <div key={part.qNum} className="border border-slate-200 rounded-2xl p-4 sm:p-5 bg-slate-50/40 space-y-3.5">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                    <div key={part.qNum} className="border border-slate-200 rounded-xl sm:rounded-2xl p-3 sm:p-5 bg-slate-50/40 space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 border-b border-slate-200 pb-2.5 sm:pb-3">
                         <div className="flex items-center gap-2">
-                          <span className="px-2.5 py-1 bg-blue-600 text-white font-black text-xs rounded-lg shadow-2xs">
+                          <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-blue-600 text-white font-black text-xs rounded-lg shadow-2xs shrink-0">
                             {part.qNum}
                           </span>
-                          <h4 className="text-sm font-black text-slate-800">
+                          <h4 className="text-xs sm:text-sm font-black text-slate-800 break-words flex-1">
                             {part.instruction}
                           </h4>
                         </div>
-                        <span className="px-2.5 py-0.5 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-lg shrink-0 self-start sm:self-auto">
+                        <span className="px-2 py-0.5 bg-white border border-slate-200 text-slate-700 text-[10px] sm:text-xs font-bold rounded-md sm:rounded-lg shrink-0 self-start sm:self-auto">
                           Attempt {part.required || 6} of {(part.questions || []).length} • {part.totalMarks || 12} Marks
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5 pt-1">
                         {(part.questions || []).map((qText, qIdx) => (
                           <div 
                             key={qIdx}
-                            className="p-3 bg-white rounded-xl border border-slate-200/80 hover:border-blue-300 transition-all flex items-start gap-2.5 shadow-2xs group"
+                            className="p-2.5 sm:p-3 bg-white rounded-xl border border-slate-200/80 hover:border-blue-300 transition-all flex items-start gap-2 sm:gap-2.5 shadow-2xs group"
                           >
-                            <span className="w-5 h-5 rounded-md bg-blue-50 text-blue-700 font-black text-[11px] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <span className="w-5 h-5 rounded-md bg-blue-50 text-blue-700 font-black text-[10px] sm:text-[11px] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                               {romanNumerals[qIdx] || qIdx + 1}
                             </span>
-                            <p className="text-xs font-semibold text-slate-800 leading-relaxed">
+                            <p className="text-xs font-semibold text-slate-800 leading-relaxed break-words flex-1">
                               {qText}
                             </p>
-                            <span className="ml-auto text-[10px] text-slate-400 font-bold shrink-0">
+                            <span className="text-[10px] text-slate-400 font-bold shrink-0 ml-1 mt-0.5">
                               2M
                             </span>
                           </div>
@@ -1032,44 +1038,44 @@ export default function PTMSecondaryViews({
               {/* SECTION II: LONG / DESCRIPTIVE QUESTIONS */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 {/* Subjective Section II Header */}
-                <div className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-transparent p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-transparent p-3.5 sm:p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
-                      <h3 className="text-base font-black text-slate-900 tracking-tight">
+                      <span className="w-2.5 h-2.5 rounded-full bg-purple-600 shrink-0"></span>
+                      <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight leading-tight">
                         {selectedPaper?.subjective?.section2?.title || 'SECTION II'}
                       </h3>
                     </div>
-                    <p className="text-xs text-slate-600 font-medium mt-1">
+                    <p className="text-[11px] sm:text-xs text-slate-600 font-medium mt-0.5 leading-relaxed">
                       {selectedPaper?.subjective?.section2?.instruction || 'Note: Attempt any THREE descriptive questions.'}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-                    <span className="px-3 py-1 bg-purple-100 text-purple-900 font-black text-xs rounded-xl border border-purple-200">
+                  <div className="flex items-center gap-1.5 self-start sm:self-auto shrink-0 flex-wrap">
+                    <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-purple-100 text-purple-900 font-black text-[10px] sm:text-xs rounded-lg sm:rounded-xl border border-purple-200">
                       Total: {selectedPaper?.subjective?.section2?.totalMarks || 24} Marks
                     </span>
-                    <span className="px-3 py-1 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl">
+                    <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-white border border-slate-200 text-slate-700 text-[10px] sm:text-xs font-bold rounded-lg sm:rounded-xl">
                       Attempt {selectedPaper?.subjective?.section2?.required || 3} of {(selectedPaper?.subjective?.section2?.questions || []).length}
                     </span>
                   </div>
                 </div>
 
                 {/* Long Questions List */}
-                <div className="p-5 sm:p-6 space-y-3">
+                <div className="p-3 sm:p-6 space-y-2.5 sm:space-y-3">
                   {(selectedPaper?.subjective?.section2?.questions || []).map((lq) => (
                     <div 
                       key={lq.qNum}
-                      className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-purple-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs group"
+                      className="p-3 sm:p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-purple-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 shadow-2xs group"
                     >
-                      <div className="flex items-start gap-3">
-                        <span className="px-2.5 py-1 rounded-lg bg-purple-100 text-purple-800 font-black text-xs group-hover:bg-purple-600 group-hover:text-white transition-colors shrink-0">
+                      <div className="flex items-start gap-2.5 sm:gap-3">
+                        <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg bg-purple-100 text-purple-800 font-black text-xs group-hover:bg-purple-600 group-hover:text-white transition-colors shrink-0 self-start">
                           {lq.qNum}
                         </span>
-                        <p className="text-sm font-bold text-slate-800 leading-snug">
+                        <p className="text-xs sm:text-sm font-bold text-slate-800 leading-snug break-words flex-1">
                           {lq.question}
                         </p>
                       </div>
-                      <span className="px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-black border border-purple-200 shrink-0 self-start sm:self-auto">
+                      <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-purple-50 text-purple-700 text-[10px] sm:text-xs font-black border border-purple-200 shrink-0 self-start sm:self-auto">
                         {lq.marks} Marks
                       </span>
                     </div>
@@ -1082,16 +1088,16 @@ export default function PTMSecondaryViews({
 
         </div>
 
-        {/* FOOTER NOTICE */}
-        <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+        {/* FOOTER NOTICE (MOBILE FULL-WIDTH ACTION) */}
+        <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[11px] sm:text-xs text-slate-600">
           <div className="flex items-center gap-2">
             <CheckSquare className="w-4 h-4 text-orange-600 shrink-0" />
-            <span>Compiled strictly in accordance with Punjab & Federal Curriculum & Textbook Board (PCTB/FBISE) 2025-2026.</span>
+            <span className="leading-relaxed">Compiled strictly in accordance with Punjab & Federal Curriculum & Textbook Board (PCTB/FBISE) 2025-2026.</span>
           </div>
           <button
             type="button"
             onClick={() => onGoToGenerate?.()}
-            className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+            className="w-full sm:w-auto text-center px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
           >
             Create Custom Paper From Bank &rarr;
           </button>
