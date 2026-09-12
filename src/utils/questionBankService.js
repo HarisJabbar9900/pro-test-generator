@@ -6,6 +6,7 @@ import { CHAPTER_4_NEW_TOPICS } from './chapter4TopicsData.js';
 import { CHAPTER_5_NEW_TOPICS } from './chapter5TopicsData.js';
 import { CHAPTER_6_NEW_TOPICS } from './chapter6TopicsData.js';
 import { CHAPTER_7_NEW_TOPICS } from './chapter7TopicsData.js';
+import { CHAPTER_8_NEW_TOPICS } from './chapter8TopicsData.js';
 import { CLASS_11_CHAPTER_1_TOPICS } from './class11Chapter1Data.js';
 import { CLASS_11_CHAPTER_2_TOPICS } from './class11Chapter2Data.js';
 import { CLASS_11_UNITS_3_TO_9_CHAPTERS } from './class11Units3To9Data.js';
@@ -168,6 +169,12 @@ export const INITIAL_QUESTION_BANK = {
             "chapterNumber": 7,
             "name": "Hypothesis Testing",
             "topics": CHAPTER_7_NEW_TOPICS
+          },
+          {
+            "id": "cs-12-ch8",
+            "chapterNumber": 8,
+            "name": "Applications of Computer Science",
+            "topics": CHAPTER_8_NEW_TOPICS
           }
         ] 
       },
@@ -1752,6 +1759,187 @@ export function mergeChapter1NewTopics(bank) {
 
           // Sort numerically: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6
           ch7.topics.sort((a, b) => {
+            const aParts = (a.topicNumber || '0').split('.').map(Number);
+            const bParts = (b.topicNumber || '0').split('.').map(Number);
+            for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+              const av = aParts[i] || 0;
+              const bv = bParts[i] || 0;
+              if (av !== bv) return av - bv;
+            }
+            return 0;
+          });
+        }
+
+        // =====================================================================
+        // CHAPTER 8: APPLICATIONS OF COMPUTER SCIENCE
+        // =====================================================================
+        let ch8 = sub.chapters.find(c => 
+          c.chapterNumber === 8 || 
+          (c.name && c.name.toLowerCase().includes('applications of computer science')) ||
+          (c.name && c.name.toLowerCase().includes('chap#8'))
+        );
+
+        if (!ch8 && clsKey === '12th') {
+          ch8 = {
+            id: `${sub.id}-ch8`,
+            chapterNumber: 8,
+            name: "Applications of Computer Science",
+            topics: []
+          };
+          sub.chapters.push(ch8);
+          changed = true;
+        }
+
+        if (ch8 && clsKey === '12th') {
+          if (!ch8.name || !ch8.name.includes("Applications of Computer")) {
+            ch8.name = "Applications of Computer Science";
+            ch8.chapterNumber = 8;
+            changed = true;
+          }
+          if (!ch8.topics) ch8.topics = [];
+
+          // Remove any stale sub-topics (e.g. 8.1.1) and keep strictly 8.1, 8.2, etc.
+          const preCh8Count = ch8.topics.length;
+          ch8.topics = ch8.topics.filter(t => {
+            const parts = (t.topicNumber || '').trim().split('.');
+            return parts.length <= 2;
+          });
+          if (ch8.topics.length !== preCh8Count) changed = true;
+
+          CHAPTER_8_NEW_TOPICS.forEach(newTopic => {
+            const existingTopic = ch8.topics.find(t => 
+              t.topicNumber?.trim() === newTopic.topicNumber.trim()
+            );
+
+            if (!existingTopic) {
+              ch8.topics.push(JSON.parse(JSON.stringify(newTopic)));
+              changed = true;
+            } else {
+              existingTopic.name = newTopic.name;
+              if (!existingTopic.id || (newTopic.id && existingTopic.id !== newTopic.id)) {
+                existingTopic.id = newTopic.id;
+                changed = true;
+              }
+
+              if (!existingTopic.mcqs) existingTopic.mcqs = [];
+              (newTopic.mcqs || []).forEach(m => {
+                const normQ = (m.question || '').trim().toLowerCase();
+                const existingMcq = existingTopic.mcqs.find(em => (em.question || '').trim().toLowerCase() === normQ);
+                if (existingMcq) {
+                  if (m.category === 'exercise' && (existingMcq.category !== 'exercise' || !existingMcq.isExercise)) {
+                    existingMcq.category = 'exercise';
+                    existingMcq.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise') {
+                    existingTopic.mcqs.unshift(JSON.parse(JSON.stringify(m)));
+                  } else {
+                    existingTopic.mcqs.push(JSON.parse(JSON.stringify(m)));
+                  }
+                  changed = true;
+                }
+              });
+
+              if (!existingTopic.shortQuestions) existingTopic.shortQuestions = [];
+              (newTopic.shortQuestions || []).forEach(s => {
+                const normQ = (s.question || '').trim().toLowerCase();
+                const existingShort = existingTopic.shortQuestions.find(es => (es.question || '').trim().toLowerCase() === normQ);
+                if (existingShort) {
+                  if (s.category === 'exercise' && (existingShort.category !== 'exercise' || !existingShort.isExercise)) {
+                    existingShort.category = 'exercise';
+                    existingShort.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise') {
+                    existingTopic.shortQuestions.unshift(JSON.parse(JSON.stringify(s)));
+                  } else {
+                    existingTopic.shortQuestions.push(JSON.parse(JSON.stringify(s)));
+                  }
+                  changed = true;
+                }
+              });
+            }
+          });
+
+          // Strictly enforce that ONLY the 10 official textbook exercise MCQs and 10 Shorts in Chapter 8 are marked as exercise
+          const OFFICIAL_CH8_EX_MCQ_KEYS = new Set([
+            'artificial intelligence (ai) is best described as:',
+            'the internet of things (iot) is mainly used to:',
+            'an example of cloud computing is:',
+            'blockchain technology is known for:',
+            'an ethical issue in ai systems is:',
+            'the purpose of ai governance policies is to:',
+            'in agriculture, iot and ai can work together to:',
+            'transparency in agriculture supply chains can be improved using:',
+            'responsible technology development should:',
+            'cultural awareness in ai design ensures:'
+          ]);
+
+          const OFFICIAL_CH8_EX_SHORT_KEYS = new Set([
+            'what is artificial intelligence (ai) and how is it used in daily life?',
+            'how does the internet of things (iot) connect smart devices together?',
+            'what are the main advantages of using cloud computing?',
+            'how does blockchain ensure security and transparency in transactions?',
+            'why is it important to consider ethics while developing ai systems?',
+            'what role do stakeholders play in the design and regulation of ai technologies?',
+            'how can emerging technologies help solve national challenges in pakistan?',
+            'what is the importance of cultural awareness when designing technological solutions?',
+            'how can ai, iot, and cloud work together to improve agriculture?',
+            'why are laws and policies necessary for the responsible and safe use of technology?'
+          ]);
+
+          ch8.topics.forEach(t => {
+            if (Array.isArray(t.mcqs)) {
+              t.mcqs.forEach(m => {
+                const normQ = (m.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH8_EX_MCQ_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (m.category !== 'exercise' || !m.isExercise) {
+                    m.category = 'exercise';
+                    m.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (m.category === 'exercise' || m.isExercise || (typeof m.id === 'string' && m.id.includes('-ex-'))) {
+                    m.category = 'topic';
+                    m.isExercise = false;
+                    if (typeof m.id === 'string' && m.id.includes('-ex-')) {
+                      m.id = m.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+
+            if (Array.isArray(t.shortQuestions)) {
+              t.shortQuestions.forEach(s => {
+                const normQ = (s.question || '').toLowerCase().trim();
+                const isOfficial = OFFICIAL_CH8_EX_SHORT_KEYS.has(normQ);
+                if (isOfficial) {
+                  if (s.category !== 'exercise' || !s.isExercise) {
+                    s.category = 'exercise';
+                    s.isExercise = true;
+                    changed = true;
+                  }
+                } else {
+                  if (s.category === 'exercise' || s.isExercise || (typeof s.id === 'string' && s.id.includes('-ex-'))) {
+                    s.category = 'topic';
+                    s.isExercise = false;
+                    if (typeof s.id === 'string' && s.id.includes('-ex-')) {
+                      s.id = s.id.replace('-ex-', '-');
+                    }
+                    changed = true;
+                  }
+                }
+              });
+            }
+          });
+
+          // Sort numerically: 8.1, 8.2, 8.3, 8.4
+          ch8.topics.sort((a, b) => {
             const aParts = (a.topicNumber || '0').split('.').map(Number);
             const bParts = (b.topicNumber || '0').split('.').map(Number);
             for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
