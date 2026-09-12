@@ -1,7 +1,7 @@
 /**
  * Chapter 4: Applications of Python (12th Class Computer Science)
  * GUI Development with Tkinter & Working with Databases in Python
- * Official Exercise Questions (MCQs & Short Questions) & Board-Style Topic-Wise MCQs
+ * Official Exercise Questions (MCQs & Short Questions) & Board-Style Topic-Wise MCQs & Shorts
  */
 
 export const CHAPTER_4_NEW_TOPICS = [
@@ -517,6 +517,102 @@ export const CHAPTER_4_NEW_TOPICS = [
         "marks": 2,
         "category": "exercise",
         "isExercise": true
+      },
+      {
+        "id": "ch4-t4.1-s1",
+        "topicNumber": "4.1",
+        "question": "What is a Graphical User Interface (GUI), and how does it improve user usability compared to a Command-Line Interface (CLI)?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s2",
+        "topicNumber": "4.1",
+        "question": "What are the specific roles of tk.Tk() and window.mainloop() in a Tkinter program?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s3",
+        "topicNumber": "4.1",
+        "question": "Differentiate between a Label widget and an Entry widget in Tkinter.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s4",
+        "topicNumber": "4.1",
+        "question": "What is a Frame widget in Tkinter, and why is it useful when organizing complex layouts?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s5",
+        "topicNumber": "4.1",
+        "question": "How can you mask user input in a Tkinter Entry widget to display asterisks (*) for password fields?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s6",
+        "topicNumber": "4.1",
+        "question": "Describe the purpose of a Listbox widget in Tkinter.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s7",
+        "topicNumber": "4.1",
+        "question": "Compare the working mechanisms of the pack() and grid() layout managers in Tkinter.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s8",
+        "topicNumber": "4.1",
+        "question": "Explain how the place() layout manager positions widgets using x and y coordinates.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s9",
+        "topicNumber": "4.1",
+        "question": "What is the function of the columnspan option when arranging widgets with grid()?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s10",
+        "topicNumber": "4.1",
+        "question": "What is Event-Driven Programming, and how does it control application flow?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s11",
+        "topicNumber": "4.1",
+        "question": "How is a Python function linked to a Tkinter Button click using the command= parameter?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.1-s12",
+        "topicNumber": "4.1",
+        "question": "What is the role of the messagebox module in Tkinter, and when is it used?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
       }
     ],
     "longQuestions": []
@@ -781,6 +877,94 @@ export const CHAPTER_4_NEW_TOPICS = [
         "marks": 2,
         "category": "exercise",
         "isExercise": true
+      },
+      {
+        "id": "ch4-t4.2-s13",
+        "topicNumber": "4.2",
+        "question": "Differentiate between an Entity and an Attribute in relational database design with examples.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.2-s14",
+        "topicNumber": "4.2",
+        "question": "What is a Primary Key, and why must every database table have one?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.2-s15",
+        "topicNumber": "4.2",
+        "question": "Explain the concept of a Foreign Key and how it establishes relationships between tables.",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.2-s16",
+        "topicNumber": "4.2",
+        "question": "Why is sqlite3 widely used for small to medium Python desktop applications?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.2-s17",
+        "topicNumber": "4.2",
+        "question": "What is a Cursor object in Python database programming, and why is it required?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.2-s18",
+        "topicNumber": "4.2",
+        "question": "Differentiate between cursor.execute() and cursor.fetchall().",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.2-s19",
+        "topicNumber": "4.2",
+        "question": "Why is calling connection.commit() necessary after executing INSERT, UPDATE, or DELETE queries?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.2-s20",
+        "topicNumber": "4.2",
+        "question": "What does the acronym CRUD stand for in database application management?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.2-s21",
+        "topicNumber": "4.2",
+        "question": "Which SQL command performs the Create operation in CRUD, and what is its standard syntax?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.2-s22",
+        "topicNumber": "4.2",
+        "question": "Which SQL command corresponds to the Read operation, and how do you retrieve all columns from a table?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
+      },
+      {
+        "id": "ch4-t4.2-s23",
+        "topicNumber": "4.2",
+        "question": "Why is the WHERE clause essential when executing UPDATE and DELETE SQL operations?",
+        "marks": 2,
+        "category": "topic",
+        "isExercise": false
       }
     ],
     "longQuestions": []
