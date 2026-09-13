@@ -716,6 +716,160 @@ export default function App() {
     } catch (e) {}
   };
 
+  // Instant 1-Click Test Generator from Dashboard Presets
+  const handleGeneratePaperFromPreset = ({
+    preset,
+    classKey,
+    subjectId,
+    chapterIds = [],
+    language = 'bilingual',
+    customTitle,
+    syllabus
+  }) => {
+    const targetClass = classKey || selectedClass || '10th';
+    const targetClassData = bank[targetClass] || {};
+    const targetSubject = (targetClassData.subjects || []).find(s => s.id === subjectId) || targetClassData.subjects?.[0] || {};
+    const targetChapters = targetSubject.chapters || [];
+
+    const activeChapters = (chapterIds && chapterIds.length > 0)
+      ? targetChapters.filter(ch => chapterIds.includes(ch.id))
+      : targetChapters;
+
+    const collectedTopicIds = [];
+    activeChapters.forEach(ch => {
+      (ch.topics || []).forEach(t => collectedTopicIds.push(t.id));
+    });
+
+    let mcqCount = 5;
+    let mcqMarks = 1;
+    let shortCount = 5;
+    let shortMarks = 2;
+    let longCount = 2;
+    let longMarks = 5;
+    let timeAllowed = '35 Mins';
+
+    if (preset.id === 'chapter_test') {
+      mcqCount = 5;
+      mcqMarks = 1;
+      shortCount = 5;
+      shortMarks = 2;
+      longCount = 2;
+      longMarks = 5;
+      timeAllowed = '35 Mins';
+    } else if (preset.id === 'half_book') {
+      mcqCount = 10;
+      mcqMarks = 1;
+      shortCount = 10;
+      shortMarks = 2;
+      longCount = 4;
+      longMarks = 5;
+      timeAllowed = '75 Mins';
+    } else if (preset.id === 'grand_mock') {
+      mcqCount = 15;
+      mcqMarks = 1;
+      shortCount = 15;
+      shortMarks = 2;
+      longCount = 6;
+      longMarks = 5;
+      timeAllowed = '2.5 Hours';
+    } else if (preset.id === 'mcqs_quiz') {
+      mcqCount = 20;
+      mcqMarks = 1;
+      shortCount = 0;
+      shortMarks = 0;
+      longCount = 0;
+      longMarks = 0;
+      timeAllowed = '20 Mins';
+    }
+
+    let computedSyllabus = syllabus;
+    if (!computedSyllabus) {
+      if (activeChapters.length === 1) {
+        const ch = activeChapters[0];
+        computedSyllabus = `Chapter ${ch?.chapterNumber || 1}: ${ch?.name || 'Unit'}`;
+      } else if (activeChapters.length > 1 && activeChapters.length < targetChapters.length) {
+        computedSyllabus = `Chapters: ${activeChapters.map(c => c.chapterNumber || c.name).join(', ')}`;
+      } else {
+        computedSyllabus = 'Complete Syllabus (Full Book)';
+      }
+    }
+
+    setSelectedCourse('Computer Science');
+    setSelectedClass(targetClass);
+    setSelectedSubjectId(targetSubject.id);
+    setSelectedTopicIds(collectedTopicIds);
+
+    setPaperConfig(prev => ({
+      ...prev,
+      institute: currentUser?.institute || prev.institute || 'Educators Academy',
+      subject: targetSubject.name || prev.subject || 'Computer Science',
+      gradeClass: `${targetClass} Class`,
+      examTitle: customTitle || `${preset.title} (${preset.marks} Marks)`,
+      timeAllowed: timeAllowed || preset.time,
+      totalMarks: preset.marks,
+      syllabus: computedSyllabus,
+      language: language || 'bilingual',
+      date: new Date().toISOString().split('T')[0]
+    }));
+
+    const generated = generatePaperFromTopics(targetClass, targetSubject.id, {
+      selectedTopicIds: collectedTopicIds,
+      chapters: activeChapters,
+      pooledMcqCount: mcqCount,
+      pooledMcqMarks: mcqMarks,
+      pooledShortCount: shortCount,
+      pooledShortMarks: shortMarks,
+      pooledLongCount: longCount,
+      pooledLongMarks: longMarks,
+      isRandom: true
+    });
+
+    setPaperData({
+      mcqs: generated.mcqs || [],
+      shortQuestions: generated.shortQuestions || [],
+      longQuestions: generated.longQuestions || []
+    });
+
+    setActiveNav('generate_paper');
+    setPaperStep('canvas');
+
+    notify.success(`${preset.title} پیپر کامیابی سے تیار ہو گیا ہے!`, {
+      description: `کل نمبر: ${preset.marks} | دورانیہ: ${preset.time}`
+    });
+
+    try {
+      confetti({
+        particleCount: 85,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    } catch (e) {}
+  };
+
+  const handleOpenPresetInManualMode = ({ preset, classKey, subjectId }) => {
+    const targetClass = classKey || selectedClass || '10th';
+    const targetClassData = bank[targetClass] || {};
+    const targetSubject = (targetClassData.subjects || []).find(s => s.id === subjectId) || targetClassData.subjects?.[0] || {};
+
+    setSelectedCourse('Computer Science');
+    setSelectedClass(targetClass);
+    setSelectedSubjectId(targetSubject.id);
+
+    setPaperConfig(prev => ({
+      ...prev,
+      institute: currentUser?.institute || prev.institute || 'Educators Academy',
+      subject: targetSubject.name || prev.subject || 'Computer Science',
+      gradeClass: `${targetClass} Class`,
+      examTitle: `${preset.title} (${preset.marks} Marks)`,
+      timeAllowed: preset.time,
+      totalMarks: preset.marks,
+      presetType: preset.id
+    }));
+
+    setActiveNav('generate_paper');
+    setPaperStep('topics');
+  };
+
   // Printing & Word Export Handlers with Paywall & Subscription Guards
   const handlePrintPaper = () => {
     if (currentUser && !isSuperAdmin(currentUser) && !userSubscribed) {
@@ -1313,6 +1467,8 @@ export default function App() {
               onExportDocx={handleExportDocx}
               paperConfig={paperConfig}
               setPaperConfig={setPaperConfig}
+              onGenerateFromPreset={handleGeneratePaperFromPreset}
+              onOpenPresetInManualMode={handleOpenPresetInManualMode}
             />
           )}
 
