@@ -97,19 +97,6 @@ export default function PTMDashboardView({
                 <span>{isUrdu ? 'یوزر مینجمنٹ • User Management' : 'User Management'}</span>
               </button>
             )}
-
-            {/* User Package & Expiry Date Pill */}
-            <div className="flex items-center gap-2 px-3 py-1 bg-white border border-slate-200/90 rounded-full shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-              <span className="text-xs font-black text-slate-800">
-                {isSuper ? (isUrdu ? 'سپر ایڈمن' : 'Super Admin') : (currentUser?.package || (isUrdu ? 'بیسک پیکیج' : 'Basic Plan'))}
-              </span>
-              <span className="text-slate-300">|</span>
-              <span className="text-[11px] font-bold text-emerald-700 flex items-center gap-1 shrink-0">
-                <Calendar className="w-3 h-3 text-emerald-600" />
-                <span>{isUrdu ? 'میعاد:' : 'Expires:'} {currentUser?.expiryDate || '31-12-2026'}</span>
-              </span>
-            </div>
           </div>
         </div>
 
@@ -234,7 +221,7 @@ export default function PTMDashboardView({
           >
             <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
               <div>
-                <div className="text-xl sm:text-2xl font-black tracking-tight drop-shadow-xs truncate max-w-[190px]">
+                <div className="text-base sm:text-lg font-black tracking-tight drop-shadow-xs leading-snug line-clamp-2">
                   {isSuper ? 'Super Admin' : (currentUser?.package && currentUser?.package !== 'None' ? currentUser.package : 'Basic Plan')}
                 </div>
                 <div className="text-xs font-bold mt-1 text-white/90 leading-snug">
@@ -243,9 +230,9 @@ export default function PTMDashboardView({
                 </div>
 
                 {/* Expiry Date Badge inside Card 5 */}
-                <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/25 backdrop-blur-xs text-[11px] font-bold text-amber-200 border border-white/10">
+                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/25 backdrop-blur-xs text-[11px] font-bold text-amber-200 border border-white/10">
                   <Calendar className="w-3.5 h-3.5 text-amber-300" />
-                  <span>{isUrdu ? 'میعاد:' : 'Expires:'} {currentUser?.expiryDate || '31-12-2026'}</span>
+                  <span>{isUrdu ? 'میعاد ختم:' : 'Expires:'} {currentUser?.expiryDate || '31-12-2026'}</span>
                 </div>
               </div>
               <ShieldCheck className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
