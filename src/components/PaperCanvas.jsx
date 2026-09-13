@@ -41,6 +41,31 @@ export default function PaperCanvas({
   const paperData = data || propPaperData || EMPTY_PAPER_DATA;
   const propLanguage = propLanguageCurrent || propLanguageDirect || "English";
 
+  const {
+    academyName,
+    tagline,
+    subject,
+    gradeClass: rawGradeClass,
+    timeAllowed,
+    topMargin = 15,
+    questionGap = 2, // Dynamic Gap range slider (0px to 24px)
+    fontSize = 10,   // Dynamic Font Size range slider (8pt to 14pt)
+    englishFont = 'Inter',
+    showInstructions,
+    instructions,
+    watermarkText: configWatermarkText,
+    showWatermark: configShowWatermark,
+    watermarkType = 'Text Watermark',
+    theme,
+    showAnswerKey,
+    headerLayout = 'Layout 13',
+    headerFontStyle = 'Default',
+    headerFontSize = 30,
+    paperFontColor = 'Black'
+  } = paperConfig;
+
+  const gradeClass = rawGradeClass || (selectedClass ? `${selectedClass} Class` : '11th Class');
+
   // Multi-Set Cheating Protection States (Sets A, B, C, D)
   const [isMultiSetEnabled, setIsMultiSetEnabled] = useState(false);
   const [activeSetKey, setActiveSetKey] = useState('A'); // 'A' | 'B' | 'C' | 'D'
@@ -218,31 +243,6 @@ export default function PaperCanvas({
       return { ...prev, [sectionKey]: list };
     });
   };
-
-  const {
-    academyName,
-    tagline,
-    subject,
-    gradeClass: rawGradeClass,
-    timeAllowed,
-    topMargin = 15,
-    questionGap = 2, // Dynamic Gap range slider (0px to 24px)
-    fontSize = 10,   // Dynamic Font Size range slider (8pt to 14pt)
-    englishFont = 'Inter',
-    showInstructions,
-    instructions,
-    watermarkText: configWatermarkText,
-    showWatermark: configShowWatermark,
-    watermarkType = 'Text Watermark',
-    theme,
-    showAnswerKey,
-    headerLayout = 'Layout 13',
-    headerFontStyle = 'Default',
-    headerFontSize = 30,
-    paperFontColor = 'Black'
-  } = paperConfig;
-
-  const gradeClass = rawGradeClass || (selectedClass ? `${selectedClass} Class` : '11th Class');
 
   // Quick Watermark Toggle Local State (ensures 0ms instant UI and DOM toggle)
   const [localWatermarkOverride, setLocalWatermarkOverride] = useState(null);
