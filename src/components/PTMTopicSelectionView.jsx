@@ -322,18 +322,6 @@ export default function PTMTopicSelectionView({
               <span className="text-xs font-bold text-slate-600 shrink-0">
                 {selectedTopicIds.length} / {allTopicIds.length} Topics Selected
               </span>
-
-              {selectedTopicIds.length > 0 && (
-                <button
-                  type="button"
-                  onClick={handleProceedToCriteria}
-                  className="hidden sm:flex px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-lg shadow-sm transition-all items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
-                  title="Continue to Question Criteria"
-                >
-                  <span>Next: Criteria</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              )}
             </div>
           </div>
 
@@ -481,10 +469,10 @@ export default function PTMTopicSelectionView({
             )}
           </div>
 
-          {/* SINGLE UNIFIED BOTTOM FLOATING ACTION BAR: CONTINUE TO QUESTION CRITERIA */}
-          <div className="fixed bottom-3 left-3 right-3 sm:static sm:bottom-auto sm:left-auto sm:right-auto z-40 p-2.5 sm:p-4 bg-white/95 backdrop-blur-md border border-slate-300/90 rounded-2xl shadow-2xl sm:shadow-xl flex items-center justify-between gap-2.5 animate-fadeIn">
+          {/* PERMANENT FLOATING ACTION BAR AT BOTTOM OF SCREEN */}
+          <div className="fixed bottom-4 left-4 right-4 max-w-4xl mx-auto z-40 p-3 sm:p-4 bg-white/95 backdrop-blur-md border border-slate-300 rounded-2xl shadow-2xl flex items-center justify-between gap-3 animate-fadeIn">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-xs">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-xs">
                 ✓
               </div>
               <div className="truncate">
@@ -504,11 +492,11 @@ export default function PTMTopicSelectionView({
               type="button"
               disabled={selectedTopicIds.length === 0}
               onClick={handleProceedToCriteria}
-              className="px-4 sm:px-6 py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:via-indigo-700 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-xs sm:text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shrink-0"
+              className="px-5 sm:px-7 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:via-indigo-700 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 shrink-0"
             >
-              <span className="hidden sm:inline">Continue to Question Criteria (سوالات کی ترتیب)</span>
+              <span className="hidden sm:inline">Continue to Criteria (سوالات کی ترتیب)</span>
               <span className="sm:hidden">Next: Criteria</span>
-              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
