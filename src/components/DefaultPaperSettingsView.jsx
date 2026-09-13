@@ -257,13 +257,7 @@ export default function DefaultPaperSettingsView({
         </div>
 
         <div className="text-xs font-bold text-slate-400 flex items-center gap-1.5 self-start sm:self-center">
-          {onBack ? (
-            <button type="button" onClick={onBack} className="text-blue-600 hover:underline cursor-pointer">
-              Dashboard
-            </button>
-          ) : (
-            <span className="text-blue-600 hover:underline cursor-pointer" onClick={onGoToGenerate}>Home</span>
-          )}
+          <span className="text-slate-500">Dashboard</span>
           <span>/</span>
           <span className="text-slate-700">Default Paper Settings</span>
         </div>

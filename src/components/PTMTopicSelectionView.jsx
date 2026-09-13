@@ -286,11 +286,11 @@ export default function PTMTopicSelectionView({
             </div>
 
             <div className="text-xs font-semibold text-slate-500 flex flex-wrap items-center gap-1.5 pl-8 sm:pl-0">
-              <button onClick={onBackToClasses} className="text-blue-600 hover:underline">Classes</button>
+              <span>Classes</span>
               <span className="text-slate-400">/</span>
-              <button onClick={onBackToSubjects} className="text-blue-600 hover:underline">{selectedClass}</button>
+              <span>{selectedClass}</span>
               <span className="text-slate-400">/</span>
-              <span className="text-slate-700 font-bold">Topics</span>
+              <span className="text-blue-700 font-bold">Topics</span>
             </div>
           </div>
 
@@ -543,13 +543,13 @@ export default function PTMTopicSelectionView({
             </div>
 
             <div className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-              <button onClick={onBackToClasses} className="text-blue-600 hover:underline">Classes</button>
+              <span>Classes</span>
               <span className="text-slate-400">/</span>
-              <button onClick={onBackToSubjects} className="text-blue-600 hover:underline">{selectedClass}</button>
+              <span>{selectedClass}</span>
               <span className="text-slate-400">/</span>
-              <button onClick={handleBackToTopics} className="text-blue-600 hover:underline">Topics</button>
+              <span>Topics</span>
               <span className="text-slate-400">/</span>
-              <span className="text-slate-700 font-bold">Criteria</span>
+              <span className="text-blue-700 font-bold">Criteria</span>
             </div>
           </div>
 
@@ -578,15 +578,6 @@ export default function PTMTopicSelectionView({
             </div>
 
             <div className="flex items-center gap-2 self-start md:self-auto shrink-0 flex-wrap">
-              <button
-                type="button"
-                onClick={handleBackToTopics}
-                className="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
-              >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>Change Topics</span>
-              </button>
-
               <button
                 type="button"
                 onClick={handleSearchAndGenerate}

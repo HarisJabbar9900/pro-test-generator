@@ -56,13 +56,7 @@ export default function CourseSelectionView({
         </div>
         
         <div className="text-xs font-semibold text-slate-500 self-start sm:self-center bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 flex items-center gap-1.5">
-          {onBackToDashboard ? (
-            <button type="button" onClick={onBackToDashboard} className="text-blue-600 hover:underline cursor-pointer">
-              Dashboard
-            </button>
-          ) : (
-            <span className="text-blue-600">Home</span>
-          )}
+          <span className="text-slate-500">Dashboard</span>
           <span className="text-slate-400">/</span>
           <span className="text-slate-800 font-bold">Courses</span>
         </div>

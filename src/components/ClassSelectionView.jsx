@@ -188,15 +188,9 @@ export default function ClassSelectionView({
 
         {/* BREADCRUMB */}
         <div className="text-xs font-semibold text-slate-500 flex items-center gap-1.5 self-start sm:self-auto bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-          <button 
-            type="button"
-            onClick={onBack} 
-            className="text-blue-600 hover:underline cursor-pointer font-bold"
-          >
-            Courses
-          </button>
+          <span className="text-slate-500">Courses</span>
           <span className="text-slate-400">/</span>
-          <span className="text-slate-800 font-black">{courseName}</span>
+          <span className="text-slate-800 font-bold">{courseName}</span>
           <span className="text-slate-400">/</span>
           <span className="text-blue-700 font-bold">Classes</span>
         </div>
