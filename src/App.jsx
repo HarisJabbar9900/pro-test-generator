@@ -1097,6 +1097,7 @@ export default function App() {
               setShowPinModal(true);
             }
           }}
+          onOpenUserAudit={() => handleSafeNavigate('login_history')}
           currentUser={currentUser}
           onUpdateUser={handleUpdateUser}
           onLogout={handleLogout}

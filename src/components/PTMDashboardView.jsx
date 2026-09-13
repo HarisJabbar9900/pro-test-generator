@@ -101,6 +101,18 @@ export default function PTMDashboardView({
               <span>{isUrdu ? 'اردو فعال (Urdu)' : 'اردو میں دیکھیں'}</span>
             </button>
 
+            {isSuper && (
+              <button
+                type="button"
+                onClick={() => onNavigate && onNavigate('login_history')}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-300 transition-all cursor-pointer shadow-2xs"
+                title="Manage all registered teachers, passwords, and sessions"
+              >
+                <Users className="w-3.5 h-3.5 text-purple-600" />
+                <span>{isUrdu ? 'رجسٹرڈ یوزرز و پاسورڈز' : 'Users & Passwords'}</span>
+              </button>
+            )}
+
             <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
               {isSuper ? (isUrdu ? 'سپر ایڈمن (Super Admin)' : 'Super Admin') : (currentUser?.package || (isUrdu ? 'تصدیق شدہ استاد' : 'Verified Faculty'))}
             </span>

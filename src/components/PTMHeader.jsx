@@ -13,6 +13,7 @@ export default function PTMHeader({
   onOpenFirebaseStatus,
   onOpenAiBot,
   onOpenAdmin,
+  onOpenUserAudit,
   currentUser,
   onUpdateUser,
   onLogout,
@@ -219,7 +220,25 @@ export default function PTMHeader({
                       </div>
                     </button>
 
-                    {/* Menu Action 3: Contact Pro Test Maker Team */}
+                    {/* Menu Action 3: Admin Only - Registered Users & Passwords Audit */}
+                    {currentUser?.isAdmin && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          if (typeof onOpenUserAudit === 'function') onOpenUserAudit();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all cursor-pointer text-left"
+                      >
+                        <ShieldCheck className="w-4 h-4 text-purple-600 shrink-0" />
+                        <div className="flex-1">
+                          <div className="text-purple-700 font-black">Registered Users & Passwords</div>
+                          <div className="text-[10px] font-medium text-slate-400">تمام یوزرز کی تفصیلات اور پاسورڈز دیکھیں</div>
+                        </div>
+                      </button>
+                    )}
+
+                    {/* Menu Action 4: Contact Pro Test Maker Team */}
                     <button
                       type="button"
                       onClick={() => {

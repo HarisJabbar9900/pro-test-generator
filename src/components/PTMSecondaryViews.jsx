@@ -46,6 +46,7 @@ export default function PTMSecondaryViews({
   const [loginLogs, setLoginLogs] = useState([]);
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [visiblePasswords, setVisiblePasswords] = useState({});
   const [selectedPastPaperBoard, setSelectedPastPaperBoard] = useState(null);
 
   // Model Papers States
@@ -2348,7 +2349,8 @@ export default function PTMSecondaryViews({
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50/50 text-[11px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">
                   <th className="py-3 px-4">User / Name</th>
-                  <th className="py-3 px-4">Email Address</th>
+                  <th className="py-3 px-4">Email & Phone</th>
+                  <th className="py-3 px-4">Password / پاسورڈ</th>
                   <th className="py-3 px-4">School / Institute</th>
                   <th className="py-3 px-4">Role</th>
                   <th className="py-3 px-4">Plan & Quota</th>
@@ -2360,7 +2362,7 @@ export default function PTMSecondaryViews({
               <tbody className="divide-y divide-slate-100 text-xs">
                 {displayUsers.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="py-12 text-center text-slate-400 font-medium">
+                    <td colSpan="9" className="py-12 text-center text-slate-400 font-medium">
                       No matching registered users found.
                     </td>
                   </tr>
@@ -2397,12 +2399,54 @@ export default function PTMSecondaryViews({
                           </div>
                         </td>
 
-                        {/* Email */}
+                        {/* Email & Phone */}
                         <td className="py-3 px-4 whitespace-nowrap">
-                          <span className="font-semibold text-slate-700 font-mono text-[11px] flex items-center gap-1">
-                            <Mail className="w-3 h-3 text-slate-400 shrink-0" />
-                            {u.email}
-                          </span>
+                          <div className="space-y-0.5">
+                            <span className="font-semibold text-slate-700 font-mono text-[11px] flex items-center gap-1">
+                              <Mail className="w-3 h-3 text-slate-400 shrink-0" />
+                              {u.email}
+                            </span>
+                            {(u.phone || u.phoneClean || u.phoneStd) && (
+                              <span className="font-medium text-emerald-700 font-mono text-[10px] flex items-center gap-1">
+                                <Phone className="w-3 h-3 text-emerald-500 shrink-0" />
+                                {u.phone || u.phoneStd}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Password with Eye Reveal & Copy */}
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          {u.isAdmin ? (
+                            <span className="text-[11px] text-slate-400 font-mono italic">Protected</span>
+                          ) : (
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-mono text-xs font-black text-slate-800 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200 min-w-[70px] text-center tracking-wide select-all">
+                                {visiblePasswords[u.id || u.email] ? (u.password || '******') : '••••••••'}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setVisiblePasswords(prev => ({ ...prev, [u.id || u.email]: !prev[u.id || u.email] }))}
+                                className="p-1 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer shadow-2xs"
+                                title={visiblePasswords[u.id || u.email] ? "پاسورڈ چھپائیں (Hide Password)" : "پاسورڈ دیکھیں (Show Password)"}
+                              >
+                                {visiblePasswords[u.id || u.email] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                              </button>
+                              {u.password && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(u.password);
+                                    notify.success("Password copied to clipboard!");
+                                  }}
+                                  className="p-1 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-blue-600 transition-colors cursor-pointer shadow-2xs"
+                                  title="پاسورڈ کاپی کریں (Copy Password)"
+                                >
+                                  <Copy className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </td>
 
                         {/* Institute / School */}

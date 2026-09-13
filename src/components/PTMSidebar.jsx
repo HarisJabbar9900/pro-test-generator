@@ -49,6 +49,13 @@ export default function PTMSidebar({
     },
     ...(isAdmin ? [
       { 
+        id: 'login_history', 
+        label: isUrdu ? 'Users & Passwords • رجسٹرڈ یوزرز' : 'Registered Users & Passwords', 
+        icon: Users, 
+        isAdmin: true, 
+        badge: 'Live DB' 
+      },
+      { 
         id: 'question_bank_editor', 
         label: isUrdu ? 'Question Bank • سوالات ایڈٹ' : 'Questions & Answers', 
         icon: Database, 
