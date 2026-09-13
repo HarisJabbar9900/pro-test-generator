@@ -80,7 +80,18 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------
-    // 5. CONNECTION TEST & HEARTBEAT
+    // 5. SHARED PAPERS (QR Code Scans & Solution Access)
+    // Public read for students & teachers scanning QR codes.
+    // Deletion strictly limited to Super Admin to prevent vandalism.
+    // -------------------------------------------------------------
+    match /shared_papers/{paperId} {
+      allow read: if true;
+      allow create, update: if true;
+      allow delete: if isSuperAdmin();
+    }
+
+    // -------------------------------------------------------------
+    // 6. CONNECTION TEST & HEARTBEAT
     // -------------------------------------------------------------
     match /_connection_test/{docId} {
       allow read, write: if true;

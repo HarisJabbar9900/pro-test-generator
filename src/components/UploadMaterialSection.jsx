@@ -4,7 +4,7 @@ import {
   BookOpen, Sparkles, Check, ChevronRight, HelpCircle, 
   Hash, Cloud, Layers, Plus, Trash2, ArrowRight, FileEdit, RefreshCw, FolderPlus, Tag
 } from 'lucide-react';
-import { extractTextFromFile, parseDocumentIntoQuestions } from '../utils/docParser';
+import { extractTextFromFile, parseDocumentIntoQuestions, validateUploadedFile } from '../utils/docParser';
 import { 
   getQuestionBank, 
   addSubjectToClass,
@@ -182,6 +182,15 @@ export default function UploadMaterialSection({
   // Handle File Upload
   const handleFileSelection = async (file) => {
     if (!file) return;
+
+    // Security check: file size and extension whitelist
+    const validation = validateUploadedFile(file);
+    if (!validation.valid) {
+      notify.error(validation.error);
+      setParseError(validation.error);
+      return;
+    }
+
     setUploadedFile(file);
     setIsParsing(true);
     setParseError('');

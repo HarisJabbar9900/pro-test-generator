@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Lock, KeyRound, ShieldAlert, X, CheckCircle2, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Lock, KeyRound, ShieldAlert, X, CheckCircle2, ArrowRight, ShieldCheck } from 'lucide-react';
+import { hashSecret, verifySecret, checkRateLimit, recordFailedAttempt, resetRateLimit } from '../utils/securitySanitizer';
 
 export default function AdminPinModal({
   isOpen,
@@ -13,32 +14,71 @@ export default function AdminPinModal({
   const [newPinInput, setNewPinInput] = useState('');
   const [confirmPinInput, setConfirmPinInput] = useState('');
   const [changeSuccessMsg, setChangeSuccessMsg] = useState('');
+  const [lockoutSeconds, setLockoutSeconds] = useState(0);
+
+  // Countdown timer for lockout
+  React.useEffect(() => {
+    if (lockoutSeconds <= 0) return;
+    const timer = setInterval(() => {
+      setLockoutSeconds(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [lockoutSeconds]);
 
   if (!isOpen) return null;
 
-  // Get stored pin or default to 1234
-  const getStoredPin = () => {
+  // Get stored pin hash or default 1234
+  const getStoredPinHash = () => {
     return localStorage.getItem('protestgenerator_admin_pin') || '1234';
   };
 
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
-    const correctPin = getStoredPin();
+    
+    // Check rate limit first
+    const rateStatus = checkRateLimit('admin_pin_verify', 5, 60);
+    if (!rateStatus.allowed) {
+      setLockoutSeconds(rateStatus.remainingSeconds);
+      setErrorMsg(`Security Lockout: Please wait ${rateStatus.remainingSeconds}s before retrying.`);
+      return;
+    }
 
-    if (pin.trim() === correctPin) {
+    const stored = getStoredPinHash();
+    const isValid = await verifySecret(pin.trim(), stored);
+
+    if (isValid) {
+      // If was legacy plain text, silently upgrade to SHA-256 hash now
+      if (!/^[a-f0-9]{64}$/i.test(stored)) {
+        const hashed = await hashSecret(pin.trim());
+        localStorage.setItem('protestgenerator_admin_pin', hashed);
+      }
+      resetRateLimit('admin_pin_verify');
       setErrorMsg('');
       setPin('');
       onSuccess();
     } else {
-      setErrorMsg('Incorrect PIN! Default PIN is 1234');
+      const attemptRes = recordFailedAttempt('admin_pin_verify', 5, 60);
+      if (attemptRes.isLocked) {
+        setLockoutSeconds(attemptRes.remainingSeconds);
+        setErrorMsg(`Too many incorrect PIN attempts! Locked for ${attemptRes.remainingSeconds}s.`);
+      } else {
+        setErrorMsg(`Incorrect PIN! ${attemptRes.remainingAttempts} attempt(s) remaining.`);
+      }
     }
   };
 
-  const handleChangePinSubmit = (e) => {
+  const handleChangePinSubmit = async (e) => {
     e.preventDefault();
-    const correctPin = getStoredPin();
+    const stored = getStoredPinHash();
+    const isValidCurrent = await verifySecret(currentPinInput.trim(), stored);
 
-    if (currentPinInput.trim() !== correctPin) {
+    if (!isValidCurrent) {
       setErrorMsg('Current PIN is incorrect!');
       return;
     }
@@ -53,8 +93,10 @@ export default function AdminPinModal({
       return;
     }
 
-    localStorage.setItem('protestgenerator_admin_pin', newPinInput.trim());
-    setChangeSuccessMsg('PIN successfully updated!');
+    // Store strictly as cryptographic SHA-256 hash
+    const hashedNewPin = await hashSecret(newPinInput.trim());
+    localStorage.setItem('protestgenerator_admin_pin', hashedNewPin);
+    setChangeSuccessMsg('PIN successfully updated and encrypted!');
     setErrorMsg('');
     setCurrentPinInput('');
     setNewPinInput('');
@@ -123,19 +165,21 @@ export default function AdminPinModal({
                   setErrorMsg('');
                 }}
                 placeholder="• • • •"
-                className="w-full text-center tracking-[0.6em] text-2xl font-black py-2.5 px-4 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-50 text-slate-900"
+                disabled={lockoutSeconds > 0}
+                className="w-full text-center tracking-[0.6em] text-2xl font-black py-2.5 px-4 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-50 text-slate-900 disabled:bg-slate-100 disabled:cursor-not-allowed"
               />
-              <p className="text-[11px] text-slate-400 text-center mt-1">
-                Default PIN: <span className="font-mono font-bold text-blue-600">1234</span>
-              </p>
+              <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 text-center mt-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span>SHA-256 Encrypted Passkey Defense</span>
+              </div>
             </div>
 
             <button
               type="submit"
-              disabled={!pin}
+              disabled={!pin || lockoutSeconds > 0}
               className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-98 text-white rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>Unlock Admin Portal</span>
+              <span>{lockoutSeconds > 0 ? `Locked (${lockoutSeconds}s)` : 'Unlock Admin Portal'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 

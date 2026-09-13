@@ -1,5 +1,6 @@
 import { isValidHumanText } from './textValidator.js';
-export { isValidHumanText };
+import { validateUploadedFile, sanitizeText } from './securitySanitizer.js';
+export { isValidHumanText, validateUploadedFile };
 
 export function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -16,7 +17,8 @@ export function fileToBase64(file) {
 
 export function cleanExtractedText(text) {
   if (!text) return '';
-  return text
+  const sanitized = sanitizeText(text);
+  return sanitized
     .replace(/\r\n/g, '\n')
     .replace(/\r/g, '\n')
     .replace(/[ \t]+/g, ' ')
@@ -30,6 +32,12 @@ export function cleanExtractedText(text) {
  */
 export async function extractTextFromFile(file) {
   if (!file) return "";
+
+  // Strict security validation (size + extension whitelist)
+  const validation = validateUploadedFile(file);
+  if (!validation.valid) {
+    throw new Error(validation.error);
+  }
 
   const name = file.name.toLowerCase();
   const type = file.type.toLowerCase();

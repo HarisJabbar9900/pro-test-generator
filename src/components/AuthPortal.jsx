@@ -14,6 +14,7 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { recordUserLoginEvent } from '../utils/userActivityTracker';
+import { checkRateLimit, recordFailedAttempt, resetRateLimit, sanitizeText } from '../utils/securitySanitizer';
 
 export default function AuthPortal({ onLoginSuccess }) {
   // Language toggle: default is English as requested ('en' | 'ur')
@@ -25,6 +26,22 @@ export default function AuthPortal({ onLoginSuccess }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [lockoutSeconds, setLockoutSeconds] = useState(0);
+
+  // Security Lockout Countdown Timer
+  React.useEffect(() => {
+    if (lockoutSeconds <= 0) return;
+    const timer = setInterval(() => {
+      setLockoutSeconds(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [lockoutSeconds]);
 
   // Login form state (Email or Mobile Number input)
   const [loginEmail, setLoginEmail] = useState(() => {
@@ -141,7 +158,19 @@ export default function AuthPortal({ onLoginSuccess }) {
     setErrorMessage('');
     setSuccessMessage('');
 
-    const rawInput = loginEmail.trim();
+    // A. Rate Limit Check
+    const rateStatus = checkRateLimit('auth_portal_login', 5, 60);
+    if (!rateStatus.allowed) {
+      setLockoutSeconds(rateStatus.remainingSeconds);
+      setErrorMessage(
+        lang === 'ur'
+          ? `سیکیورٹی الرٹ: بہت زیادہ غلط کوششیں! براہ کرم ${rateStatus.remainingSeconds} سیکنڈ انتظار کریں۔`
+          : `Security Alert: Too many failed attempts! Please wait ${rateStatus.remainingSeconds}s before retrying.`
+      );
+      return;
+    }
+
+    const rawInput = sanitizeText(loginEmail.trim());
     const cleanPass = loginPassword.trim();
 
     if (!rawInput || !cleanPass) {
@@ -162,6 +191,7 @@ export default function AuthPortal({ onLoginSuccess }) {
 
     if (isAdminAccount) {
       if (cleanPass === '9900') {
+        resetRateLimit('auth_portal_login');
         const nowFormatted = new Date().toLocaleString('en-PK', { dateStyle: 'medium', timeStyle: 'short' });
         const adminUser = {
           name: 'System Administrator',
@@ -191,10 +221,15 @@ export default function AuthPortal({ onLoginSuccess }) {
         setTimeout(() => onLoginSuccess(adminUser), 300);
         return;
       } else {
+        const attemptRes = recordFailedAttempt('auth_portal_login', 5, 60);
+        if (attemptRes.isLocked) {
+          setLockoutSeconds(attemptRes.remainingSeconds);
+        }
+        await new Promise(r => setTimeout(r, 600));
         setErrorMessage(
           lang === 'ur'
-            ? 'ایڈمن پاسورڈ درست نہیں ہے۔ برائے مہربانی درست پاسورڈ درج کریں۔'
-            : 'Incorrect Admin password! Please enter the valid password.'
+            ? `ایڈمن پاسورڈ درست نہیں ہے۔ (${attemptRes.remainingAttempts || 0} کوششیں باقی ہیں)`
+            : `Incorrect Admin password! (${attemptRes.remainingAttempts || 0} attempt(s) remaining)`
         );
         return;
       }
@@ -471,6 +506,7 @@ export default function AuthPortal({ onLoginSuccess }) {
       }
       const isNewRegistration = Boolean(justRegistered || (!loggedUser.isAdmin && (!loggedUser.package || loggedUser.package === 'None')));
 
+      resetRateLimit('auth_portal_login');
       try { confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } }); } catch (err) {}
       setSuccessMessage(
         lang === 'ur'
@@ -480,8 +516,17 @@ export default function AuthPortal({ onLoginSuccess }) {
       setTimeout(() => onLoginSuccess(loggedUser, isNewRegistration), 280);
 
     } catch (err) {
+      const attemptRes = recordFailedAttempt('auth_portal_login', 5, 60);
+      if (attemptRes.isLocked) {
+        setLockoutSeconds(attemptRes.remainingSeconds);
+      }
+      await new Promise(r => setTimeout(r, 600));
       console.warn("Login Failure:", err);
-      setErrorMessage(err.message || 'Login failed. Please check your credentials.');
+      setErrorMessage(
+        attemptRes.isLocked
+          ? (lang === 'ur' ? `بہت زیادہ غلط کوششیں! لاگ ان ${attemptRes.remainingSeconds} سیکنڈ کے لیے لاک ہو گیا ہے۔` : `Too many failed attempts! Access locked for ${attemptRes.remainingSeconds}s.`)
+          : (err.message || 'Login failed. Please check your credentials.')
+      );
     } finally {
       setIsLoading(false);
     }
@@ -808,13 +853,15 @@ export default function AuthPortal({ onLoginSuccess }) {
               <button
                 type="submit"
                 id="submit-login-btn"
-                disabled={isLoading}
+                disabled={isLoading || lockoutSeconds > 0}
                 className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-xl text-xs font-black shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50 mt-1"
               >
                 <span>
-                  {isLoading 
-                    ? (lang === 'ur' ? 'تصدیق ہو رہی ہے...' : 'Verifying credentials...') 
-                    : (lang === 'ur' ? 'پورٹل میں داخل ہوں' : 'Sign In to Dashboard')}
+                  {lockoutSeconds > 0
+                    ? (lang === 'ur' ? `لاک آؤٹ (${lockoutSeconds} سیکنڈ)` : `Locked (${lockoutSeconds}s)`)
+                    : isLoading 
+                      ? (lang === 'ur' ? 'تصدیق ہو رہی ہے...' : 'Verifying credentials...') 
+                      : (lang === 'ur' ? 'پورٹل میں داخل ہوں' : 'Sign In to Dashboard')}
                 </span>
                 <ArrowRight className="w-4 h-4" />
               </button>
