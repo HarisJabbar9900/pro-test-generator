@@ -41,7 +41,8 @@ export default function PTMSecondaryViews({
   onNavigate,
   onBack,
   appLanguage = 'en',
-  onToggleLanguage
+  onToggleLanguage,
+  onOpenPairingSchemeModal
 }) {
   const isUrdu = appLanguage === 'ur';
   const [registeredUsers, setRegisteredUsers] = useState([]);
@@ -815,6 +816,17 @@ export default function PTMSecondaryViews({
               <span className="sm:hidden">Print</span>
               <span className="hidden sm:inline">{isUrdu ? 'Print • پرنٹ کریں' : 'Print Model Paper'}</span>
             </button>
+
+            {onOpenPairingSchemeModal && (
+              <button
+                type="button"
+                onClick={onOpenPairingSchemeModal}
+                className="col-span-3 sm:col-span-1 px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-black bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 hover:from-amber-400 hover:to-orange-400 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+              >
+                <Award className="w-3.5 h-3.5 shrink-0" />
+                <span>{isUrdu ? 'پیئرنگ اسکیم 2026' : 'Pairing Scheme 2026'}</span>
+              </button>
+            )}
           </div>
         </div>
 

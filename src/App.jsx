@@ -47,6 +47,7 @@ const AdminPinModal = lazyWithRetry(() => import('./components/AdminPinModal'));
 const AdminPortalSection = lazyWithRetry(() => import('./components/AdminPortalSection'));
 const AdminQuestionBankManagerView = lazyWithRetry(() => import('./components/AdminQuestionBankManagerView'));
 const AIAssistantBotModal = lazyWithRetry(() => import('./components/AIAssistantBotModal'));
+const BoardPairingSchemeModal = lazyWithRetry(() => import('./components/BoardPairingSchemeModal'));
 import { DEFAULT_PAPER_CONFIG } from './utils/sampleData';
 import { isUserSubscribed, isSuperAdmin } from './utils/pricingPlansService';
 import { 
@@ -387,6 +388,7 @@ export default function App() {
   const [firebaseStatus, setFirebaseStatus] = useState(null);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showAiBotModal, setShowAiBotModal] = useState(false);
+  const [showPairingSchemeModal, setShowPairingSchemeModal] = useState(false);
 
   // Sync Question Bank with Firebase Cloud Firestore (real-time single subscription)
   useEffect(() => {
@@ -1027,6 +1029,21 @@ export default function App() {
 
     setActiveNav('generate_paper');
     setPaperStep('topics');
+  };
+
+  // Handler for 1-Click Board Pairing Scheme Generation
+  const handleApplyBoardPairingPaper = (newPaperData, newPaperConfig) => {
+    setPaperConfig(prev => ({
+      ...prev,
+      ...newPaperConfig,
+      institute: currentUser?.institute || prev.institute || 'Educators Academy'
+    }));
+    setPaperData(newPaperData);
+    if (newPaperConfig.pairingMeta?.classKey) {
+      setSelectedClass(newPaperConfig.pairingMeta.classKey);
+    }
+    setActiveNav('generate_paper');
+    setPaperStep('canvas');
   };
 
   // Printing & Word Export Handlers with Paywall & Subscription Guards
@@ -1734,6 +1751,7 @@ export default function App() {
                 });
               }}
               activeDraftInfo={hasActiveDraft ? { subject: paperConfig.subject, gradeClass: paperConfig.gradeClass, totalMarks: totalPaperMarks } : null}
+              onOpenPairingSchemeModal={() => setShowPairingSchemeModal(true)}
             />
           )}
 
@@ -1818,6 +1836,7 @@ export default function App() {
                 onBack={() => navigateTo('dashboard')}
                 appLanguage={appLanguage}
                 onToggleLanguage={handleToggleLanguage}
+                onOpenPairingSchemeModal={() => setShowPairingSchemeModal(true)}
               />
             </div>
           )}
@@ -2006,6 +2025,22 @@ export default function App() {
             currentUser={currentUser}
             onOpenPricing={() => handleSafeNavigate('pricing')}
             onOpenContact={() => handleSafeNavigate('contact')}
+          />
+        )}
+      </React.Suspense>
+
+      {/* BOARD PAIRING SCHEME & BLUEPRINT MODAL */}
+      <React.Suspense fallback={null}>
+        {showPairingSchemeModal && (
+          <BoardPairingSchemeModal
+            isOpen={showPairingSchemeModal}
+            onClose={() => setShowPairingSchemeModal(false)}
+            bank={bank}
+            selectedClass={selectedClass}
+            selectedSubjectId={selectedSubjectId}
+            currentUser={currentUser}
+            onApplyBoardPaper={handleApplyBoardPairingPaper}
+            appLanguage={appLanguage}
           />
         )}
       </React.Suspense>
