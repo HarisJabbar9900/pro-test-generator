@@ -800,6 +800,144 @@ export const PAIRING_SCHEMES_DATA = {
           ]
         }
       }
+    },
+    "computer_science": {
+      subjectName: "Computer Science",
+      punjab: {
+        totalMarks: 75,
+        timeAllowed: "3 Hours",
+        objectiveMarks: 15,
+        subjectiveMarks: 60,
+        description: "Official Punjab Board (PBCC) 12th Computer Science 2025-2026 Pairing Scheme. New Textbook Edition — Exactly 9 Modern Units (Networks, Algorithms, OOP in Python, Python Applications, Testing/Debugging, Data Science & ML, Hypothesis, Applied CS, Cybersecurity).",
+        mcqs: {
+          total: 15,
+          distribution: [
+            { chapter: 1, count: 2, name: "Unit 1: Computer Networks" },
+            { chapter: 2, count: 2, name: "Unit 2: Computational Thinking & Algorithms" },
+            { chapter: 3, count: 2, name: "Unit 3: Object Oriented Programming Using Python" },
+            { chapter: 4, count: 2, name: "Unit 4: Applications of Python" },
+            { chapter: 5, count: 1, name: "Unit 5: Code Testing and Debugging" },
+            { chapter: 6, count: 2, name: "Unit 6: Data Science and Machine Learning" },
+            { chapter: 7, count: 1, name: "Unit 7: Hypothesis Testing" },
+            { chapter: 8, count: 1, name: "Unit 8: Applications of Computer Science" },
+            { chapter: 9, count: 2, name: "Unit 9: Cybersecurity and Safe Digital Collaboration" }
+          ]
+        },
+        shortQuestions: [
+          {
+            qNum: "Q2",
+            title: "Question No. 2 (Short Questions)",
+            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
+            totalOptions: 9,
+            required: 6,
+            marksEach: 2,
+            totalMarks: 12,
+            breakdown: [
+              { chapter: 1, count: 3, name: "Unit 1: Computer Networks" },
+              { chapter: 2, count: 3, name: "Unit 2: Computational Thinking & Algorithms" },
+              { chapter: 3, count: 3, name: "Unit 3: OOP Using Python" }
+            ]
+          },
+          {
+            qNum: "Q3",
+            title: "Question No. 3 (Short Questions)",
+            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
+            totalOptions: 9,
+            required: 6,
+            marksEach: 2,
+            totalMarks: 12,
+            breakdown: [
+              { chapter: 4, count: 3, name: "Unit 4: Applications of Python" },
+              { chapter: 5, count: 3, name: "Unit 5: Code Testing & Debugging" },
+              { chapter: 6, count: 3, name: "Unit 6: Data Science & Machine Learning" }
+            ]
+          },
+          {
+            qNum: "Q4",
+            title: "Question No. 4 (Short Questions)",
+            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
+            totalOptions: 9,
+            required: 6,
+            marksEach: 2,
+            totalMarks: 12,
+            breakdown: [
+              { chapter: 7, count: 3, name: "Unit 7: Hypothesis Testing" },
+              { chapter: 8, count: 3, name: "Unit 8: Applications of Computer Science" },
+              { chapter: 9, count: 3, name: "Unit 9: Cybersecurity & Digital Collaboration" }
+            ]
+          }
+        ],
+        longQuestions: {
+          instruction: "Attempt any 3 questions out of 5. (Each carries 8 Marks = 24 Marks)",
+          totalOptions: 5,
+          required: 3,
+          marksEach: 8,
+          totalMarks: 24,
+          questions: [
+            { qNum: "Q5", chapter: 1, topic: "Unit 1: Computer Networks (Network Topologies, OSI & TCP/IP Model Layers, Guided/Unguided Media)" },
+            { qNum: "Q6", chapter: 3, topic: "Unit 3: Object Oriented Programming (Classes, Objects, Inheritance, Polymorphism & Encapsulation in Python)" },
+            { qNum: "Q7", chapter: 4, topic: "Unit 4: Applications of Python (GUI Design with Tkinter, File Handling, Exception Handling & SQLite DB)" },
+            { qNum: "Q8", chapter: 6, topic: "Unit 6: Data Science & ML (Supervised vs Unsupervised Learning, Regression, Neural Networks & Ethics)" },
+            { qNum: "Q9", chapter: 9, topic: "Unit 9: Cybersecurity (Cyber Threats, Public/Private Key Cryptography, Firewalls & Digital Forensics)" }
+          ]
+        }
+      },
+      federal: {
+        totalMarks: 75,
+        timeAllowed: "3 Hours",
+        objectiveMarks: 15,
+        subjectiveMarks: 60,
+        description: "Federal Board (FBISE Islamabad) 12th Computer Science 2025-2026 SLO Assessment Blueprint. All 9 Units evaluated under Knowledge (30%), Understanding (50%), and Application (20%) framework.",
+        mcqs: {
+          total: 15,
+          distribution: [
+            { chapter: 1, count: 2, name: "Unit 1: Computer Networks" },
+            { chapter: 2, count: 2, name: "Unit 2: Computational Thinking & Algorithms" },
+            { chapter: 3, count: 2, name: "Unit 3: OOP Using Python" },
+            { chapter: 4, count: 2, name: "Unit 4: Applications of Python" },
+            { chapter: 5, count: 1, name: "Unit 5: Code Testing & Debugging" },
+            { chapter: 6, count: 2, name: "Unit 6: Data Science & ML" },
+            { chapter: 7, count: 1, name: "Unit 7: Hypothesis Testing" },
+            { chapter: 8, count: 1, name: "Unit 8: Applications of CS" },
+            { chapter: 9, count: 2, name: "Unit 9: Cybersecurity" }
+          ]
+        },
+        shortQuestions: [
+          {
+            qNum: "Section B",
+            title: "Section-B: Short Response Questions (SLO Based)",
+            instruction: "Attempt any 12 questions out of 16. (12 x 3 Marks = 36 Marks)",
+            totalOptions: 16,
+            required: 12,
+            marksEach: 3,
+            totalMarks: 36,
+            breakdown: [
+              { chapter: 1, count: 2, name: "Unit 1: Computer Networks" },
+              { chapter: 2, count: 2, name: "Unit 2: Algorithms" },
+              { chapter: 3, count: 2, name: "Unit 3: OOP" },
+              { chapter: 4, count: 2, name: "Unit 4: Python Apps" },
+              { chapter: 5, count: 2, name: "Unit 5: Debugging" },
+              { chapter: 6, count: 2, name: "Unit 6: Data Science" },
+              { chapter: 7, count: 1, name: "Unit 7: Hypothesis" },
+              { chapter: 8, count: 1, name: "Unit 8: Applied CS" },
+              { chapter: 9, count: 2, name: "Unit 9: Cybersecurity" }
+            ]
+          }
+        ],
+        longQuestions: {
+          instruction: "Attempt any 3 questions out of 4. (3 x 8 Marks = 24 Marks)",
+          totalOptions: 4,
+          required: 3,
+          marksEach: 8,
+          totalMarks: 24,
+          questions: [
+            { qNum: "Q3", chapter: 1, topic: "Computer Networks: OSI/TCP-IP protocols and network architecture analysis" },
+            { qNum: "Q4", chapter: 3, topic: "OOP in Python: Designing classes with inheritance, encapsulation & polymorphism" },
+            { qNum: "Q5", chapter: 6, topic: "Data Science & AI: Supervised learning models, training vs testing data & overfitting" },
+            { qNum: "Q6", chapter: 9, topic: "Cybersecurity & Cryptography: Asymmetric vs Symmetric encryption, SSL/TLS, and security policies" }
+          ]
+        }
+      }
     }
   },
 
@@ -860,6 +998,144 @@ export const PAIRING_SCHEMES_DATA = {
             { qNum: "Q7", chapter: 6, topic: "(a) Chapter 6 & (b) Chapter 7" },
             { qNum: "Q8", chapter: 8, topic: "(a) Chapter 8 & (b) Chapter 9" },
             { qNum: "Q9", chapter: 10, topic: "(a) Chapter 10 & (b) Chapter 11" }
+          ]
+        }
+      }
+    },
+    "computer_science": {
+      subjectName: "Computer Science",
+      punjab: {
+        totalMarks: 75,
+        timeAllowed: "3 Hours",
+        objectiveMarks: 15,
+        subjectiveMarks: 60,
+        description: "Official Punjab Board (PBCC) 11th Computer Science 2025-2026 Pairing Scheme. New Textbook Edition — Exactly 9 Units (Software Dev, Python Basics, Algorithms & Flowcharts, Computational Structures, Data Analytics, Emerging Tech, Computing Ethics, Digital Literacy, Digital Entrepreneurship).",
+        mcqs: {
+          total: 15,
+          distribution: [
+            { chapter: 1, count: 2, name: "Unit 1: Software Development" },
+            { chapter: 2, count: 2, name: "Unit 2: Python Programming" },
+            { chapter: 3, count: 2, name: "Unit 3: Algorithms & Problem Solving" },
+            { chapter: 4, count: 2, name: "Unit 4: Computational Structures" },
+            { chapter: 5, count: 2, name: "Unit 5: Data Analytics" },
+            { chapter: 6, count: 1, name: "Unit 6: Emerging Technologies" },
+            { chapter: 7, count: 1, name: "Unit 7: Legal and Ethical Aspects of Computing" },
+            { chapter: 8, count: 1, name: "Unit 8: Online Research and Digital Literacy" },
+            { chapter: 9, count: 2, name: "Unit 9: Entrepreneurship in Digital Age" }
+          ]
+        },
+        shortQuestions: [
+          {
+            qNum: "Q2",
+            title: "Question No. 2 (Short Questions)",
+            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
+            totalOptions: 9,
+            required: 6,
+            marksEach: 2,
+            totalMarks: 12,
+            breakdown: [
+              { chapter: 1, count: 3, name: "Unit 1: Software Development" },
+              { chapter: 2, count: 4, name: "Unit 2: Python Programming" },
+              { chapter: 3, count: 2, name: "Unit 3: Algorithms & Problem Solving" }
+            ]
+          },
+          {
+            qNum: "Q3",
+            title: "Question No. 3 (Short Questions)",
+            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
+            totalOptions: 9,
+            required: 6,
+            marksEach: 2,
+            totalMarks: 12,
+            breakdown: [
+              { chapter: 4, count: 4, name: "Unit 4: Computational Structures" },
+              { chapter: 5, count: 3, name: "Unit 5: Data Analytics" },
+              { chapter: 6, count: 2, name: "Unit 6: Emerging Technologies" }
+            ]
+          },
+          {
+            qNum: "Q4",
+            title: "Question No. 4 (Short Questions)",
+            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
+            totalOptions: 9,
+            required: 6,
+            marksEach: 2,
+            totalMarks: 12,
+            breakdown: [
+              { chapter: 7, count: 3, name: "Unit 7: Legal & Ethical Aspects" },
+              { chapter: 8, count: 3, name: "Unit 8: Online Research & Literacy" },
+              { chapter: 9, count: 3, name: "Unit 9: Entrepreneurship in Digital Age" }
+            ]
+          }
+        ],
+        longQuestions: {
+          instruction: "Attempt any 3 questions out of 5. (Each carries 8 Marks = 24 Marks)",
+          totalOptions: 5,
+          required: 3,
+          marksEach: 8,
+          totalMarks: 24,
+          questions: [
+            { qNum: "Q5", chapter: 1, topic: "Unit 1: Software Development (SDLC Phases, Waterfall vs Agile methodologies, Feasibility study)" },
+            { qNum: "Q6", chapter: 2, topic: "Unit 2: Python Programming (Control Flow: If-else, While/For loops, Nested Loops & Functions)" },
+            { qNum: "Q7", chapter: 3, topic: "Unit 3: Algorithms & Problem Solving (Algorithm Design, Flowcharts, Computational Complexity & Sorting Algorithms)" },
+            { qNum: "Q8", chapter: 5, topic: "Unit 5: Data Analytics (Data Gathering, Cleaning, Analysis with Python, Matplotlib & Descriptive Statistics)" },
+            { qNum: "Q9", chapter: 9, topic: "Unit 9: Entrepreneurship in Digital Age (Digital Business Models, Startup Lifecycle, Pitch Decks & E-commerce)" }
+          ]
+        }
+      },
+      federal: {
+        totalMarks: 75,
+        timeAllowed: "3 Hours",
+        objectiveMarks: 15,
+        subjectiveMarks: 60,
+        description: "Federal Board (FBISE Islamabad) 11th Computer Science 2025-2026 SLO Assessment Framework. All 9 Units tested on Conceptual Knowledge (30%), Understanding (50%), and Problem Solving / Programming (20%).",
+        mcqs: {
+          total: 15,
+          distribution: [
+            { chapter: 1, count: 2, name: "Unit 1: Software Development" },
+            { chapter: 2, count: 2, name: "Unit 2: Python Programming" },
+            { chapter: 3, count: 2, name: "Unit 3: Algorithms & Problem Solving" },
+            { chapter: 4, count: 2, name: "Unit 4: Computational Structures" },
+            { chapter: 5, count: 2, name: "Unit 5: Data Analytics" },
+            { chapter: 6, count: 1, name: "Unit 6: Emerging Technologies" },
+            { chapter: 7, count: 1, name: "Unit 7: Legal and Ethical Aspects" },
+            { chapter: 8, count: 1, name: "Unit 8: Online Research & Literacy" },
+            { chapter: 9, count: 2, name: "Unit 9: Entrepreneurship in Digital Age" }
+          ]
+        },
+        shortQuestions: [
+          {
+            qNum: "Section B",
+            title: "Section-B: Short Response Questions (SLO Based)",
+            instruction: "Attempt any 12 questions out of 16. (12 x 3 Marks = 36 Marks)",
+            totalOptions: 16,
+            required: 12,
+            marksEach: 3,
+            totalMarks: 36,
+            breakdown: [
+              { chapter: 1, count: 2, name: "Unit 1: Software Dev" },
+              { chapter: 2, count: 2, name: "Unit 2: Python" },
+              { chapter: 3, count: 2, name: "Unit 3: Algorithms" },
+              { chapter: 4, count: 2, name: "Unit 4: Computational Structures" },
+              { chapter: 5, count: 2, name: "Unit 5: Data Analytics" },
+              { chapter: 6, count: 2, name: "Unit 6: Emerging Tech" },
+              { chapter: 7, count: 1, name: "Unit 7: Ethics" },
+              { chapter: 8, count: 1, name: "Unit 8: Digital Literacy" },
+              { chapter: 9, count: 2, name: "Unit 9: Digital Entrepreneurship" }
+            ]
+          }
+        ],
+        longQuestions: {
+          instruction: "Attempt any 3 questions out of 4. (3 x 8 Marks = 24 Marks)",
+          totalOptions: 4,
+          required: 3,
+          marksEach: 8,
+          totalMarks: 24,
+          questions: [
+            { qNum: "Q3", chapter: 1, topic: "Software Development: Comparative analysis of SDLC models and requirement gathering techniques" },
+            { qNum: "Q4", chapter: 2, topic: "Python Programming: Designing modular algorithms with nested functions and error handling" },
+            { qNum: "Q5", chapter: 5, topic: "Data Analytics: Practical workflow of data manipulation, cleaning, and visualization with Python" },
+            { qNum: "Q6", chapter: 9, topic: "Digital Entrepreneurship: Building a digital startup value proposition, MVP, and revenue model" }
           ]
         }
       }
