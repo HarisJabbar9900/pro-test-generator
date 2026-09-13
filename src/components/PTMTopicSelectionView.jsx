@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { 
   ArrowLeft, ArrowRight, Search, CheckSquare, Square, 
   RefreshCw, FileText, Layers, BookOpen, CheckCircle2, ChevronRight, Edit3,
-  ChevronDown, ChevronUp
+  ChevronDown, ChevronUp, Sliders, Plus, Minus, Check, Sparkles, Filter, 
+  Award, Globe, HelpCircle, FileSpreadsheet, Zap
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 import { computeSyllabusText } from '../utils/syllabusHelper';
@@ -23,10 +24,23 @@ export default function PTMTopicSelectionView({
   // Stage state to separate Chapter/Topic selection from Question Criteria
   const [stage, setStage] = useState(initialStage);
 
-  // Filter bar states matching exact CTM screenshot
+  // Question Type Mode:
+  // 'ALL': Complete Paper (Combine: MCQs + Shorts + Longs)
+  // 'MCQ_SHORT': Objective + Shorts (MCQs + Shorts)
+  // 'SUBJECTIVE': Subjective Paper (Shorts + Longs)
+  // 'MCQ': MCQs Only
+  // 'SHORT': Short Questions Only
+  // 'LONG': Long Questions Only
   const [questionType, setQuestionType] = useState('ALL');
-  const [requiredQuestions, setRequiredQuestions] = useState(10);
-  const [eachQuestionMarks, setEachQuestionMarks] = useState(1);
+
+  // Dedicated Counts and Marks for each question type
+  const [mcqCount, setMcqCount] = useState(10);
+  const [mcqMarks, setMcqMarks] = useState(1);
+  const [shortCount, setShortCount] = useState(5);
+  const [shortMarks, setShortMarks] = useState(2);
+  const [longCount, setLongCount] = useState(2);
+  const [longMarks, setLongMarks] = useState(5);
+
   const [mediumType, setMediumType] = useState('ENGLISH');
   const [choiceCount, setChoiceCount] = useState(0);
   const [blankLinesType, setBlankLinesType] = useState('None');
@@ -134,6 +148,19 @@ export default function PTMTopicSelectionView({
     }
   };
 
+  // Active state checkers based on chosen question type mode
+  const isMcqActive = questionType === 'ALL' || questionType === 'MCQ_SHORT' || questionType === 'MCQ';
+  const isShortActive = questionType === 'ALL' || questionType === 'MCQ_SHORT' || questionType === 'SUBJECTIVE' || questionType === 'SHORT';
+  const isLongActive = questionType === 'ALL' || questionType === 'SUBJECTIVE' || questionType === 'LONG';
+
+  // Effective questions selected for paper
+  const effectiveMcqCount = isMcqActive ? mcqCount : 0;
+  const effectiveShortCount = isShortActive ? shortCount : 0;
+  const effectiveLongCount = isLongActive ? longCount : 0;
+
+  const totalSelectedQuestions = effectiveMcqCount + effectiveShortCount + effectiveLongCount;
+  const totalPaperMarks = (effectiveMcqCount * mcqMarks) + (effectiveShortCount * shortMarks) + (effectiveLongCount * longMarks);
+
   // Count available questions across selected topics honoring Exercise & Topic filters
   const availableQuestions = useMemo(() => {
     let m = 0, s = 0, l = 0;
@@ -162,14 +189,27 @@ export default function PTMTopicSelectionView({
         }
       });
     });
-    const typeTotal = questionType === 'MCQ' ? m : questionType === 'SHORT' ? s : questionType === 'LONG' ? l : (m + s + l);
-    return { mcqs: m, shorts: s, longs: l, total: typeTotal };
+
+    let activeTotal = 0;
+    if (questionType === 'ALL') activeTotal = m + s + l;
+    else if (questionType === 'MCQ_SHORT') activeTotal = m + s;
+    else if (questionType === 'SUBJECTIVE') activeTotal = s + l;
+    else if (questionType === 'MCQ') activeTotal = m;
+    else if (questionType === 'SHORT') activeTotal = s;
+    else if (questionType === 'LONG') activeTotal = l;
+
+    return { mcqs: m, shorts: s, longs: l, total: activeTotal };
   }, [currentChapters, selectedTopicIds, questionType, dataSelectionCategories]);
 
   // Compute clean syllabus text for the summary
   const syllabusSummary = useMemo(() => {
-    return computeSyllabusText(currentChapters, selectedTopicIds, { questionType });
-  }, [currentChapters, selectedTopicIds, questionType]);
+    return computeSyllabusText(currentChapters, selectedTopicIds, {
+      questionType,
+      mcqCount: effectiveMcqCount,
+      shortCount: effectiveShortCount,
+      longCount: effectiveLongCount
+    });
+  }, [currentChapters, selectedTopicIds, questionType, effectiveMcqCount, effectiveShortCount, effectiveLongCount]);
 
   const handleProceedToCriteria = () => {
     if (selectedTopicIds.length === 0) {
@@ -192,39 +232,22 @@ export default function PTMTopicSelectionView({
       return;
     }
 
-    let mcqCount = 0;
-    let shortCount = 0;
-    let longCount = 0;
-    let mcqMarks = eachQuestionMarks;
-    let shortMarks = 2;
-    let longMarks = 5;
-
-    if (questionType === 'MCQ') {
-      mcqCount = requiredQuestions;
-      mcqMarks = eachQuestionMarks;
-    } else if (questionType === 'SHORT') {
-      shortCount = requiredQuestions;
-      shortMarks = eachQuestionMarks;
-    } else if (questionType === 'LONG') {
-      longCount = requiredQuestions;
-      longMarks = eachQuestionMarks;
-    } else {
-      // ALL / Mixed
-      mcqCount = requiredQuestions;
-      shortCount = Math.max(1, Math.ceil(requiredQuestions / 2));
-      longCount = 2;
+    if (totalSelectedQuestions <= 0) {
+      notify.warning("براہ کرم کم از کم 1 سوال منتخب کریں (Please select at least 1 question).");
+      return;
     }
 
     onGeneratePaper({
       selectedTopicIds,
       questionType,
       dataSelectionCategories: { ...dataSelectionCategories },
-      mcqCount,
+      mcqCount: effectiveMcqCount,
       mcqMarks,
-      shortCount,
+      shortCount: effectiveShortCount,
       shortMarks,
-      longCount,
+      longCount: effectiveLongCount,
       longMarks,
+      totalMarks: totalPaperMarks,
       language: mediumType === 'URDU' ? 'Urdu' : mediumType === 'DUAL MEDIUM' ? 'English + Urdu (Bilingual)' : 'English',
       showAnswerLines: blankLinesType !== 'None',
       showChapterName: showChapterNameOnPaper,
@@ -603,205 +626,540 @@ export default function PTMTopicSelectionView({
             </div>
           </div>
 
-          {/* EXACT 2-ROW CTM FILTER & SELECTION BAR (MATCHING USER SCREENSHOT) */}
-          <div className="p-4 sm:p-6 space-y-4 bg-white border border-slate-300 rounded-xl shadow-md">
+          {/* EXECUTIVE QUESTION SELECTION & PAPER CONFIGURATION CONTAINER */}
+          <div className="p-4 sm:p-6 lg:p-7 space-y-6 bg-white border border-slate-200/90 rounded-2xl shadow-sm">
             
-            <div className="border-b border-slate-100 pb-3">
-              <h3 className="text-sm font-black text-slate-800 tracking-tight flex items-center gap-2">
-                <span>Question Selection & Paper Configuration</span>
-              </h3>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
-                Configure question types, marks, medium, and choice rules for the test paper.
-              </p>
-            </div>
-
-            {/* Row 1: Question Type, Selection, Required Questions, Each Question Marks */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
-              {/* Question Type */}
-              <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs">
-                <span className="bg-[#1890ff] text-white font-bold px-3 py-2 flex items-center whitespace-nowrap text-xs select-none shrink-0">
-                  Question Type
-                </span>
-                <select
-                  value={questionType}
-                  onChange={(e) => setQuestionType(e.target.value)}
-                  className="w-full bg-white px-2 py-2 text-slate-800 font-semibold focus:outline-none text-xs cursor-pointer"
-                >
-                  <option value="ALL">Question Type</option>
-                  <option value="MCQ">MCQs</option>
-                  <option value="SHORT">Short Questions</option>
-                  <option value="LONG">Long Questions</option>
-                </select>
+            {/* Header: Title, Urdu translation & Live Totals */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0 mt-0.5">
+                  <Sliders className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <span>Question Selection & Paper Configuration</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5 font-sans">
+                    پیپر کی اقسام، سوالات کی تعداد اور امتحانی ضوابط متعین کریں (Configure question types, counts, marks & exam rules)
+                  </p>
+                </div>
               </div>
 
-              {/* Selection & Data Selection Type with Dropdown Popover */}
-              <div className="relative flex border border-slate-300 rounded shadow-2xs">
-                <span className="bg-[#1890ff] text-white font-bold px-3 py-2 flex items-center whitespace-nowrap text-xs select-none shrink-0">
-                  Selection
+              {/* Live Mini Badge Summary */}
+              <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap">
+                <span className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200">
+                  Total: <strong className="text-blue-600 font-black">{totalSelectedQuestions}</strong> Questions
                 </span>
+                <span className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs shadow-2xs">
+                  {totalPaperMarks} Total Marks
+                </span>
+              </div>
+            </div>
+
+            {/* 1. QUESTION TYPE / PATTERN SELECTOR (COMBINED / ALL MODES) */}
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-black text-slate-800 tracking-wide uppercase flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                  <span>1. پیپر کا پیٹرن منتخب کریں (Select Question Paper Mode)</span>
+                </label>
+                <span className="text-[11px] text-slate-500 font-semibold hidden sm:inline">
+                  مطلوبہ سوالات کی اقسام شامل کرنے کے لیے آپشن منتخب کریں
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
+                {/* Mode 1: Complete Paper (Combine) */}
                 <button
                   type="button"
-                  onClick={() => setShowDataSelectionDropdown(!showDataSelectionDropdown)}
-                  className="w-full bg-white px-2.5 py-2 text-slate-800 font-semibold focus:outline-none text-xs flex items-center justify-between gap-1 cursor-pointer select-none"
+                  onClick={() => setQuestionType('ALL')}
+                  className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 relative ${
+                    questionType === 'ALL'
+                      ? 'border-blue-600 bg-blue-50/80 text-blue-950 shadow-xs ring-2 ring-blue-500/20'
+                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/80 text-slate-700'
+                  }`}
                 >
-                  <span className="truncate">Data Selection Type</span>
-                  <span className="text-[10px] text-slate-500 font-bold shrink-0">⬍</span>
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-xs font-black">مکمل پیپر (Combine)</span>
+                    {questionType === 'ALL' && <Check className="w-3.5 h-3.5 text-blue-600 shrink-0" />}
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-bold leading-tight">
+                    MCQs + Shorts + Longs
+                  </span>
                 </button>
 
-                {/* Popover Menu */}
-                {showDataSelectionDropdown && (
-                  <>
-                    <div 
-                      className="fixed inset-0 z-40 bg-transparent" 
-                      onClick={() => setShowDataSelectionDropdown(false)} 
-                    />
-                    <div className="absolute left-0 right-0 sm:right-auto top-full mt-1.5 bg-white border border-slate-300 rounded-md shadow-2xl z-50 p-3 space-y-2.5 min-w-full sm:min-w-[270px] animate-fadeIn text-slate-800">
-                      <div className="flex items-center justify-between pb-1.5 border-b border-slate-200">
-                        <span className="text-[11px] font-black uppercase tracking-wider text-slate-600">Question Categories</span>
-                        <button
-                          type="button"
-                          onClick={toggleSelectAllCategories}
-                          className="text-[11px] font-bold text-blue-600 hover:underline cursor-pointer"
-                        >
-                          {isAllCategoriesSelected ? "Deselect All" : "Select All"}
-                        </button>
-                      </div>
+                {/* Mode 2: Objective + Shorts */}
+                <button
+                  type="button"
+                  onClick={() => setQuestionType('MCQ_SHORT')}
+                  className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 relative ${
+                    questionType === 'MCQ_SHORT'
+                      ? 'border-indigo-600 bg-indigo-50/80 text-indigo-950 shadow-xs ring-2 ring-indigo-500/20'
+                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/80 text-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-xs font-black">معروضی + مختصر</span>
+                    {questionType === 'MCQ_SHORT' && <Check className="w-3.5 h-3.5 text-indigo-600 shrink-0" />}
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-bold leading-tight">
+                    MCQs + Shorts Only
+                  </span>
+                </button>
 
-                      {/* Exercise Section */}
-                      <div className="p-2 bg-amber-50 rounded border border-amber-200 space-y-1.5">
-                        <div className="text-[10px] font-black uppercase text-amber-800 tracking-wider flex items-center gap-1">
-                          <span>⭐</span>
-                          <span>Textbook Exercise (مشقی مواد)</span>
-                        </div>
-                        <label className="flex items-center gap-2 cursor-pointer text-xs font-bold select-none hover:text-amber-800 text-slate-800">
-                          <input
-                            type="checkbox"
-                            checked={dataSelectionCategories.exerciseMcqs}
-                            onChange={() => toggleCategory('exerciseMcqs')}
-                            className="w-4 h-4 rounded text-amber-500 focus:ring-0 cursor-pointer"
-                          />
-                          <span>Exercise MCQs (مشقی MCQs)</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer text-xs font-bold select-none hover:text-amber-800 text-slate-800">
-                          <input
-                            type="checkbox"
-                            checked={dataSelectionCategories.exerciseShorts}
-                            onChange={() => toggleCategory('exerciseShorts')}
-                            className="w-4 h-4 rounded text-amber-500 focus:ring-0 cursor-pointer"
-                          />
-                          <span>Exercise Shorts (مشقی شارٹ سوالات)</span>
-                        </label>
-                      </div>
+                {/* Mode 3: Subjective Only (Shorts + Longs) */}
+                <button
+                  type="button"
+                  onClick={() => setQuestionType('SUBJECTIVE')}
+                  className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 relative ${
+                    questionType === 'SUBJECTIVE'
+                      ? 'border-purple-600 bg-purple-50/80 text-purple-950 shadow-xs ring-2 ring-purple-500/20'
+                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/80 text-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-xs font-black">انشائیہ پیپر (Subjective)</span>
+                    {questionType === 'SUBJECTIVE' && <Check className="w-3.5 h-3.5 text-purple-600 shrink-0" />}
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-bold leading-tight">
+                    Shorts + Longs Only
+                  </span>
+                </button>
 
-                      {/* Topic Questions Section */}
-                      <div className="p-2 bg-blue-50 rounded border border-blue-200 space-y-1.5">
-                        <div className="text-[10px] font-black uppercase text-blue-800 tracking-wider flex items-center gap-1">
-                          <span>📘</span>
-                          <span>Topic Questions (ٹاپک وائز مواد)</span>
-                        </div>
-                        <label className="flex items-center gap-2 cursor-pointer text-xs font-bold select-none hover:text-blue-800 text-slate-800">
-                          <input
-                            type="checkbox"
-                            checked={dataSelectionCategories.topicMcqs}
-                            onChange={() => toggleCategory('topicMcqs')}
-                            className="w-4 h-4 rounded text-blue-600 focus:ring-0 cursor-pointer"
-                          />
-                          <span>Topic MCQs (ٹاپک وائز MCQs)</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer text-xs font-bold select-none hover:text-blue-800 text-slate-800">
-                          <input
-                            type="checkbox"
-                            checked={dataSelectionCategories.topicShorts}
-                            onChange={() => toggleCategory('topicShorts')}
-                            className="w-4 h-4 rounded text-blue-600 focus:ring-0 cursor-pointer"
-                          />
-                          <span>Topic Shorts (ٹاپک وائز شارٹس)</span>
-                        </label>
-                      </div>
+                {/* Mode 4: MCQs Only */}
+                <button
+                  type="button"
+                  onClick={() => setQuestionType('MCQ')}
+                  className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 relative ${
+                    questionType === 'MCQ'
+                      ? 'border-cyan-600 bg-cyan-50/80 text-cyan-950 shadow-xs ring-2 ring-cyan-500/20'
+                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/80 text-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-xs font-black">صرف معروضی (MCQs)</span>
+                    {questionType === 'MCQ' && <Check className="w-3.5 h-3.5 text-cyan-600 shrink-0" />}
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-bold leading-tight">
+                    Objective Only
+                  </span>
+                </button>
 
-                      {/* Other Standard Categories */}
-                      <label className="flex items-center gap-2 cursor-pointer text-xs font-bold select-none hover:text-blue-600 text-slate-800 pt-1">
-                        <input
-                          type="checkbox"
-                          checked={dataSelectionCategories.pastPapers}
-                          onChange={() => toggleCategory('pastPapers')}
-                          className="w-4 h-4 rounded text-[#1890ff] focus:ring-0 cursor-pointer"
-                        />
-                        <span>Past Papers (پاسٹ پیپرز)</span>
-                      </label>
+                {/* Mode 5: Shorts Only */}
+                <button
+                  type="button"
+                  onClick={() => setQuestionType('SHORT')}
+                  className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 relative ${
+                    questionType === 'SHORT'
+                      ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 shadow-xs ring-2 ring-emerald-500/20'
+                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/80 text-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-xs font-black">صرف مختصر سوالات</span>
+                    {questionType === 'SHORT' && <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-bold leading-tight">
+                    Short Questions Only
+                  </span>
+                </button>
 
-                      <label className="flex items-center gap-2 cursor-pointer text-xs font-bold select-none hover:text-blue-600 text-slate-800">
-                        <input
-                          type="checkbox"
-                          checked={dataSelectionCategories.additional}
-                          onChange={() => toggleCategory('additional')}
-                          className="w-4 h-4 rounded text-[#1890ff] focus:ring-0 cursor-pointer"
-                        />
-                        <span>Additional (اضافی)</span>
-                      </label>
+                {/* Mode 6: Longs Only */}
+                <button
+                  type="button"
+                  onClick={() => setQuestionType('LONG')}
+                  className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 relative ${
+                    questionType === 'LONG'
+                      ? 'border-amber-600 bg-amber-50/80 text-amber-950 shadow-xs ring-2 ring-amber-500/20'
+                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/80 text-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-xs font-black">صرف تفصیلی سوالات</span>
+                    {questionType === 'LONG' && <Check className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-bold leading-tight">
+                    Long Questions Only
+                  </span>
+                </button>
+              </div>
+            </div>
 
-                      <label className="flex items-center gap-2 cursor-pointer text-xs font-bold select-none hover:text-blue-600 text-slate-800">
-                        <input
-                          type="checkbox"
-                          checked={dataSelectionCategories.conceptual}
-                          onChange={() => toggleCategory('conceptual')}
-                          className="w-4 h-4 rounded text-[#1890ff] focus:ring-0 cursor-pointer"
-                        />
-                        <span>Conceptual (تصوراتی)</span>
-                      </label>
+            {/* 2. DEDICATED QUESTION COUNTS & MARKS CONFIGURATION CARDS */}
+            <div className="space-y-2.5">
+              <label className="text-xs font-black text-slate-800 tracking-wide uppercase flex items-center gap-1.5">
+                <Sliders className="w-3.5 h-3.5 text-blue-600" />
+                <span>2. سوالات کی تعداد اور مارکس کی ترتیب (Customize Quantities & Marks)</span>
+              </label>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
+                
+                {/* CARD 1: MCQs CONFIGURATION */}
+                <div className={`p-4 rounded-xl border transition-all ${
+                  isMcqActive 
+                    ? 'bg-gradient-to-b from-blue-50/40 via-white to-white border-blue-300/80 shadow-xs' 
+                    : 'bg-slate-50/60 border-slate-200 opacity-50'
+                }`}>
+                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                      <span className="text-xs font-black text-slate-900">MCQs (معروضی سوالات)</span>
                     </div>
-                  </>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200 font-mono">
+                      {availableQuestions.mcqs} Available
+                    </span>
+                  </div>
+
+                  {isMcqActive ? (
+                    <div className="pt-3 space-y-3">
+                      {/* Count Stepper */}
+                      <div>
+                        <div className="flex items-center justify-between text-xs mb-1">
+                          <span className="font-bold text-slate-600">تعداد (Count):</span>
+                          <span className="text-[10px] text-slate-400 font-semibold">Max: {availableQuestions.mcqs}</span>
+                        </div>
+                        <div className="flex items-center border border-slate-300 rounded-lg overflow-hidden bg-white shadow-2xs">
+                          <button
+                            type="button"
+                            onClick={() => setMcqCount(prev => Math.max(0, prev - 1))}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black cursor-pointer select-none"
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <input
+                            type="number"
+                            min="0"
+                            max={Math.max(100, availableQuestions.mcqs)}
+                            value={mcqCount}
+                            onChange={(e) => setMcqCount(Math.max(0, parseInt(e.target.value) || 0))}
+                            className="w-full text-center py-1.5 text-sm font-black text-slate-900 focus:outline-none"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setMcqCount(prev => prev + 1)}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black cursor-pointer select-none"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        {/* Quick Count Presets */}
+                        <div className="flex items-center gap-1.5 mt-1.5">
+                          {[5, 10, 15, 20].map(val => (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => setMcqCount(val)}
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-colors cursor-pointer ${
+                                mcqCount === val
+                                  ? 'bg-blue-600 text-white border-blue-600'
+                                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                              }`}
+                            >
+                              {val}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Marks Each */}
+                      <div className="flex items-center justify-between pt-1 border-t border-slate-100">
+                        <span className="text-xs font-bold text-slate-600">ہر سوال کے نمبر:</span>
+                        <div className="flex items-center gap-1.5">
+                          {[1, 2].map(m => (
+                            <button
+                              key={m}
+                              type="button"
+                              onClick={() => setMcqMarks(m)}
+                              className={`px-2.5 py-1 rounded-md text-xs font-black border transition-all cursor-pointer ${
+                                mcqMarks === m
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              {m} {m === 1 ? 'Mark' : 'Marks'}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Subtotal */}
+                      <div className="p-2 rounded-lg bg-blue-50/60 border border-blue-100 flex items-center justify-between text-xs font-bold text-blue-950">
+                        <span>MCQs Subtotal:</span>
+                        <span className="font-mono text-sm font-black text-blue-700">
+                          {effectiveMcqCount} × {mcqMarks} = {effectiveMcqCount * mcqMarks} Marks
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="py-6 text-center text-xs text-slate-400 font-semibold italic">
+                      اس پیٹرن میں معروضی سوالات شامل نہیں ہیں
+                    </div>
+                  )}
+                </div>
+
+                {/* CARD 2: SHORT QUESTIONS CONFIGURATION */}
+                <div className={`p-4 rounded-xl border transition-all ${
+                  isShortActive 
+                    ? 'bg-gradient-to-b from-indigo-50/40 via-white to-white border-indigo-300/80 shadow-xs' 
+                    : 'bg-slate-50/60 border-slate-200 opacity-50'
+                }`}>
+                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                      <span className="text-xs font-black text-slate-900">Shorts (مختصر سوالات)</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200 font-mono">
+                      {availableQuestions.shorts} Available
+                    </span>
+                  </div>
+
+                  {isShortActive ? (
+                    <div className="pt-3 space-y-3">
+                      {/* Count Stepper */}
+                      <div>
+                        <div className="flex items-center justify-between text-xs mb-1">
+                          <span className="font-bold text-slate-600">تعداد (Count):</span>
+                          <span className="text-[10px] text-slate-400 font-semibold">Max: {availableQuestions.shorts}</span>
+                        </div>
+                        <div className="flex items-center border border-slate-300 rounded-lg overflow-hidden bg-white shadow-2xs">
+                          <button
+                            type="button"
+                            onClick={() => setShortCount(prev => Math.max(0, prev - 1))}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black cursor-pointer select-none"
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <input
+                            type="number"
+                            min="0"
+                            max={Math.max(100, availableQuestions.shorts)}
+                            value={shortCount}
+                            onChange={(e) => setShortCount(Math.max(0, parseInt(e.target.value) || 0))}
+                            className="w-full text-center py-1.5 text-sm font-black text-slate-900 focus:outline-none"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShortCount(prev => prev + 1)}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black cursor-pointer select-none"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        {/* Quick Count Presets */}
+                        <div className="flex items-center gap-1.5 mt-1.5">
+                          {[3, 5, 8, 10].map(val => (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => setShortCount(val)}
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-colors cursor-pointer ${
+                                shortCount === val
+                                  ? 'bg-indigo-600 text-white border-indigo-600'
+                                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                              }`}
+                            >
+                              {val}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Marks Each */}
+                      <div className="flex items-center justify-between pt-1 border-t border-slate-100">
+                        <span className="text-xs font-bold text-slate-600">ہر سوال کے نمبر:</span>
+                        <div className="flex items-center gap-1.5">
+                          {[2, 3, 4].map(m => (
+                            <button
+                              key={m}
+                              type="button"
+                              onClick={() => setShortMarks(m)}
+                              className={`px-2.5 py-1 rounded-md text-xs font-black border transition-all cursor-pointer ${
+                                shortMarks === m
+                                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              {m}M
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Subtotal */}
+                      <div className="p-2 rounded-lg bg-indigo-50/60 border border-indigo-100 flex items-center justify-between text-xs font-bold text-indigo-950">
+                        <span>Shorts Subtotal:</span>
+                        <span className="font-mono text-sm font-black text-indigo-700">
+                          {effectiveShortCount} × {shortMarks} = {effectiveShortCount * shortMarks} Marks
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="py-6 text-center text-xs text-slate-400 font-semibold italic">
+                      اس پیٹرن میں مختصر سوالات شامل نہیں ہیں
+                    </div>
+                  )}
+                </div>
+
+                {/* CARD 3: LONG QUESTIONS CONFIGURATION */}
+                <div className={`p-4 rounded-xl border transition-all ${
+                  isLongActive 
+                    ? 'bg-gradient-to-b from-purple-50/40 via-white to-white border-purple-300/80 shadow-xs' 
+                    : 'bg-slate-50/60 border-slate-200 opacity-50'
+                }`}>
+                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                      <span className="text-xs font-black text-slate-900">Longs (تفصیلی سوالات)</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-200 font-mono">
+                      {availableQuestions.longs} Available
+                    </span>
+                  </div>
+
+                  {isLongActive ? (
+                    <div className="pt-3 space-y-3">
+                      {/* Count Stepper */}
+                      <div>
+                        <div className="flex items-center justify-between text-xs mb-1">
+                          <span className="font-bold text-slate-600">تعداد (Count):</span>
+                          <span className="text-[10px] text-slate-400 font-semibold">Max: {availableQuestions.longs}</span>
+                        </div>
+                        <div className="flex items-center border border-slate-300 rounded-lg overflow-hidden bg-white shadow-2xs">
+                          <button
+                            type="button"
+                            onClick={() => setLongCount(prev => Math.max(0, prev - 1))}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black cursor-pointer select-none"
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <input
+                            type="number"
+                            min="0"
+                            max={Math.max(50, availableQuestions.longs)}
+                            value={longCount}
+                            onChange={(e) => setLongCount(Math.max(0, parseInt(e.target.value) || 0))}
+                            className="w-full text-center py-1.5 text-sm font-black text-slate-900 focus:outline-none"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setLongCount(prev => prev + 1)}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black cursor-pointer select-none"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        {/* Quick Count Presets */}
+                        <div className="flex items-center gap-1.5 mt-1.5">
+                          {[1, 2, 3, 4].map(val => (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => setLongCount(val)}
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-colors cursor-pointer ${
+                                longCount === val
+                                  ? 'bg-purple-600 text-white border-purple-600'
+                                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                              }`}
+                            >
+                              {val}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Marks Each */}
+                      <div className="flex items-center justify-between pt-1 border-t border-slate-100">
+                        <span className="text-xs font-bold text-slate-600">ہر سوال کے نمبر:</span>
+                        <div className="flex items-center gap-1.5">
+                          {[4, 5, 8, 10].map(m => (
+                            <button
+                              key={m}
+                              type="button"
+                              onClick={() => setLongMarks(m)}
+                              className={`px-2 py-1 rounded-md text-xs font-black border transition-all cursor-pointer ${
+                                longMarks === m
+                                  ? 'bg-purple-600 text-white border-purple-600 shadow-2xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              {m}M
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Subtotal */}
+                      <div className="p-2 rounded-lg bg-purple-50/60 border border-purple-100 flex items-center justify-between text-xs font-bold text-purple-950">
+                        <span>Longs Subtotal:</span>
+                        <span className="font-mono text-sm font-black text-purple-700">
+                          {effectiveLongCount} × {longMarks} = {effectiveLongCount * longMarks} Marks
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="py-6 text-center text-xs text-slate-400 font-semibold italic">
+                      اس پیٹرن میں تفصیلی سوالات شامل نہیں ہیں
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            </div>
+
+            {/* LIVE TOTAL SUMMARY BANNER */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-xl bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white shadow-xs">
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="font-bold text-slate-300">منتخب شدہ بریک ڈاؤن:</span>
+                {isMcqActive && (
+                  <span className="px-2 py-0.5 rounded bg-blue-500/30 text-blue-200 border border-blue-400/30 font-mono text-[11px]">
+                    {effectiveMcqCount} MCQs ({effectiveMcqCount * mcqMarks}M)
+                  </span>
+                )}
+                {isShortActive && (
+                  <span className="px-2 py-0.5 rounded bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 font-mono text-[11px]">
+                    {effectiveShortCount} Shorts ({effectiveShortCount * shortMarks}M)
+                  </span>
+                )}
+                {isLongActive && (
+                  <span className="px-2 py-0.5 rounded bg-purple-500/30 text-purple-200 border border-purple-400/30 font-mono text-[11px]">
+                    {effectiveLongCount} Longs ({effectiveLongCount * longMarks}M)
+                  </span>
                 )}
               </div>
 
-              {/* Required Questions */}
-              <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs">
-                <span className="bg-[#1890ff] text-white font-bold px-3 py-2 flex items-center whitespace-nowrap text-xs select-none">
-                  Required Questions
-                </span>
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={requiredQuestions}
-                  onChange={(e) => setRequiredQuestions(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="w-full bg-white px-2 py-2 text-slate-800 font-bold focus:outline-none text-xs text-center"
-                  placeholder="100"
-                />
-              </div>
-
-              {/* Each Question Marks */}
-              <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs">
-                <span className="bg-[#1890ff] text-white font-bold px-3 py-2 flex items-center whitespace-nowrap text-xs select-none">
-                  Each Quesion Marks
-                </span>
-                <input
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={eachQuestionMarks}
-                  onChange={(e) => setEachQuestionMarks(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="w-full bg-white px-2 py-2 text-slate-800 font-bold focus:outline-none text-xs text-center"
-                  placeholder="1"
-                />
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="text-right">
+                  <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">کل پیپر کے سوالات و نمبرات</div>
+                  <div className="text-sm sm:text-base font-black text-cyan-300">
+                    {totalSelectedQuestions} Questions | {totalPaperMarks} Total Marks
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Dedicated Exercise & Topic Inclusion Controls Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-gradient-to-r from-amber-50/90 to-blue-50/90 border border-amber-200/90 rounded-lg text-xs shadow-2xs">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-black text-slate-800 flex items-center gap-1.5 shrink-0">
-                  <span className="text-amber-500 font-bold text-sm">⭐</span>
-                  <span>مشقی سوالات فلٹر (Exercise Filters):</span>
+            {/* 3. QUESTION POOL & CATEGORY FILTERS (REPLACING HARSH YELLOW BOX) */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Filter className="w-4 h-4 text-blue-600" />
+                  <span className="text-xs font-black text-slate-800">
+                    سوالات کی اقسام و ذرائع فلٹر (Question Pool & Category Inclusion)
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-500 font-semibold italic">
+                  (بٹن پر کلک کر کے مشقی یا ٹاپک سوالات شامل / خارج کریں)
                 </span>
+              </div>
 
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Exercise MCQs */}
                 <button
                   type="button"
                   onClick={() => toggleCategory('exerciseMcqs')}
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-bold transition-all cursor-pointer select-none ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer select-none ${
                     dataSelectionCategories.exerciseMcqs
-                      ? 'bg-amber-600 hover:bg-amber-700 text-white border-amber-700 shadow-2xs'
-                      : 'bg-white hover:bg-amber-50 text-slate-500 border-slate-300 line-through decoration-red-500 decoration-2'
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-700 shadow-2xs'
+                      : 'bg-white hover:bg-slate-100 text-slate-400 border-slate-300 line-through decoration-red-500 decoration-2'
                   }`}
                   title="کلک کریں تاکہ پیپر میں مشقی MCQs شامل یا خارج کیے جا سکیں"
                 >
@@ -809,13 +1167,14 @@ export default function PTMTopicSelectionView({
                   <span>Exercise MCQs (مشقی MCQs)</span>
                 </button>
 
+                {/* Exercise Shorts */}
                 <button
                   type="button"
                   onClick={() => toggleCategory('exerciseShorts')}
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-bold transition-all cursor-pointer select-none ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer select-none ${
                     dataSelectionCategories.exerciseShorts
-                      ? 'bg-amber-600 hover:bg-amber-700 text-white border-amber-700 shadow-2xs'
-                      : 'bg-white hover:bg-amber-50 text-slate-500 border-slate-300 line-through decoration-red-500 decoration-2'
+                      ? 'bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-700 shadow-2xs'
+                      : 'bg-white hover:bg-slate-100 text-slate-400 border-slate-300 line-through decoration-red-500 decoration-2'
                   }`}
                   title="کلک کریں تاکہ پیپر میں مشقی مختصر سوالات شامل یا خارج کیے جا سکیں"
                 >
@@ -823,13 +1182,14 @@ export default function PTMTopicSelectionView({
                   <span>Exercise Shorts (مشقی شارٹس)</span>
                 </button>
 
+                {/* Topic MCQs */}
                 <button
                   type="button"
                   onClick={() => toggleCategory('topicMcqs')}
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-bold transition-all cursor-pointer select-none ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer select-none ${
                     dataSelectionCategories.topicMcqs
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-700 shadow-2xs'
-                      : 'bg-white hover:bg-blue-50 text-slate-500 border-slate-300 line-through decoration-red-500 decoration-2'
+                      ? 'bg-cyan-700 hover:bg-cyan-800 text-white border-cyan-800 shadow-2xs'
+                      : 'bg-white hover:bg-slate-100 text-slate-400 border-slate-300 line-through decoration-red-500 decoration-2'
                   }`}
                   title="عام ٹاپک کے MCQs شامل یا خارج کریں"
                 >
@@ -837,137 +1197,218 @@ export default function PTMTopicSelectionView({
                   <span>Topic MCQs (ٹاپک MCQs)</span>
                 </button>
 
+                {/* Topic Shorts */}
                 <button
                   type="button"
                   onClick={() => toggleCategory('topicShorts')}
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-bold transition-all cursor-pointer select-none ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer select-none ${
                     dataSelectionCategories.topicShorts
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-700 shadow-2xs'
-                      : 'bg-white hover:bg-blue-50 text-slate-500 border-slate-300 line-through decoration-red-500 decoration-2'
+                      ? 'bg-teal-700 hover:bg-teal-800 text-white border-teal-800 shadow-2xs'
+                      : 'bg-white hover:bg-slate-100 text-slate-400 border-slate-300 line-through decoration-red-500 decoration-2'
                   }`}
                   title="عام ٹاپک کے مختصر سوالات شامل یا خارج کریں"
                 >
                   <span>{dataSelectionCategories.topicShorts ? '✓' : '✗'}</span>
                   <span>Topic Shorts (ٹاپک شارٹس)</span>
                 </button>
-              </div>
 
-              <span className="text-[11px] font-semibold text-slate-500 italic hidden md:inline">
-                (بٹن پر کلک کر کے مشقی یا ٹاپک سوالات منتخب / خارج کریں)
-              </span>
+                {/* More Categories Popover Trigger */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowDataSelectionDropdown(!showDataSelectionDropdown)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                  >
+                    <span>مزید کیٹیگریز (Data Types)</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+                  </button>
+
+                  {/* Popover Menu */}
+                  {showDataSelectionDropdown && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-40 bg-transparent" 
+                        onClick={() => setShowDataSelectionDropdown(false)} 
+                      />
+                      <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 bg-white border border-slate-200 rounded-xl shadow-2xl z-50 p-4 space-y-3 min-w-[280px] text-slate-800">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                          <span className="text-xs font-black uppercase tracking-wider text-slate-700">Question Categories</span>
+                          <button
+                            type="button"
+                            onClick={toggleSelectAllCategories}
+                            className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
+                          >
+                            {isAllCategoriesSelected ? "Deselect All" : "Select All"}
+                          </button>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="flex items-center gap-2.5 cursor-pointer text-xs font-bold select-none text-slate-800 hover:text-blue-600">
+                            <input
+                              type="checkbox"
+                              checked={dataSelectionCategories.pastPapers}
+                              onChange={() => toggleCategory('pastPapers')}
+                              className="w-4 h-4 rounded text-blue-600 focus:ring-0 cursor-pointer"
+                            />
+                            <span>Past Papers (پاسٹ پیپرز)</span>
+                          </label>
+
+                          <label className="flex items-center gap-2.5 cursor-pointer text-xs font-bold select-none text-slate-800 hover:text-blue-600">
+                            <input
+                              type="checkbox"
+                              checked={dataSelectionCategories.additional}
+                              onChange={() => toggleCategory('additional')}
+                              className="w-4 h-4 rounded text-blue-600 focus:ring-0 cursor-pointer"
+                            />
+                            <span>Additional (اضافی مواد)</span>
+                          </label>
+
+                          <label className="flex items-center gap-2.5 cursor-pointer text-xs font-bold select-none text-slate-800 hover:text-blue-600">
+                            <input
+                              type="checkbox"
+                              checked={dataSelectionCategories.conceptual}
+                              onChange={() => toggleCategory('conceptual')}
+                              className="w-4 h-4 rounded text-blue-600 focus:ring-0 cursor-pointer"
+                            />
+                            <span>Conceptual (تصوراتی سوالات)</span>
+                          </label>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
 
-            {/* Row 2: Medium (◐), Choice, Blank Lines Type (☰), Chap Name, Selected Counter */}
-            <div className="flex flex-wrap items-center justify-between gap-3 text-xs pt-1">
-              <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto lg:flex-1">
-                {/* Medium */}
-                <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs flex-1 sm:flex-initial min-w-[140px] sm:min-w-[180px]">
-                  <span className="bg-[#1890ff] text-white font-bold px-2.5 sm:px-3 py-1.5 flex items-center justify-center text-sm select-none shrink-0">
-                    ◐
-                  </span>
+            {/* 4. PAPER FORMATTING & EXAM RULES GRID */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              {/* Medium */}
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
+                  <Globe className="w-3.5 h-3.5 text-blue-600" />
+                  <span>پیپر کی زبان (Medium):</span>
+                </label>
+                <div className="border border-slate-300 rounded-xl overflow-hidden bg-white shadow-2xs focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500">
                   <select
                     value={mediumType}
                     onChange={(e) => setMediumType(e.target.value)}
-                    className="w-full bg-white px-2 py-1.5 text-slate-800 font-bold focus:outline-none text-xs cursor-pointer"
+                    className="w-full bg-white px-3 py-2 text-slate-800 font-bold focus:outline-none text-xs cursor-pointer"
                   >
                     <option value="ENGLISH">ENGLISH MEDIUM</option>
-                    <option value="URDU">URDU MEDIUM</option>
-                    <option value="DUAL MEDIUM">DUAL MEDIUM</option>
+                    <option value="URDU">URDU MEDIUM (اردو میڈیم)</option>
+                    <option value="DUAL MEDIUM">DUAL MEDIUM (دونوں زبانیں)</option>
                   </select>
                 </div>
+              </div>
 
-                {/* Choice */}
-                <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs w-24 sm:w-28 shrink-0">
-                  <span className="bg-[#1890ff] text-white font-bold px-2 sm:px-2.5 py-1.5 flex items-center whitespace-nowrap text-xs select-none">
-                    Choice
-                  </span>
+              {/* Choice */}
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
+                  <Award className="w-3.5 h-3.5 text-blue-600" />
+                  <span>اختیاری سوالات (Choice):</span>
+                </label>
+                <div className="flex items-center border border-slate-300 rounded-xl overflow-hidden bg-white shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => setChoiceCount(prev => Math.max(0, prev - 1))}
+                    className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black cursor-pointer select-none"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
                   <input
                     type="number"
                     min="0"
                     value={choiceCount}
                     onChange={(e) => setChoiceCount(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-full bg-white px-1.5 sm:px-2 py-1.5 text-slate-800 font-bold focus:outline-none text-xs text-center"
+                    className="w-full text-center py-2 text-xs font-bold text-slate-900 focus:outline-none"
                     placeholder="0"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setChoiceCount(prev => prev + 1)}
+                    className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black cursor-pointer select-none"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
                 </div>
+              </div>
 
-                {/* Blank Lines Type */}
-                <div className="flex border border-slate-300 rounded overflow-hidden shadow-2xs flex-1 sm:flex-initial min-w-[130px] sm:min-w-[160px]">
-                  <span className="bg-[#1890ff] text-white font-bold px-2.5 sm:px-3 py-1.5 flex items-center justify-center text-sm select-none shrink-0">
-                    ☰
-                  </span>
+              {/* Blank Lines Type */}
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
+                  <FileText className="w-3.5 h-3.5 text-blue-600" />
+                  <span>خالی لائنیں (Answer Lines):</span>
+                </label>
+                <div className="border border-slate-300 rounded-xl overflow-hidden bg-white shadow-2xs focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500">
                   <select
                     value={blankLinesType}
                     onChange={(e) => setBlankLinesType(e.target.value)}
-                    className="w-full bg-white px-2 py-1.5 text-slate-800 font-semibold focus:outline-none text-xs cursor-pointer"
+                    className="w-full bg-white px-3 py-2 text-slate-800 font-semibold focus:outline-none text-xs cursor-pointer"
                   >
-                    <option value="None">Blank Lines Type</option>
-                    <option value="2 Lines">2 Lines</option>
-                    <option value="3 Lines">3 Lines</option>
-                    <option value="4 Lines">4 Lines</option>
+                    <option value="None">None (No Lines)</option>
+                    <option value="2 Lines">2 Lines (دو لائنیں)</option>
+                    <option value="3 Lines">3 Lines (تین لائنیں)</option>
+                    <option value="4 Lines">4 Lines (چار لائنیں)</option>
                   </select>
                 </div>
+              </div>
 
-                {/* Chap Name checkbox */}
-                <label className="flex items-center gap-1.5 cursor-pointer font-bold text-xs text-slate-800 select-none px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded hover:bg-slate-100 transition-colors shrink-0">
+              {/* Show Chapter Name */}
+              <div className="flex flex-col gap-1 justify-end">
+                <label 
+                  onClick={() => setShowChapterNameOnPaper(!showChapterNameOnPaper)}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border cursor-pointer select-none transition-all shadow-2xs h-[38px] ${
+                    showChapterNameOnPaper
+                      ? 'bg-blue-50/80 border-blue-400 text-blue-900 font-black'
+                      : 'bg-white border-slate-300 text-slate-700 font-bold hover:bg-slate-50'
+                  }`}
+                >
                   <input
                     type="checkbox"
                     checked={showChapterNameOnPaper}
                     onChange={(e) => setShowChapterNameOnPaper(e.target.checked)}
                     className="w-4 h-4 rounded text-blue-600 focus:ring-0 cursor-pointer"
                   />
-                  <span className="whitespace-nowrap">Chap Name</span>
+                  <span className="truncate">پیپر پر سبق کا نام دکھائیں</span>
                 </label>
-              </div>
-
-              {/* Counter: Selected Questions & Real-Time Pool Breakdown */}
-              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 font-bold text-xs text-slate-800 bg-slate-50 px-2.5 sm:px-3 py-1.5 rounded border border-slate-200 w-full lg:w-auto justify-between sm:justify-start">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-slate-500 font-semibold text-[11px] sm:text-xs">Pool:</span>
-                  <span className="px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-800 border border-cyan-200 font-mono text-[10px] sm:text-[11px]">
-                    {availableQuestions.mcqs} MCQs
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 border border-indigo-200 font-mono text-[10px] sm:text-[11px]">
-                    {availableQuestions.shorts} Shorts
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-200 font-mono text-[10px] sm:text-[11px]">
-                    {availableQuestions.longs} Longs
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-[11px] sm:text-xs shrink-0">
-                  <span className="text-slate-300 hidden sm:inline">|</span>
-                  <span>Selected</span>
-                  <span className="text-blue-600 font-black text-sm">{requiredQuestions}</span>
-                  <span>From</span>
-                  <span className="text-red-600 font-black text-sm">{availableQuestions.total}</span>
-                </div>
               </div>
             </div>
 
-            {/* Row 3: Action Buttons */}
-            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            {/* 5. ACTION & POOL SUMMARY BAR */}
+            <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3.5">
               <button
                 type="button"
                 onClick={handleBackToTopics}
-                className="w-full sm:w-auto px-4 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                className="w-full sm:w-auto px-4 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5"
               >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back to Topics</span>
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Topics (ٹاپکس میں واپسی)</span>
               </button>
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-                <span className="text-xs text-slate-500 font-semibold hidden sm:inline">
-                  {selectedTopicIds.length} Topics Selected
+              {/* Center/Pool Indicators */}
+              <div className="flex flex-wrap items-center justify-center gap-1.5 font-bold text-xs text-slate-700">
+                <span className="text-slate-500 font-semibold text-[11px]">Pool:</span>
+                <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200 font-mono text-[11px]">
+                  {availableQuestions.mcqs} MCQs
                 </span>
-                <button
-                  type="button"
-                  onClick={handleSearchAndGenerate}
-                  disabled={selectedTopicIds.length === 0}
-                  className="w-full sm:w-auto px-6 py-2.5 bg-[#00a8cc] hover:bg-[#008ba8] text-white font-black text-sm rounded-lg shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span>Search Questions 🔍</span>
-                </button>
+                <span className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800 border border-indigo-200 font-mono text-[11px]">
+                  {availableQuestions.shorts} Shorts
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-purple-50 text-purple-800 border border-purple-200 font-mono text-[11px]">
+                  {availableQuestions.longs} Longs
+                </span>
               </div>
+
+              {/* Generate Paper CTA Button */}
+              <button
+                type="button"
+                onClick={handleSearchAndGenerate}
+                disabled={selectedTopicIds.length === 0 || totalSelectedQuestions === 0}
+                className="w-full sm:w-auto px-7 py-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:via-indigo-700 hover:to-cyan-600 text-white font-black text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Generate Paper (پیپر تیار کریں) 🚀</span>
+              </button>
             </div>
 
           </div>

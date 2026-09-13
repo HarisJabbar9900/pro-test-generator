@@ -779,6 +779,7 @@ export default function App() {
       language: params.language,
       showAnswerLines: params.showAnswerLines,
       showChapterName: params.showChapterName,
+      totalMarks: params.totalMarks || prev.totalMarks || 50,
       syllabus: calculatedSyllabus || prev.syllabus || 'Chapter 2 (Topic: 2.1 to 2.12)'
     }));
 
@@ -796,24 +797,27 @@ export default function App() {
     });
 
     setPaperData(prev => {
-      let nextMcqs = prev?.mcqs || [];
-      let nextShorts = prev?.shortQuestions || [];
-      let nextLongs = prev?.longQuestions || [];
+      let nextMcqs = [];
+      let nextShorts = [];
+      let nextLongs = [];
 
       if (params.questionType === 'MCQ') {
-        // User picked MCQs: preserve existing short and long questions!
-        nextMcqs = (generated.mcqs && generated.mcqs.length > 0) ? generated.mcqs : (prev?.mcqs || []);
+        nextMcqs = (generated.mcqs && generated.mcqs.length > 0) ? generated.mcqs : [];
       } else if (params.questionType === 'SHORT') {
-        // User picked Short Questions: preserve existing mcqs and long questions!
-        nextShorts = (generated.shortQuestions && generated.shortQuestions.length > 0) ? generated.shortQuestions : (prev?.shortQuestions || []);
+        nextShorts = (generated.shortQuestions && generated.shortQuestions.length > 0) ? generated.shortQuestions : [];
       } else if (params.questionType === 'LONG') {
-        // User picked Long Questions: preserve existing mcqs and short questions!
-        nextLongs = (generated.longQuestions && generated.longQuestions.length > 0) ? generated.longQuestions : (prev?.longQuestions || []);
+        nextLongs = (generated.longQuestions && generated.longQuestions.length > 0) ? generated.longQuestions : [];
+      } else if (params.questionType === 'MCQ_SHORT') {
+        nextMcqs = (generated.mcqs && generated.mcqs.length > 0) ? generated.mcqs : [];
+        nextShorts = (generated.shortQuestions && generated.shortQuestions.length > 0) ? generated.shortQuestions : [];
+      } else if (params.questionType === 'SUBJECTIVE') {
+        nextShorts = (generated.shortQuestions && generated.shortQuestions.length > 0) ? generated.shortQuestions : [];
+        nextLongs = (generated.longQuestions && generated.longQuestions.length > 0) ? generated.longQuestions : [];
       } else {
-        // ALL question types
-        nextMcqs = (generated.mcqs && generated.mcqs.length > 0) ? generated.mcqs : (prev?.mcqs || []);
-        nextShorts = (generated.shortQuestions && generated.shortQuestions.length > 0) ? generated.shortQuestions : (prev?.shortQuestions || []);
-        nextLongs = (generated.longQuestions && generated.longQuestions.length > 0) ? generated.longQuestions : (prev?.longQuestions || []);
+        // ALL / Combined (MCQs + Shorts + Longs)
+        nextMcqs = (generated.mcqs && generated.mcqs.length > 0) ? generated.mcqs : [];
+        nextShorts = (generated.shortQuestions && generated.shortQuestions.length > 0) ? generated.shortQuestions : [];
+        nextLongs = (generated.longQuestions && generated.longQuestions.length > 0) ? generated.longQuestions : [];
       }
 
       return {
