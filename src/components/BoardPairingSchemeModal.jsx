@@ -13,10 +13,14 @@ import {
   Printer, 
   ChevronRight, 
   ShieldCheck, 
-  HelpCircle,
   BarChart3,
   Flame,
-  ArrowRight
+  ArrowRight,
+  GitMerge,
+  Zap,
+  CheckCircle,
+  HelpCircle,
+  Hash
 } from 'lucide-react';
 import { 
   BOARD_AUTHORITIES, 
@@ -47,6 +51,7 @@ export default function BoardPairingSchemeModal({
   });
   const [activeSubjectId, setActiveSubjectId] = useState(selectedSubjectId || 'physics');
   const [copiedScheme, setCopiedScheme] = useState(false);
+  const [activeViewMode, setActiveViewMode] = useState('matrix'); // 'matrix' | 'flow'
 
   // Available classes
   const classesList = [
@@ -63,9 +68,101 @@ export default function BoardPairingSchemeModal({
 
   const currentBoardMeta = BOARD_AUTHORITIES[activeBoard.toUpperCase()] || BOARD_AUTHORITIES.PUNJAB;
 
+  // Active subject metadata
+  const currentSubjectMeta = useMemo(() => {
+    return AVAILABLE_SCHEME_SUBJECTS.find(s => s.id === activeSubjectId) || AVAILABLE_SCHEME_SUBJECTS[0];
+  }, [activeSubjectId]);
+
+  // Aggregate Chapter-wise Blueprint Matrix
+  const chapterMatrix = useMemo(() => {
+    if (!currentScheme) return [];
+    const map = new Map();
+
+    // 1. Process MCQs
+    (currentScheme.mcqs?.distribution || []).forEach(m => {
+      const chNum = Number(m.chapter);
+      if (!map.has(chNum)) {
+        map.set(chNum, {
+          chapter: chNum,
+          name: m.name || `Unit ${chNum}`,
+          mcqs: 0,
+          shortGroups: [],
+          longQuestions: []
+        });
+      }
+      const entry = map.get(chNum);
+      entry.mcqs += (m.count || 0);
+      if (m.name && (!entry.name || entry.name.startsWith('Unit '))) entry.name = m.name;
+    });
+
+    // 2. Process Short Questions
+    (currentScheme.shortQuestions || []).forEach(sq => {
+      (sq.breakdown || []).forEach(b => {
+        const chNum = Number(b.chapter);
+        if (!map.has(chNum)) {
+          map.set(chNum, {
+            chapter: chNum,
+            name: b.name || `Unit ${chNum}`,
+            mcqs: 0,
+            shortGroups: [],
+            longQuestions: []
+          });
+        }
+        const entry = map.get(chNum);
+        entry.shortGroups.push({
+          qNum: sq.qNum,
+          count: b.count,
+          marks: (b.count || 0) * (sq.marksEach || 2)
+        });
+        if (b.name && (!entry.name || entry.name.startsWith('Unit '))) entry.name = b.name;
+      });
+    });
+
+    // 3. Process Long Questions
+    (currentScheme.longQuestions?.questions || []).forEach(lq => {
+      const chNum = Number(lq.chapter);
+      if (!map.has(chNum)) {
+        map.set(chNum, {
+          chapter: chNum,
+          name: `Unit ${chNum}`,
+          mcqs: 0,
+          shortGroups: [],
+          longQuestions: []
+        });
+      }
+      const entry = map.get(chNum);
+      entry.longQuestions.push({
+        qNum: lq.qNum,
+        topic: lq.topic,
+        marks: currentScheme.longQuestions?.marksEach || 8
+      });
+    });
+
+    // Convert to sorted array & calculate marks & percentages
+    const list = Array.from(map.values()).sort((a, b) => a.chapter - b.chapter);
+    const totalPossibleMarks = currentScheme.totalMarks || 60;
+
+    return list.map(item => {
+      const mcqMarks = item.mcqs * 1;
+      const shortMarks = item.shortGroups.reduce((acc, g) => acc + g.marks, 0);
+      const longMarks = item.longQuestions.reduce((acc, l) => acc + (l.marks >= 8 ? 4 : l.marks), 0); // approx part share
+      const totalChMarks = mcqMarks + shortMarks + longMarks;
+      const percentage = Math.min(100, Math.round((totalChMarks / totalPossibleMarks) * 100));
+
+      return {
+        ...item,
+        mcqMarks,
+        shortMarks,
+        longMarks,
+        totalChMarks,
+        percentage
+      };
+    });
+  }, [currentScheme]);
+
   if (!isOpen) return null;
 
-  // Handle generating the actual 100% board paper
+  // 1-Click Generate Action
   const handleGenerateClick = () => {
     try {
       const result = generateBoardPairingPaper({
@@ -109,171 +206,149 @@ export default function BoardPairingSchemeModal({
     }
   };
 
-  // Copy textual pairing scheme
+  // Copy scheme
   const handleCopyScheme = () => {
     if (!currentScheme) return;
     let text = `=== ${currentBoardMeta.fullName} ===\n`;
-    text += `CLASS: ${activeClass} Class | SUBJECT: Computer Science\n`;
+    text += `CLASS: ${activeClass} Class | SUBJECT: ${currentScheme.subjectName || currentSubjectMeta.name}\n`;
     text += `SESSION: 2025-2026 | TOTAL MARKS: ${currentScheme.totalMarks} | TIME: ${currentScheme.timeAllowed}\n\n`;
-    text += `[PART 1: MCQs (${currentScheme.objectiveMarks} Marks)]\n`;
-    (currentScheme.mcqs?.distribution || []).forEach(m => {
-      text += `• Chapter ${m.chapter}: ${m.count} MCQ(s) - ${m.name}\n`;
+    text += `[VISUAL CHAPTER PAIRING MATRIX]\n`;
+    chapterMatrix.forEach(row => {
+      text += `• Unit ${row.chapter} (${row.name}): ${row.mcqs} MCQs, Shorts: ${row.shortGroups.map(g => `${g.qNum}(${g.count}Q)`).join(', ') || 'None'}, Longs: ${row.longQuestions.map(l => l.qNum).join(', ') || 'None'} (~${row.totalChMarks} Marks)\n`;
     });
-    text += `\n[PART 2: SHORT QUESTIONS (${currentScheme.subjectiveMarks - (currentScheme.longQuestions?.totalMarks || 24)} Marks)]\n`;
-    (currentScheme.shortQuestions || []).forEach(sq => {
-      text += `• ${sq.title}: ${sq.instruction}\n`;
-      (sq.breakdown || []).forEach(b => {
-        text += `   - ${b.name}: ${b.count} Questions\n`;
-      });
-    });
-    text += `\n[PART 3: LONG QUESTIONS (${currentScheme.longQuestions?.totalMarks || 24} Marks)]\n`;
-    text += `• ${currentScheme.longQuestions?.instruction}\n`;
+    text += `\n[LONG QUESTIONS PAIRING]\n`;
     (currentScheme.longQuestions?.questions || []).forEach(lq => {
-      text += `   - ${lq.qNum}: ${lq.topic}\n`;
+      text += `• ${lq.qNum}: ${lq.topic}\n`;
     });
 
     navigator.clipboard.writeText(text);
     setCopiedScheme(true);
-    notify.success(isUrdu ? "پیئرنگ اسکیم کاپی ہو گئی!" : "Pairing scheme copied to clipboard!");
+    notify.success(isUrdu ? "پیئرنگ اسکیم کاپی ہو گئی!" : "Pairing matrix copied to clipboard!");
     setTimeout(() => setCopiedScheme(false), 2500);
   };
 
+  // Calculate section percentages for visual bar
+  const totalMarks = currentScheme?.totalMarks || 60;
+  const mcqMarks = currentScheme?.objectiveMarks || 12;
+  const longMarks = currentScheme?.longQuestions?.totalMarks || 18;
+  const shortMarks = totalMarks - mcqMarks - longMarks;
+  const mcqPct = Math.round((mcqMarks / totalMarks) * 100);
+  const shortPct = Math.round((shortMarks / totalMarks) * 100);
+  const longPct = 100 - mcqPct - shortPct;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 md:p-6 bg-slate-950/70 backdrop-blur-sm animate-fadeIn font-sans">
-      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/75 backdrop-blur-xs animate-fadeIn font-sans">
+      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-5xl w-full max-h-[94vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden relative">
         
-        {/* MODAL HEADER */}
-        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-4 sm:p-6 flex items-start justify-between gap-4 border-b border-indigo-900/50 shrink-0">
-          <div className="flex items-start gap-3 min-w-0">
-            <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0 mt-0.5">
-              <Award className="w-6 h-6 sm:w-7 sm:h-7" />
+        {/* MODAL HEADER: COMPACT, HIGH-END BRANDED */}
+        <div className="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 text-white p-3.5 sm:p-5 flex items-center justify-between gap-3 border-b border-indigo-900/50 shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center shadow-md shadow-amber-500/20 shrink-0 font-black">
+              <Award className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-lg sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-                  <span>{isUrdu ? 'آفیشل بورڈ پیئرنگ اسکیم' : 'Official Board Pairing Schemes'}</span>
+                <h2 className="text-base sm:text-xl font-black text-white tracking-tight flex items-center gap-1.5">
+                  <span>{currentScheme?.subjectName || currentSubjectMeta.name}</span>
+                  <span className="text-amber-400 font-bold">•</span>
+                  <span className="text-amber-300">{activeClass}</span>
                 </h2>
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] sm:text-xs font-black tracking-wider uppercase">
-                  Session 2025 - 2026
+                <span className="px-2 py-0.5 rounded-full bg-white/10 text-slate-200 border border-white/15 text-[10px] sm:text-xs font-bold">
+                  {currentBoardMeta.badge}
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] sm:text-xs font-bold">
-                  100% Board Standard
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-[10px] sm:text-xs font-black">
+                  2025–2026 New Syllabus
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-indigo-200 font-medium mt-1 leading-relaxed">
-                {isUrdu 
-                  ? 'پنجاب، فیڈرل، سندھ اور کے پی کے بورڈز کے عین مطابق پیئرنگ اسکیم اور 1-کلک پر مکمل بورڈ پرچہ جنریٹر۔' 
-                  : 'Authentic pairing schemes for Punjab PBCC, Federal FBISE, Sindh, and KPK Boards with 1-click test generator.'}
+              <p className="text-[11px] sm:text-xs text-indigo-200 font-medium truncate mt-0.5">
+                {currentBoardMeta.fullName} — 100% Chapter Pairing & Blueprint
               </p>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all cursor-pointer shrink-0"
-            title="Close modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleCopyScheme}
+              className="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-white/10"
+              title="Copy Pairing Matrix"
+            >
+              {copiedScheme ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-300" />}
+              <span className="hidden sm:inline">{copiedScheme ? 'Copied' : 'Copy Matrix'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all cursor-pointer"
+              title="Close modal"
+            >
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          </div>
         </div>
 
-        {/* BOARD SELECTOR & CLASS TABS BAR */}
-        <div className="bg-slate-50 border-b border-slate-200/90 p-3 sm:p-4 space-y-3 shrink-0">
+        {/* COMPACT INTERACTIVE SELECTOR CONTROLS (BOARD, CLASS & SUBJECT) */}
+        <div className="bg-slate-50 border-b border-slate-200 p-2.5 sm:p-3 space-y-2 shrink-0">
           
-          {/* BOARD TABS */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {[
-              { id: 'punjab', label: 'Punjab Boards', tag: 'PBCC (9 Boards)', color: 'border-emerald-500 text-emerald-700 bg-emerald-50' },
-              { id: 'federal', label: 'Federal Board', tag: 'FBISE (SLO Based)', color: 'border-blue-500 text-blue-700 bg-blue-50' },
-              { id: 'sindh', label: 'Sindh Boards', tag: 'BIEK / BSEK', color: 'border-amber-500 text-amber-700 bg-amber-50' },
-              { id: 'kpk', label: 'KPK Boards', tag: 'Peshawar / Mardan', color: 'border-rose-500 text-rose-700 bg-rose-50' }
-            ].map(b => {
-              const isActive = activeBoard === b.id;
-              return (
+          {/* 1. BOARD TABS + CLASS PILLS (1 ROW ON TABLET/DESKTOP) */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+            {/* BOARD TABS */}
+            <div className="grid grid-cols-4 gap-1 sm:gap-1.5 p-1 bg-slate-200/70 rounded-xl max-w-xl">
+              {[
+                { id: 'punjab', label: 'Punjab (PBCC)' },
+                { id: 'federal', label: 'Federal (FBISE)' },
+                { id: 'sindh', label: 'Sindh (BIEK)' },
+                { id: 'kpk', label: 'KPK Boards' }
+              ].map(b => (
                 <button
                   key={b.id}
                   type="button"
                   onClick={() => setActiveBoard(b.id)}
-                  className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all cursor-pointer relative flex flex-col justify-between ${
-                    isActive 
-                      ? 'bg-white border-blue-600 shadow-md ring-2 ring-blue-500/20' 
-                      : 'bg-white/60 hover:bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                  className={`px-2 py-1.5 rounded-lg text-center text-[11px] sm:text-xs font-black transition-all cursor-pointer truncate ${
+                    activeBoard === b.id
+                      ? 'bg-white text-blue-700 shadow-xs ring-1 ring-blue-500/20'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className={`text-xs sm:text-sm font-black ${isActive ? 'text-blue-900' : 'text-slate-800'}`}>
-                      {b.label}
-                    </span>
-                    {isActive && <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />}
-                  </div>
-                  <span className="text-[10px] font-bold text-slate-500 mt-0.5">
-                    {b.tag}
-                  </span>
+                  {b.label}
                 </button>
-              );
-            })}
-          </div>
+              ))}
+            </div>
 
-          {/* CLASS SELECTOR PILLS */}
-          <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-slate-200/60">
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar">
-              <span className="text-xs font-black text-slate-600 uppercase mr-1">
-                {isUrdu ? 'کلاس منتخب کریں:' : 'Class:'}
-              </span>
+            {/* CLASS PILLS */}
+            <div className="flex items-center gap-1 overflow-x-auto pb-0.5 no-scrollbar">
               {classesList.map(c => (
                 <button
                   key={c.key}
                   type="button"
                   onClick={() => setActiveClass(c.key)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
                     activeClass === c.key
                       ? 'bg-slate-900 text-white shadow-xs'
                       : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
                   }`}
                 >
-                  <span>{c.label}</span>
+                  {c.key}
                 </button>
               ))}
             </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleCopyScheme}
-                className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
-                title="Copy Scheme"
-              >
-                {copiedScheme ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
-                <span className="hidden sm:inline">{copiedScheme ? 'Copied' : 'Copy'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
-                title="Print Scheme"
-              >
-                <Printer className="w-3.5 h-3.5 text-slate-500" />
-                <span className="hidden sm:inline">Print</span>
-              </button>
-            </div>
           </div>
 
-          {/* SUBJECT SELECTOR PILLS */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar pt-1.5 border-t border-slate-200/60">
-            <span className="text-xs font-black text-slate-600 uppercase mr-1 shrink-0">
-              {isUrdu ? 'مضمون منتخب کریں:' : 'Subject:'}
+          {/* 2. SUBJECT SELECTOR CHIPS */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar pt-1 border-t border-slate-200/60">
+            <span className="text-[11px] font-black text-slate-500 uppercase shrink-0 mr-0.5">
+              {isUrdu ? 'مضمون:' : 'Subject:'}
             </span>
             {AVAILABLE_SCHEME_SUBJECTS.map(s => {
-              const isSubjActive = activeSubjectId === s.id;
+              const isActive = activeSubjectId === s.id;
               return (
                 <button
                   key={s.id}
                   type="button"
                   onClick={() => setActiveSubjectId(s.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
-                    isSubjActive
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1 ${
+                    isActive
                       ? 'bg-blue-600 text-white shadow-xs'
                       : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
                   }`}
@@ -285,198 +360,218 @@ export default function BoardPairingSchemeModal({
           </div>
         </div>
 
-        {/* SCROLLABLE BLUEPRINT CONTENT */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 min-h-0 bg-[#f8fafc]">
+        {/* VISUAL BLUEPRINT BODY */}
+        <div className="flex-1 overflow-y-auto p-3 sm:p-5 space-y-4 min-h-0 bg-[#f8fafc]">
           
-          {/* SCHEME HEADER SUMMARY BANNER */}
-          {currentScheme && (
-            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="space-y-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[11px] font-black">
-                    {currentBoardMeta.fullName}
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">
-                    {currentScheme.subjectName || 'Subject'} • {activeClass} Class
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
-                    {isUrdu ? 'نیا نصاب و کتب' : 'New Syllabus (Latest)'}
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
-                  {currentScheme.description}
-                </p>
-              </div>
-
-              {/* QUICK STATS */}
-              <div className="grid grid-cols-3 gap-2 shrink-0 w-full sm:w-auto">
-                <div className="bg-blue-50 border border-blue-200/80 rounded-xl p-2.5 text-center min-w-[80px]">
-                  <div className="text-lg sm:text-xl font-black text-blue-700">{currentScheme.totalMarks}</div>
-                  <div className="text-[10px] font-bold text-blue-600 uppercase">Total Marks</div>
-                </div>
-                <div className="bg-emerald-50 border border-emerald-200/80 rounded-xl p-2.5 text-center min-w-[80px]">
-                  <div className="text-lg sm:text-xl font-black text-emerald-700">{currentScheme.objectiveMarks}M</div>
-                  <div className="text-[10px] font-bold text-emerald-600 uppercase">MCQs</div>
-                </div>
-                <div className="bg-amber-50 border border-amber-200/80 rounded-xl p-2.5 text-center min-w-[80px]">
-                  <div className="text-lg sm:text-xl font-black text-amber-700">{currentScheme.subjectiveMarks}M</div>
-                  <div className="text-[10px] font-bold text-amber-600 uppercase">Subjective</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 1. OBJECTIVE SECTION (MCQS) DISTRIBUTION */}
-          {currentScheme?.mcqs && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-              <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 p-3.5 sm:p-4 border-b border-slate-200 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-amber-500 text-white flex items-center justify-center font-black text-xs">
-                    Q1
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-black text-slate-900">
-                      PART 1: OBJECTIVE — MULTIPLE CHOICE QUESTIONS
-                    </h3>
-                    <p className="text-xs text-slate-500 font-medium">
-                      Total: {currentScheme.mcqs.total} MCQs (1 Mark each = {currentScheme.mcqs.total} Marks)
-                    </p>
-                  </div>
-                </div>
-                <span className="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 font-black text-xs border border-amber-200">
-                  {currentScheme.objectiveMarks} Marks
+          {/* VISUAL MARKS WEIGHTAGE BAR & QUICK METRICS */}
+          <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200 shadow-2xs space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm font-black text-slate-900">
+                  {isUrdu ? '📊 امتحانی نمبروں کی تقسیم (Visual Split)' : '📊 Examination Marks Distribution'}
+                </span>
+                <span className="text-xs font-bold text-slate-500">
+                  Total: <strong className="text-slate-900 font-black">{totalMarks} Marks</strong> ({currentScheme?.timeAllowed || '2 Hours'})
                 </span>
               </div>
 
-              {/* MCQs Table Breakdown */}
-              <div className="p-3 sm:p-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                  {(currentScheme.mcqs.distribution || []).map((m, idx) => (
-                    <div 
-                      key={idx}
-                      className="p-3 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-amber-50/50 hover:border-amber-300 transition-all flex items-center justify-between gap-3"
-                    >
-                      <div className="min-w-0">
-                        <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-700">
-                          Unit {m.chapter}
-                        </span>
-                        <h4 className="text-xs font-bold text-slate-800 mt-1 truncate" title={m.name}>
-                          {m.name}
-                        </h4>
-                      </div>
-                      <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-800 font-black text-xs flex items-center justify-center shrink-0 border border-amber-200">
-                        {m.count}
-                      </div>
-                    </div>
-                  ))}
+              {/* View Toggle */}
+              <div className="flex items-center gap-1 p-0.5 bg-slate-100 rounded-lg border border-slate-200 text-xs font-bold self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => setActiveViewMode('matrix')}
+                  className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                    activeViewMode === 'matrix' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'text-slate-600'
+                  }`}
+                >
+                  {isUrdu ? 'باب وار ٹیبل' : 'Chapter Matrix'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveViewMode('flow')}
+                  className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                    activeViewMode === 'flow' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'text-slate-600'
+                  }`}
+                >
+                  {isUrdu ? 'لانگ پیئرنگ فلو' : 'Long Pairs Flow'}
+                </button>
+              </div>
+            </div>
+
+            {/* SEGMENTED PROGRESS WEIGHTAGE BAR */}
+            <div className="space-y-1.5">
+              <div className="w-full h-3.5 bg-slate-100 rounded-full overflow-hidden flex p-0.5 border border-slate-200 shadow-inner">
+                <div 
+                  style={{ width: `${mcqPct}%` }} 
+                  className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-l-full transition-all duration-500" 
+                  title={`Part 1: MCQs (${mcqMarks} Marks ~ ${mcqPct}%)`}
+                />
+                <div 
+                  style={{ width: `${shortPct}%` }} 
+                  className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-500" 
+                  title={`Part 2: Short Questions (${shortMarks} Marks ~ ${shortPct}%)`}
+                />
+                <div 
+                  style={{ width: `${longPct}%` }} 
+                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-600 rounded-r-full transition-all duration-500" 
+                  title={`Part 3: Long Questions (${longMarks} Marks ~ ${longPct}%)`}
+                />
+              </div>
+
+              {/* Legend pills */}
+              <div className="flex items-center justify-between text-[10px] sm:text-xs font-bold pt-0.5 text-slate-600">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                  <span>Part 1 (MCQs): <strong>{mcqMarks}M ({mcqPct}%)</strong></span>
                 </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
+                  <span>Part 2 (Shorts): <strong>{shortMarks}M ({shortPct}%)</strong></span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
+                  <span>Part 3 (Longs): <strong>{longMarks}M ({longPct}%)</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* VIEW MODE 1: VISUAL CHAPTER MATRIX TABLE (CONCISE, INFORMATIVE, GLANCEABLE) */}
+          {activeViewMode === 'matrix' && (
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-black text-slate-600 uppercase tracking-wider">
+                      <th className="py-2.5 px-3 sm:px-4 w-12 text-center">Unit</th>
+                      <th className="py-2.5 px-3 sm:px-4">Chapter Title</th>
+                      <th className="py-2.5 px-3 text-center">MCQs</th>
+                      <th className="py-2.5 px-3">Short Questions Pairing</th>
+                      <th className="py-2.5 px-3">Long Questions Pairing</th>
+                      <th className="py-2.5 px-3 sm:px-4 text-center">Weightage</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs font-semibold text-slate-800">
+                    {chapterMatrix.map((row) => (
+                      <tr key={row.chapter} className="hover:bg-blue-50/40 transition-colors">
+                        {/* Unit Number */}
+                        <td className="py-2.5 px-3 sm:px-4 text-center font-black text-slate-500">
+                          <span className="w-6 h-6 rounded-lg bg-slate-100 text-slate-700 inline-flex items-center justify-center text-[11px]">
+                            {row.chapter}
+                          </span>
+                        </td>
+
+                        {/* Chapter Name */}
+                        <td className="py-2.5 px-3 sm:px-4 font-bold text-slate-900">
+                          {row.name}
+                        </td>
+
+                        {/* MCQs Badge */}
+                        <td className="py-2.5 px-3 text-center">
+                          {row.mcqs > 0 ? (
+                            <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-xs font-black">
+                              {row.mcqs} MCQ{row.mcqs > 1 ? 's' : ''}
+                            </span>
+                          ) : (
+                            <span className="text-slate-300 font-medium">—</span>
+                          )}
+                        </td>
+
+                        {/* Short Questions Grouping */}
+                        <td className="py-2.5 px-3">
+                          {row.shortGroups.length > 0 ? (
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              {row.shortGroups.map((g, idx) => (
+                                <span 
+                                  key={idx} 
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200 text-[11px] font-bold"
+                                  title={`${g.qNum}: ${g.count} Short Questions (${g.marks} Marks)`}
+                                >
+                                  <strong className="text-blue-900 font-black">{g.qNum}:</strong> {g.count} Qs
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-slate-300 font-medium">—</span>
+                          )}
+                        </td>
+
+                        {/* Long Questions Pairing */}
+                        <td className="py-2.5 px-3">
+                          {row.longQuestions.length > 0 ? (
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              {row.longQuestions.map((l, idx) => (
+                                <span 
+                                  key={idx} 
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-bold"
+                                  title={l.topic}
+                                >
+                                  <strong className="text-emerald-900 font-black">{l.qNum}</strong>
+                                  <span className="text-[10px] text-emerald-700 max-w-[130px] truncate">
+                                    ({l.topic.includes('Numerical') ? 'Theory/Num' : 'Long Question'})
+                                  </span>
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-slate-300 font-medium">—</span>
+                          )}
+                        </td>
+
+                        {/* Weightage Percentage Bar */}
+                        <td className="py-2.5 px-3 sm:px-4 text-center">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <span className="font-black text-slate-700 text-xs">~{row.totalChMarks}M</span>
+                            <span className="text-[10px] text-slate-400 font-semibold">({row.percentage}%)</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
 
-          {/* 2. SUBJECTIVE SECTION I (SHORT QUESTIONS) PAIRING */}
-          {currentScheme?.shortQuestions && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 p-3.5 sm:p-4 border-b border-slate-200 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-xs">
-                    Sec I
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-black text-slate-900">
-                      PART 2: SECTION I — SHORT QUESTIONS (مختصر سوالات)
-                    </h3>
-                    <p className="text-xs text-slate-500 font-medium">
-                      Exact chapter groupings and compulsory internal choices
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-3 sm:p-5 space-y-4">
-                {(currentScheme.shortQuestions || []).map((group, gIdx) => (
-                  <div key={gIdx} className="p-3.5 sm:p-4 rounded-xl border border-slate-200/90 bg-slate-50/50 space-y-3">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/80 pb-2.5">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-xs font-black">
-                          {group.qNum}
-                        </span>
-                        <h4 className="text-xs sm:text-sm font-black text-slate-800">
-                          {group.title}
-                        </h4>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-200">
-                          {group.instruction}
-                        </span>
-                        <span className="text-xs font-black text-slate-900 bg-white px-2 py-0.5 rounded-md border border-slate-200">
-                          {group.totalMarks} Marks
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Chapter Breakdown Pills */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {(group.breakdown || []).map((b, bIdx) => (
-                        <div key={bIdx} className="p-2.5 rounded-lg bg-white border border-slate-200 flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-700 truncate" title={b.name}>
-                            {b.name}
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-black">
-                            {b.count} Qs
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 3. SUBJECTIVE SECTION II (LONG QUESTIONS) PAIRING */}
-          {currentScheme?.longQuestions && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
-              <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 p-3.5 sm:p-4 border-b border-slate-200 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-black text-xs">
-                    Sec II
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-black text-slate-900">
-                      PART 2: SECTION II — LONG QUESTIONS (انشائیہ تفصیلی سوالات)
-                    </h3>
-                    <p className="text-xs text-slate-500 font-medium">
-                      {currentScheme.longQuestions.instruction}
-                    </p>
-                  </div>
-                </div>
-                <span className="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 font-black text-xs border border-emerald-200">
-                  {currentScheme.longQuestions.totalMarks} Marks
+          {/* VIEW MODE 2: VISUAL LONG QUESTION PAIRING FLOW */}
+          {activeViewMode === 'flow' && (
+            <div className="space-y-3">
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs font-bold text-blue-900 flex items-center justify-between">
+                <span>⚡ Official Subjective Section II Pairing Formula</span>
+                <span className="text-blue-700 font-normal">
+                  {currentScheme?.longQuestions?.instruction || 'Attempt required questions'}
                 </span>
               </div>
 
-              <div className="p-3 sm:p-5 space-y-2.5">
-                {(currentScheme.longQuestions.questions || []).map((lq, lIdx) => (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {(currentScheme?.longQuestions?.questions || []).map((lq, idx) => (
                   <div 
-                    key={lIdx}
-                    className="p-3 sm:p-4 rounded-xl border border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/30 transition-all flex items-start gap-3"
+                    key={idx}
+                    className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-emerald-400 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-3 group"
                   >
-                    <span className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 font-black text-xs flex items-center justify-center shrink-0 border border-emerald-200 mt-0.5">
-                      {lq.qNum}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                          Unit {lq.chapter}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-black text-xs shadow-2xs">
+                          {lq.qNum}
                         </span>
-                        <span className="text-xs font-black text-emerald-700">
-                          {currentScheme.longQuestions.marksEach} Marks
+                        <span className="text-xs font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                          {currentScheme.longQuestions?.marksEach || 8} Marks
                         </span>
                       </div>
-                      <p className="text-xs sm:text-sm font-bold text-slate-800 mt-1 leading-snug">
-                        {lq.topic}
-                      </p>
+
+                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 group-hover:bg-emerald-50/40 transition-colors">
+                        <span className="text-[10px] font-black uppercase text-slate-500 block mb-1">
+                          Paired Unit: Chapter {lq.chapter}
+                        </span>
+                        <p className="text-xs font-bold text-slate-800 leading-snug">
+                          {lq.topic}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-500">
+                      <span>Standard Choice</span>
+                      <span className="text-emerald-700 font-black">100% Board Pattern</span>
                     </div>
                   </div>
                 ))}
@@ -484,26 +579,29 @@ export default function BoardPairingSchemeModal({
             </div>
           )}
 
-          {/* LIST OF BOARDS COVERED */}
-          <div className="p-3.5 sm:p-4 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-600 leading-relaxed">
-            <strong className="text-slate-800 font-bold block mb-1">
-              📌 Included Board Jurisdictions:
-            </strong>
-            <span>{currentBoardMeta.boardsList.join(' • ')}</span>
+          {/* COMPACT BOARD STATUTORY NOTES */}
+          <div className="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600 font-medium">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{isUrdu ? 'تمام سوالات بورڈ کی سرکاری نئی کتابوں کے نصاب کے عین مطابق تیار کیے جاتے ہیں۔' : 'Conforms with the 2025-2026 textbook revised syllabus.'}</span>
+            </div>
+            <div className="text-slate-500 text-[11px] font-bold">
+              {currentBoardMeta.boardsList.slice(0, 3).join(', ')} + {currentBoardMeta.boardsList.length > 3 ? `${currentBoardMeta.boardsList.length - 3} more` : ''}
+            </div>
           </div>
         </div>
 
-        {/* BOTTOM ACTION BAR */}
-        <div className="bg-white border-t border-slate-200 p-3 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-          <div className="text-xs text-slate-500 font-medium text-center sm:text-left">
-            <span>{isUrdu ? '1-کلک پر بورڈ کے عین مطابق پرچہ تیار ہو جائے گا۔' : 'Generates complete board paper obeying chapter pairing rules.'}</span>
+        {/* BOTTOM STICKY ACTION BAR */}
+        <div className="bg-white border-t border-slate-200 p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-2.5 shrink-0">
+          <div className="text-xs text-slate-500 font-semibold text-center sm:text-left">
+            <span>{isUrdu ? 'ایک کلک پر اوپر دی گئی پیئرنگ کے عین مطابق پرچہ کینوس میں کھل جائے گا۔' : '1-Click generates an exact board paper obeying the paired chapters above.'}</span>
           </div>
 
-          <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
               type="button"
               onClick={onClose}
-              className="w-1/3 sm:w-auto px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs sm:text-sm font-bold transition-all cursor-pointer"
+              className="w-1/3 sm:w-auto px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs sm:text-sm font-bold transition-all cursor-pointer"
             >
               {isUrdu ? 'بند کریں' : 'Close'}
             </button>
@@ -511,13 +609,13 @@ export default function BoardPairingSchemeModal({
             <button
               type="button"
               onClick={handleGenerateClick}
-              className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 text-white text-xs sm:text-sm font-black shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+              className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 text-white text-xs sm:text-sm font-black shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
               <span>
                 {isUrdu 
-                  ? `⚡ بورڈ پیئرنگ پرچہ بنائیں (${currentScheme?.totalMarks || 75} نمبر)` 
-                  : `⚡ Generate Full Board Paper (${currentScheme?.totalMarks || 75}M)`}
+                  ? `⚡ یہ پیپر بنائیں (${totalMarks} نمبر)` 
+                  : `⚡ Generate Board Paper (${totalMarks}M)`}
               </span>
               <ArrowRight className="w-4 h-4" />
             </button>
