@@ -1308,6 +1308,11 @@ export default function App() {
               currentUser={currentUser}
               appLanguage={appLanguage}
               onToggleLanguage={handleToggleLanguage}
+              onOpenSavedPaper={handleOpenSavedPaper}
+              onDeleteSavedPaper={handleDeleteSavedPaper}
+              onExportDocx={handleExportDocx}
+              paperConfig={paperConfig}
+              setPaperConfig={setPaperConfig}
             />
           )}
 
