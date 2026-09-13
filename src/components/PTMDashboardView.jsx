@@ -114,7 +114,11 @@ export default function PTMDashboardView({
   paperConfig,
   setPaperConfig,
   onGenerateFromPreset,
-  onOpenPresetInManualMode
+  onOpenPresetInManualMode,
+  hasActiveDraft = false,
+  onResumeDraft,
+  onDiscardDraft,
+  activeDraftInfo = null
 }) {
   const isSuper = isSuperAdmin(currentUser);
   const isUrdu = appLanguage === 'ur';
@@ -408,6 +412,51 @@ export default function PTMDashboardView({
     <div className="p-3 sm:p-6 max-w-7xl mx-auto font-sans min-h-full flex-1 flex flex-col justify-between w-full">
       <div className="space-y-6 sm:space-y-8">
       
+      {/* ACTIVE DRAFT BANNER (PRESERVED GENERATED PAPER) */}
+      {hasActiveDraft && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white shadow-lg shadow-blue-500/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fadeIn border border-blue-400/30">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shrink-0 shadow-inner">
+              📝
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black uppercase tracking-wider mb-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>{isUrdu ? 'ڈرافٹ پیپر محفوظ ہے' : 'Active Paper Draft In Memory'}</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-black tracking-tight">
+                {activeDraftInfo?.subject || 'Examination Paper'} ({activeDraftInfo?.gradeClass || 'Current Class'})
+                {activeDraftInfo?.totalMarks ? ` • ${activeDraftInfo.totalMarks} Marks` : ''}
+              </h3>
+              <p className="text-xs text-blue-100 font-medium mt-0.5">
+                {isUrdu 
+                  ? 'آپ کا پچھلا تیار کردہ پیپر محفوظ ہے۔ آپ اسے دوبارہ دیکھ سکتے ہیں یا نیا پیپر بنا سکتے ہیں۔' 
+                  : 'Your generated paper is safely preserved in drafts. Resume editing or print anytime without losing questions.'}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+            {onDiscardDraft && (
+              <button
+                type="button"
+                onClick={onDiscardDraft}
+                className="px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                title="Discard Draft"
+              >
+                {isUrdu ? 'ڈرافٹ ختم کریں' : 'Discard Draft'}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onResumeDraft}
+              className="px-4 py-2 bg-white text-blue-700 hover:bg-blue-50 text-xs font-black rounded-xl shadow-md transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
+            >
+              <span>{isUrdu ? '⚡ جاری پیپر کھولیں • Resume Paper' : '⚡ Resume Active Paper'}</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 0. LIVE BISE BOARD EXAM COUNTDOWN & PAIRING NOTIFICATION TICKER */}
       <div className="rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-3.5 sm:p-4 border border-indigo-500/25 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-3 relative overflow-hidden">
         <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>

@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Save, Newspaper, Users, FileClock, Clock, 
   Settings, CheckCircle2, ShieldCheck, Printer, Download,
-  ArrowRight, X, Sparkles, Landmark, Award, BookOpen,
+  ArrowRight, ArrowLeft, X, Sparkles, Landmark, Award, BookOpen,
   Plus, Search, Edit3, Trash2, UserPlus, Mail, Phone, Filter,
   RotateCw, School, Calendar, Activity, CheckCircle,
   Laptop, LogIn, UserCheck, Timer, KeyRound, Ban, Check, Sliders, Lock,
@@ -39,6 +39,7 @@ export default function PTMSecondaryViews({
   hasActiveDraft = false,
   onExportDocx,
   onNavigate,
+  onBack,
   appLanguage = 'en',
   onToggleLanguage
 }) {
@@ -60,6 +61,7 @@ export default function PTMSecondaryViews({
   const [selectedClassFilter, setSelectedClassFilter] = useState('12th');
   const [activityRefreshTick, setActivityRefreshTick] = useState(0);
 
+  
   const handleCopyModelPaper = (paper) => {
     if (!paper) return;
     try {
@@ -491,6 +493,7 @@ export default function PTMSecondaryViews({
         onGoToGenerate={onGoToGenerate}
         onResumeCurrentDraft={onResumeCurrentDraft}
         hasActiveDraft={hasActiveDraft}
+        onBack={onBack}
       />
     );
   }
@@ -499,17 +502,29 @@ export default function PTMSecondaryViews({
     return (
       <div className="p-4 sm:p-8 max-w-5xl mx-auto space-y-6 font-sans">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-              <Save className="w-6 h-6 text-blue-600" />
-              <span>Saved Papers Archive</span>
-              {isUrdu && <span className="text-sm font-bold text-blue-600 font-sans">• محفوظ شدہ امتحانی پرچے</span>}
-            </h1>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">
-              {isUrdu 
-                ? 'آپ کے تیار کردہ تمام پیپرز کا محفوظ ریکارڈ۔ یہاں سے دوبارہ پرنٹ، ایڈٹ اور ڈاؤنلوڈ کریں۔' 
-                : 'Manage, re-open, print, and download your saved question papers.'}
-            </p>
+          <div className="flex items-center gap-3">
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                className="p-2.5 rounded-xl hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
+                title="Back to Dashboard"
+              >
+                <ArrowLeft className="w-5 h-5 text-slate-700" />
+              </button>
+            )}
+            <div>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                <Save className="w-6 h-6 text-blue-600" />
+                <span>Saved Papers Archive</span>
+                {isUrdu && <span className="text-sm font-bold text-blue-600 font-sans">• محفوظ شدہ امتحانی پرچے</span>}
+              </h1>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                {isUrdu 
+                  ? 'آپ کے تیار کردہ تمام پیپرز کا محفوظ ریکارڈ۔ یہاں سے دوبارہ پرنٹ، ایڈٹ اور ڈاؤنلوڈ کریں۔' 
+                  : 'Manage, re-open, print, and download your saved question papers.'}
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -719,6 +734,16 @@ export default function PTMSecondaryViews({
         {/* HEADER & TOP CONTROLS */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs min-w-0">
           <div className="flex items-center gap-3 min-w-0">
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                className="p-2.5 rounded-xl hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
+                title="Back to Dashboard"
+              >
+                <ArrowLeft className="w-5 h-5 text-slate-700" />
+              </button>
+            )}
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center shadow-xs shrink-0">
               <FileSignature className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
@@ -1175,6 +1200,16 @@ export default function PTMSecondaryViews({
         {/* HEADER & BREADCRUMB */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs">
           <div className="flex items-center gap-3.5">
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                className="p-2.5 rounded-xl hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
+                title="Back to Dashboard"
+              >
+                <ArrowLeft className="w-5 h-5 text-slate-700" />
+              </button>
+            )}
             <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-200/80 text-blue-700 flex items-center justify-center shadow-xs">
               <Newspaper className="w-6 h-6" />
             </div>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import PTMSidebar from './components/PTMSidebar';
 import PTMHeader from './components/PTMHeader';
@@ -330,27 +330,7 @@ export default function App() {
     return () => unsubscribe();
   }, [currentUser?.email]);
 
-  // Navigation Guard: Strict role-based routing and paywall enforcement
-  const handleSafeNavigate = (navId) => {
-    // 1. Super Admin Route Protection
-    const adminRoutes = ['upload_material', 'admin_portal', 'question_bank_editor'];
-    if (adminRoutes.includes(navId) && !isSuperAdmin(currentUser)) {
-      notify.error("غیر مجاز رسائی (Unauthorized Access)", {
-        description: "یہ فیچر صرف سپر ایڈمنسٹریٹر کے لیے مخصوص ہے۔"
-      });
-      return;
-    }
 
-    // 2. Paywall Protection
-    if (currentUser && !userSubscribed && navId !== 'pricing') {
-      notify.warning("پہلے پیکیج حاصل کریں (Subscription Required)", {
-        description: "ڈیش بورڈ اور پیپرز بنانے کے لیے برائے مہربانی پہلے پیکیج منتخب کر کے فیس جمع کروائیں۔"
-      });
-      setActiveNav('pricing');
-      return;
-    }
-    setActiveNav(navId);
-  };
 
   const handleToggleSidebar = () => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
@@ -364,14 +344,9 @@ export default function App() {
   const [showPinModal, setShowPinModal] = useState(false);
   const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
 
-  // Generate Paper Step State (Persisted so switching sidebar views never resets step)
-  const [paperStep, setPaperStep] = useState(() => {
-    try {
-      return localStorage.getItem('ptm_active_paper_step') || 'course';
-    } catch (e) {
-      return 'course';
-    }
-  });
+  // Generate Paper Step State: Always starts cleanly from Step 1 ('course')
+  // Deep steps are never stored in localStorage so teacher is never trapped in old topics
+  const [paperStep, setPaperStep] = useState('course');
   const [selectedCourse, setSelectedCourse] = useState(() => {
     try {
       return localStorage.getItem('ptm_active_course') || 'PECTAA';
@@ -492,16 +467,211 @@ export default function App() {
     }
   });
 
-  // Auto-sync active draft and step to localStorage
+  // Calculate whether an active draft paper exists with generated questions
+  const hasActiveDraft = useMemo(() => {
+    return Boolean(
+      paperData && 
+      ((paperData.mcqs && paperData.mcqs.length > 0) || 
+       (paperData.shortQuestions && paperData.shortQuestions.length > 0) || 
+       (paperData.longQuestions && paperData.longQuestions.length > 0))
+    );
+  }, [paperData]);
+
+  // Auto-sync active draft to localStorage ONLY when questions exist (never persist intermediate wizard steps)
   useEffect(() => {
     if (!currentUser) return;
     try {
-      localStorage.setItem('ptm_active_paper_step', paperStep);
-      localStorage.setItem('ptm_active_course', selectedCourse);
-      localStorage.setItem('ptm_active_class', selectedClass);
-      localStorage.setItem('ptm_active_paper_data', JSON.stringify(paperData));
+      if (hasActiveDraft) {
+        localStorage.setItem('ptm_active_paper_data', JSON.stringify(paperData));
+        localStorage.setItem('ptm_active_course', selectedCourse);
+        localStorage.setItem('ptm_active_class', selectedClass);
+      } else {
+        localStorage.removeItem('ptm_active_paper_data');
+      }
+      // Never save intermediate wizard steps ('topics', 'class', etc.) to avoid trapped state
+      localStorage.removeItem('ptm_active_paper_step');
     } catch (e) {}
-  }, [paperStep, selectedCourse, selectedClass, paperData, currentUser]);
+  }, [hasActiveDraft, paperData, selectedCourse, selectedClass, currentUser]);
+
+  // Navigation Guard & Browser History State Synchronizer
+  const navigateTo = (navId, step = null, replace = false) => {
+    // 1. Super Admin Route Protection
+    const adminRoutes = ['upload_material', 'admin_portal', 'question_bank_editor'];
+    if (adminRoutes.includes(navId) && !isSuperAdmin(currentUser)) {
+      notify.error("غیر مجاز رسائی (Unauthorized Access)", {
+        description: "یہ فیچر صرف سپر ایڈمنسٹریٹر کے لیے مخصوص ہے۔"
+      });
+      return;
+    }
+
+    // 2. Paywall Protection
+    if (currentUser && !userSubscribed && navId !== 'pricing') {
+      notify.warning("پہلے پیکیج حاصل کریں (Subscription Required)", {
+        description: "ڈیش بورڈ اور پیپرز بنانے کے لیے برائے مہربانی پہلے پیکیج منتخب کر کے فیس جمع کروائیں۔"
+      });
+      setActiveNav('pricing');
+      return;
+    }
+
+    const nextNav = navId;
+    // When opening generate_paper from navigation (unless specified), start fresh from step 1 'course'
+    const nextStep = step !== null ? step : (navId === 'generate_paper' ? 'course' : null);
+
+    setActiveNav(nextNav);
+    if (nextStep !== null) {
+      setPaperStep(nextStep);
+    }
+
+    // Push browser history state so Back button navigates within app instead of closing browser/tab
+    try {
+      const stateObj = { nav: nextNav, step: nextStep, timestamp: Date.now() };
+      if (replace) {
+        window.history.replaceState(stateObj, '');
+      } else {
+        window.history.pushState(stateObj, '');
+      }
+    } catch (e) {}
+  };
+
+  const handleSafeNavigate = (navId, step = null) => {
+    navigateTo(navId, step);
+  };
+
+  // Universal Back Button Handler for UI Navigation Arrow
+  const handleUniversalBack = () => {
+    if (activeNav === 'generate_paper') {
+      if (paperStep === 'canvas') {
+        // Preserves the generated draft in memory & localStorage
+        notify.info(appLanguage === 'ur' 
+          ? "آپ کا تیار کردہ پیپر ڈرافٹ میں محفوظ ہے (Draft Preserved)" 
+          : "Paper saved to active draft in memory."
+        );
+        navigateTo('dashboard');
+      } else if (paperStep === 'topics') {
+        navigateTo('generate_paper', 'subject');
+      } else if (paperStep === 'subject') {
+        navigateTo('generate_paper', 'class');
+      } else if (paperStep === 'class') {
+        navigateTo('generate_paper', 'course');
+      } else {
+        navigateTo('dashboard');
+      }
+    } else {
+      navigateTo('dashboard');
+    }
+  };
+
+  // State refs for Popstate Listener
+  const activeNavRef = useRef(activeNav);
+  activeNavRef.current = activeNav;
+  const paperStepRef = useRef(paperStep);
+  paperStepRef.current = paperStep;
+  const hasActiveDraftRef = useRef(hasActiveDraft);
+  hasActiveDraftRef.current = hasActiveDraft;
+
+  // Browser History & Popstate Event Listener:
+  // Fixes: "window sy back jaty tu website band ho jati hy"
+  useEffect(() => {
+    try {
+      if (!window.history.state) {
+        window.history.replaceState({ nav: activeNavRef.current, step: paperStepRef.current, root: true }, '');
+      }
+    } catch (e) {}
+
+    let lastBackPressTime = 0;
+
+    const handlePopState = (event) => {
+      const currentNav = activeNavRef.current;
+      const currentStep = paperStepRef.current;
+
+      // If browser history has our state, navigate according to it
+      if (event.state && event.state.nav) {
+        if (currentNav === 'generate_paper' && currentStep === 'canvas' && event.state.step !== 'canvas') {
+          notify.info(appLanguage === 'ur' 
+            ? "آپ کا تیار کردہ پیپر ڈرافٹ میں محفوظ ہے (Draft Preserved)" 
+            : "Your generated paper is safely preserved in drafts."
+          );
+        }
+        setActiveNav(event.state.nav);
+        if (event.state.step) {
+          setPaperStep(event.state.step);
+        }
+        return;
+      }
+
+      // Fallback if popped past initial entry:
+      // PREVENT BROWSER FROM EXITING/CLOSING THE TAB!
+      try {
+        window.history.pushState({ nav: 'dashboard', step: null, root: true }, '');
+      } catch (e) {}
+
+      if (currentNav === 'generate_paper') {
+        if (currentStep === 'canvas') {
+          notify.info(appLanguage === 'ur' 
+            ? "آپ کا تیار کردہ پیپر ڈرافٹ میں محفوظ ہے (Draft Preserved)" 
+            : "Your generated paper is safely preserved in drafts."
+          );
+          setActiveNav('dashboard');
+        } else if (currentStep === 'topics') {
+          setPaperStep('subject');
+        } else if (currentStep === 'subject') {
+          setPaperStep('class');
+        } else if (currentStep === 'class') {
+          setPaperStep('course');
+        } else {
+          setActiveNav('dashboard');
+        }
+      } else if (currentNav !== 'dashboard') {
+        setActiveNav('dashboard');
+      } else {
+        const now = Date.now();
+        if (now - lastBackPressTime < 2500) {
+          window.history.back();
+        } else {
+          lastBackPressTime = now;
+          notify.info(appLanguage === 'ur'
+            ? "آپ ڈیش بورڈ پر ہیں۔ دوبارہ بیک دبائیں اگر باہر جانا چاہتے ہیں۔"
+            : "Press Back again if you want to exit the application."
+          );
+        }
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [appLanguage]);
+
+  // Dynamic View & Step Title Resolver for Breadcrumbs and Top Navigation Bar
+  const getViewTitle = (nav, step, lang) => {
+    const isUrdu = lang === 'ur';
+    if (nav === 'generate_paper') {
+      if (step === 'course') return isUrdu ? 'مرحلہ 1: نصاب کا انتخاب' : 'Step 1: Select Course';
+      if (step === 'class') return isUrdu ? 'مرحلہ 2: جماعت کا انتخاب' : 'Step 2: Select Class';
+      if (step === 'subject') return isUrdu ? 'مرحلہ 3: مضمون کا انتخاب' : 'Step 3: Select Subject';
+      if (step === 'topics') return isUrdu ? 'مرحلہ 4: اسباق و ٹاپکس کا انتخاب' : 'Step 4: Select Topics';
+      if (step === 'canvas') return isUrdu ? 'مرحلہ 5: امتحانی پرچہ و پرنٹنگ' : 'Step 5: Paper Canvas';
+      return isUrdu ? 'پیپر جنریٹر' : 'Paper Generator';
+    }
+    const titles = {
+      dashboard: isUrdu ? 'ڈیش بورڈ' : 'Dashboard',
+      saved_papers: isUrdu ? 'محفوظ شدہ امتحانی پیپرز' : 'Saved Papers Archive',
+      past_papers: isUrdu ? 'ماضی کے بورڈ پیپرز' : 'Past Board Papers',
+      model_papers: isUrdu ? 'ماڈل پیپرز' : 'Official Model Papers',
+      teachers: isUrdu ? 'اساتذہ ڈائریکٹری' : 'Faculty & Teachers',
+      papers_history: isUrdu ? 'پیپرز ہسٹری' : 'Papers History',
+      login_history: isUrdu ? 'لاگ ان سیشن لاگز' : 'Login Audit',
+      user_management: isUrdu ? 'یوزر مینجمنٹ' : 'User Management',
+      default_paper_settings: isUrdu ? 'پیپر ڈیفالٹ سیٹنگز' : 'Paper Default Settings',
+      pricing: isUrdu ? 'پیکیجز و سبسکرپشن' : 'Subscription & Pricing',
+      contact: isUrdu ? 'رابطہ و سپورٹ' : 'Contact Support',
+      date_sheet_planner: isUrdu ? 'ڈیٹ شیٹ پلانر' : 'Date Sheet Planner',
+      upload_material: isUrdu ? 'سوالات اپلوڈ مٹیریل' : 'Upload Material',
+      directory: isUrdu ? 'مٹیریل ڈائریکٹری' : 'Material Directory',
+      admin_portal: isUrdu ? 'ایڈمن پورٹل' : 'Admin Portal',
+      question_bank_editor: isUrdu ? 'سوالات بینک ایڈیٹر' : 'Question Bank Editor'
+    };
+    return titles[nav] || (isUrdu ? 'صفحہ' : 'Page');
+  };
 
   // Handle Login Success: Guarantees a fresh empty paper for every login
   const handleLoginSuccess = (user, isNewRegistration = false) => {
@@ -1242,6 +1412,59 @@ export default function App() {
 
         {/* MAIN BODY CONTENT AREA */}
         <main className="flex-1 flex flex-col min-h-0 min-w-0 w-full overflow-x-hidden">
+          {/* UNIVERSAL TOP BACK & NAVIGATION ARROW BAR (FOR ALL NON-DASHBOARD PAGES) */}
+          {activeNav !== 'dashboard' && (
+            <div className="bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 sticky top-0 z-30 shadow-2xs no-print">
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap min-w-0">
+                <button
+                  type="button"
+                  onClick={handleUniversalBack}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-800 rounded-xl text-xs font-black border border-blue-200 transition-all active:scale-95 cursor-pointer shadow-2xs group"
+                  title={appLanguage === 'ur' ? 'پیچھے جائیں (Back)' : 'Go Back'}
+                >
+                  <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+                  <span>{appLanguage === 'ur' ? 'واپس جائیں • Back' : 'Back'}</span>
+                </button>
+
+                {/* Breadcrumb Path */}
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 overflow-hidden text-ellipsis whitespace-nowrap">
+                  <button 
+                    type="button"
+                    onClick={() => navigateTo('dashboard')} 
+                    className="hover:text-blue-600 cursor-pointer transition-colors font-medium"
+                  >
+                    {appLanguage === 'ur' ? 'ڈیش بورڈ' : 'Dashboard'}
+                  </button>
+                  <span className="text-slate-300">/</span>
+                  <span className="font-bold text-slate-800">
+                    {getViewTitle(activeNav, paperStep, appLanguage)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right-side Quick Actions */}
+              <div className="flex items-center gap-2 shrink-0">
+                {hasActiveDraft && !(activeNav === 'generate_paper' && paperStep === 'canvas') && (
+                  <button
+                    type="button"
+                    onClick={() => navigateTo('generate_paper', 'canvas')}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                    title="Resume editing active draft paper"
+                  >
+                    <span>📝 {appLanguage === 'ur' ? 'جاری ڈرافٹ پیپر' : 'Resume Draft Paper'}</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => navigateTo('dashboard')}
+                  className="text-[11px] font-bold text-slate-600 hover:text-blue-600 px-2.5 py-1 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer flex items-center gap-1"
+                >
+                  <span>🏠 {appLanguage === 'ur' ? 'ڈیش بورڈ' : 'Dashboard'}</span>
+                </button>
+              </div>
+            </div>
+          )}
+
           <React.Suspense fallback={<div className="p-8 text-center text-slate-400 font-semibold animate-pulse">Loading View...</div>}>
 
           {/* 0. ADMIN PORTAL (PIN PROTECTED - DIRECT CLASS, SUBJECT, CHAPTER, TOPIC & QUESTION MANAGER) */}
@@ -1251,8 +1474,7 @@ export default function App() {
               onBankUpdated={handleBankUpdated}
               currentUser={currentUser}
               onExit={() => {
-                setActiveNav('generate_paper');
-                setPaperStep('course');
+                navigateTo('generate_paper', 'course');
               }}
             />
           )}
@@ -1263,8 +1485,7 @@ export default function App() {
               bank={bank}
               onBankUpdated={handleBankUpdated}
               onExit={() => {
-                setActiveNav('generate_paper');
-                setPaperStep('course');
+                navigateTo('generate_paper', 'course');
               }}
             />
           )}
@@ -1277,8 +1498,11 @@ export default function App() {
                 <CourseSelectionView
                   onSelectCourse={(courseId) => {
                     setSelectedCourse(courseId);
-                    setPaperStep('class');
+                    navigateTo('generate_paper', 'class');
                   }}
+                  onBackToDashboard={() => navigateTo('dashboard')}
+                  hasActiveDraft={hasActiveDraft}
+                  onResumeDraft={() => navigateTo('generate_paper', 'canvas')}
                 />
               )}
 
@@ -1293,9 +1517,9 @@ export default function App() {
                       ...prev,
                       gradeClass: `${classKey} Class`
                     }));
-                    setPaperStep('subject');
+                    navigateTo('generate_paper', 'subject');
                   }}
-                  onBack={() => setPaperStep('course')}
+                  onBack={() => navigateTo('generate_paper', 'course')}
                 />
               )}
 
@@ -1312,9 +1536,9 @@ export default function App() {
                       subject: subjObj?.name || prev.subject,
                       gradeClass: `${selectedClass} Class`
                     }));
-                    setPaperStep('topics');
+                    navigateTo('generate_paper', 'topics');
                   }}
-                  onBack={() => setPaperStep('class')}
+                  onBack={() => navigateTo('generate_paper', 'class')}
                 />
               )}
 
@@ -1328,25 +1552,42 @@ export default function App() {
                   selectedTopicIds={selectedTopicIds}
                   setSelectedTopicIds={setSelectedTopicIds}
                   onGeneratePaper={handleGeneratePaperFromCTM}
-                  onBackToSubjects={() => setPaperStep('subject')}
-                  onBackToClasses={() => setPaperStep('class')}
+                  onBackToSubjects={() => navigateTo('generate_paper', 'subject')}
+                  onBackToClasses={() => navigateTo('generate_paper', 'class')}
                 />
               )}
 
               {/* STEP 5: LIVE PAPER PREVIEW & ACTION CANVAS */}
               {paperStep === 'canvas' && (
                 <div className="p-4 max-w-6xl mx-auto space-y-4">
-                  {/* Return Bar to Topics */}
+                  {/* Return Bar to Topics & Dashboard */}
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-white p-3 rounded-xl border border-slate-200 shadow-2xs no-print">
                     <div className="flex flex-wrap items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => setPaperStep('topics')}
+                        onClick={() => {
+                          notify.info(appLanguage === 'ur' 
+                            ? "آپ کا تیار کردہ پیپر ڈرافٹ میں محفوظ ہے (Draft Preserved)" 
+                            : "Paper saved to active draft in memory."
+                          );
+                          navigateTo('dashboard');
+                        }}
+                        className="flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-black transition-all cursor-pointer shadow-sm active:scale-95"
+                        title="Return to Dashboard while keeping paper saved in draft"
+                      >
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>{appLanguage === 'ur' ? '← ڈیش بورڈ (ڈرافٹ محفوظ)' : '← Back to Dashboard (Draft Saved)'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => navigateTo('generate_paper', 'topics')}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-all cursor-pointer"
                       >
                         <ArrowLeft className="w-4 h-4" />
-                        <span>Back to Topics</span>
+                        <span>{appLanguage === 'ur' ? 'ٹاپکس پر واپس جائیں' : 'Back to Topics'}</span>
                       </button>
+
                       <button
                         type="button"
                         onClick={() => {
@@ -1355,8 +1596,13 @@ export default function App() {
                         }}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-2xs"
                       >
-                        <span>📋 Manual Selector</span>
+                        <span>📋 {appLanguage === 'ur' ? 'دستی سوالات منتخب کریں' : 'Manual Selector'}</span>
                       </button>
+
+                      <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>{appLanguage === 'ur' ? 'ڈرافٹ خودکار محفوظ ہے' : 'Draft Auto-Saved'}</span>
+                      </span>
                     </div>
 
                     <div className="text-xs font-bold text-slate-700 flex items-center justify-between sm:justify-end gap-2 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
@@ -1413,23 +1659,19 @@ export default function App() {
           {activeNav === 'dashboard' && (
             <PTMDashboardView
               onGoToGenerate={() => {
-                setActiveNav('generate_paper');
+                navigateTo('generate_paper', 'course');
               }}
               onGoToUpload={() => {
                 if (isSuperAdmin(currentUser)) {
-                  setActiveNav('upload_material');
+                  navigateTo('upload_material');
                 } else {
                   notify.info("سوالات اپلوڈ کرنے کی سہولت صرف ایڈمن کے لیے مخصوص ہے۔ (Admin Access Required)");
                 }
               }}
-              onGoToDirectory={() => setActiveNav('directory')}
-              onGoToSettings={() => setActiveNav('default_paper_settings')}
+              onGoToDirectory={() => navigateTo('directory')}
+              onGoToSettings={() => navigateTo('default_paper_settings')}
               onNavigate={(navId) => {
-                if ((navId === 'upload_material' || navId === 'admin_portal' || navId === 'question_bank_editor') && !isSuperAdmin(currentUser)) {
-                  notify.info("یہ فیچر صرف ایڈمنسٹریٹر کے لیے مخصوص ہے۔ (Admin Access Required)");
-                  return;
-                }
-                setActiveNav(navId);
+                navigateTo(navId);
               }}
               bank={bank}
               selectedClass={selectedClass}
@@ -1444,6 +1686,25 @@ export default function App() {
               setPaperConfig={setPaperConfig}
               onGenerateFromPreset={handleGeneratePaperFromPreset}
               onOpenPresetInManualMode={handleOpenPresetInManualMode}
+              hasActiveDraft={hasActiveDraft}
+              onResumeDraft={() => navigateTo('generate_paper', 'canvas')}
+              onDiscardDraft={() => {
+                confirmAction({
+                  title: "Discard Draft Paper",
+                  message: "Are you sure you want to clear the active draft paper from memory?",
+                  confirmText: "Discard Draft",
+                  cancelText: "Keep Draft",
+                  type: "warning",
+                  onConfirm: () => {
+                    setPaperData({ mcqs: [], shortQuestions: [], longQuestions: [] });
+                    try {
+                      localStorage.removeItem('ptm_active_paper_data');
+                    } catch (e) {}
+                    notify.info("ڈرافٹ ختم کر دیا گیا (Draft Cleared)");
+                  }
+                });
+              }}
+              activeDraftInfo={hasActiveDraft ? { subject: paperConfig.subject, gradeClass: paperConfig.gradeClass, totalMarks: totalPaperMarks } : null}
             />
           )}
 
@@ -1453,7 +1714,7 @@ export default function App() {
               <div className="p-4 max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center justify-between no-print">
                   <button
-                    onClick={() => setActiveNav('dashboard')}
+                    onClick={() => navigateTo('dashboard')}
                     className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline cursor-pointer"
                   >
                     <ArrowLeft className="w-4 h-4" /> Back to Dashboard
@@ -1465,7 +1726,7 @@ export default function App() {
                   setSelectedClass={setSelectedClass}
                   onBankUpdated={handleBankUpdated}
                   onGoToGenerator={() => {
-                    setActiveNav('generate_paper');
+                    navigateTo('generate_paper', 'course');
                   }}
                 />
               </div>
@@ -1475,7 +1736,7 @@ export default function App() {
                   ⚠️ سوالات اور نیا مٹیریل اپلوڈ کرنے کی سہولت صرف ایڈمنسٹریٹر کے لیے مخصوص ہے۔ (Admin Access Required)
                 </div>
                 <button
-                  onClick={() => setActiveNav('dashboard')}
+                  onClick={() => navigateTo('dashboard')}
                   className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
                 >
                   Back to Dashboard
@@ -1489,7 +1750,7 @@ export default function App() {
             <div className="p-4 max-w-7xl mx-auto space-y-4">
               <div className="flex items-center justify-between no-print">
                 <button
-                  onClick={() => setActiveNav('dashboard')}
+                  onClick={() => navigateTo('dashboard')}
                   className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:underline cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back to Dashboard
@@ -1501,9 +1762,9 @@ export default function App() {
                 setSelectedClass={setSelectedClass}
                 onBankUpdated={handleBankUpdated}
                 onGoToGenerator={() => {
-                  setActiveNav('generate_paper');
+                  navigateTo('generate_paper', 'course');
                 }}
-                onGoToUpload={() => setActiveNav('upload_material')}
+                onGoToUpload={() => navigateTo('upload_material')}
               />
             </div>
           )}
@@ -1516,18 +1777,16 @@ export default function App() {
                 currentUser={currentUser}
                 paperConfig={paperConfig}
                 setPaperConfig={setPaperConfig}
-                onGoToGenerate={() => setActiveNav('generate_paper')}
+                onGoToGenerate={() => navigateTo('generate_paper', 'course')}
                 savedPapers={savedPapers}
                 onOpenSavedPaper={handleOpenSavedPaper}
                 onDeleteSavedPaper={handleDeleteSavedPaper}
                 onStartNewPaper={handleStartNewPaper}
-                onResumeCurrentDraft={() => {
-                  setActiveNav('generate_paper');
-                  setPaperStep('canvas');
-                }}
-                hasActiveDraft={Boolean(paperData.mcqs?.length || paperData.shortQuestions?.length || paperData.longQuestions?.length)}
+                onResumeCurrentDraft={() => navigateTo('generate_paper', 'canvas')}
+                hasActiveDraft={hasActiveDraft}
                 onExportDocx={handleExportDocx}
-                onNavigate={handleSafeNavigate}
+                onNavigate={navigateTo}
+                onBack={() => navigateTo('dashboard')}
                 appLanguage={appLanguage}
                 onToggleLanguage={handleToggleLanguage}
               />
@@ -1539,8 +1798,8 @@ export default function App() {
             <PricingPlansView
               currentUser={currentUser}
               userSubscribed={userSubscribed}
-              onNavigate={handleSafeNavigate}
-              onGoToDashboard={() => handleSafeNavigate('dashboard')}
+              onNavigate={navigateTo}
+              onGoToDashboard={() => navigateTo('dashboard')}
               onLogout={handleLogout}
               appLanguage={appLanguage}
               onToggleLanguage={handleToggleLanguage}
@@ -1551,12 +1810,10 @@ export default function App() {
           {activeNav === 'contact' && (
             <ContactTeamView
               currentUser={currentUser}
-              onGoToGenerate={() => handleSafeNavigate('generate_paper')}
-              onResumeCurrentDraft={() => {
-                handleSafeNavigate('generate_paper');
-                setPaperStep('canvas');
-              }}
-              hasActiveDraft={Boolean(paperData.mcqs?.length || paperData.shortQuestions?.length || paperData.longQuestions?.length)}
+              onGoToGenerate={() => navigateTo('generate_paper', 'course')}
+              onResumeCurrentDraft={() => navigateTo('generate_paper', 'canvas')}
+              onBackToDashboard={() => navigateTo('dashboard')}
+              hasActiveDraft={hasActiveDraft}
               appLanguage={appLanguage}
               onToggleLanguage={handleToggleLanguage}
             />
@@ -1569,8 +1826,9 @@ export default function App() {
               selectedClass={selectedClass}
               paperConfig={paperConfig}
               currentUser={currentUser}
-              onGoToGenerator={() => handleSafeNavigate('generate_paper')}
+              onGoToGenerator={() => navigateTo('generate_paper', 'course')}
               onGenerateSpecificPaper={handleGenerateSpecificPaperFromDateSheet}
+              onBackToDashboard={() => navigateTo('dashboard')}
               appLanguage={appLanguage}
               onToggleLanguage={handleToggleLanguage}
             />

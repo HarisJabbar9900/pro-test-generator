@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   CheckCircle2, Sliders, Eye, Sparkles, Building2, 
-  RotateCcw, Info, ArrowRight, Layout 
+  RotateCcw, Info, ArrowRight, ArrowLeft, Layout 
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 
@@ -26,7 +26,8 @@ export default function DefaultPaperSettingsView({
   setPaperConfig,
   onGoToGenerate,
   onResumeCurrentDraft,
-  hasActiveDraft = false
+  hasActiveDraft = false,
+  onBack
 }) {
   const [formData, setFormData] = useState({
     headerLayout: paperConfig.headerLayout === 'Layout 42' ? 'Layout 13' : (paperConfig.headerLayout || 'Layout 13'),
@@ -212,17 +213,35 @@ export default function DefaultPaperSettingsView({
       
       {/* 1. TOP HEADER & BREADCRUMB */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2 border-b border-slate-200">
-        <div>
-          <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Default Paper Settings
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-            (Here you can set the Paper's text size, line height, layout and much more.)
-          </p>
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="p-2 rounded-xl hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
+              title="Back to Dashboard"
+            >
+              <ArrowLeft className="w-5 h-5 text-slate-700" />
+            </button>
+          )}
+          <div>
+            <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Default Paper Settings
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
+              (Here you can set the Paper's text size, line height, layout and much more.)
+            </p>
+          </div>
         </div>
 
         <div className="text-xs font-bold text-slate-400 flex items-center gap-1.5 self-start sm:self-center">
-          <span className="text-blue-600 hover:underline cursor-pointer" onClick={onGoToGenerate}>Home</span>
+          {onBack ? (
+            <button type="button" onClick={onBack} className="text-blue-600 hover:underline cursor-pointer">
+              Dashboard
+            </button>
+          ) : (
+            <span className="text-blue-600 hover:underline cursor-pointer" onClick={onGoToGenerate}>Home</span>
+          )}
           <span>/</span>
           <span className="text-slate-700">Default Paper Settings</span>
         </div>

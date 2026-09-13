@@ -1,10 +1,15 @@
 import React from 'react';
 import { 
-  ArrowRight, ShieldCheck, BookOpen, CheckCircle2, 
+  ArrowLeft, ArrowRight, ShieldCheck, BookOpen, CheckCircle2, 
   Sparkles, Award, FileCheck, Layers
 } from 'lucide-react';
 
-export default function CourseSelectionView({ onSelectCourse }) {
+export default function CourseSelectionView({ 
+  onSelectCourse, 
+  onBackToDashboard,
+  hasActiveDraft = false,
+  onResumeDraft
+}) {
   const pectaaCourse = {
     id: 'PECTAA',
     title: 'PECTAA',
@@ -23,27 +28,65 @@ export default function CourseSelectionView({ onSelectCourse }) {
       
       {/* HEADER & BREADCRUMB */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-              Step 1: Choose Curriculum
-            </span>
+        <div className="flex items-center gap-3">
+          {onBackToDashboard && (
+            <button
+              type="button"
+              onClick={onBackToDashboard}
+              className="p-2.5 rounded-xl hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
+              title="Back to Dashboard"
+            >
+              <ArrowLeft className="w-5 h-5 text-slate-700" />
+            </button>
+          )}
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Step 1: Choose Curriculum
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
+              Select Course
+            </h1>
+            <p className="text-sm text-slate-500 font-medium mt-0.5">
+              Select an authorized educational board or publisher to generate test papers.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
-            Select Course
-          </h1>
-          <p className="text-sm text-slate-500 font-medium mt-0.5">
-            Select an authorized educational board or publisher to generate test papers.
-          </p>
         </div>
         
-        <div className="text-xs font-semibold text-slate-500 self-start sm:self-center bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-          <span className="text-blue-600 hover:underline cursor-pointer">Home</span>
-          <span className="mx-1.5 text-slate-400">/</span>
+        <div className="text-xs font-semibold text-slate-500 self-start sm:self-center bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 flex items-center gap-1.5">
+          {onBackToDashboard ? (
+            <button type="button" onClick={onBackToDashboard} className="text-blue-600 hover:underline cursor-pointer">
+              Dashboard
+            </button>
+          ) : (
+            <span className="text-blue-600">Home</span>
+          )}
+          <span className="text-slate-400">/</span>
           <span className="text-slate-800 font-bold">Courses</span>
         </div>
       </div>
+
+      {/* ACTIVE DRAFT BANNER IF AVAILABLE */}
+      {hasActiveDraft && onResumeDraft && (
+        <div className="max-w-md mx-auto p-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white rounded-2xl shadow-md flex items-center justify-between gap-3 animate-fadeIn border border-blue-400/30">
+          <div className="flex items-center gap-2.5">
+            <span className="text-2xl">📝</span>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-wider text-blue-200">Active Draft Available</p>
+              <p className="text-xs font-bold">Resume your previous generated paper</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onResumeDraft}
+            className="px-3.5 py-1.5 bg-white text-blue-700 hover:bg-blue-50 text-xs font-black rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer shrink-0"
+          >
+            Resume Paper →
+          </button>
+        </div>
+      )}
 
       {/* PECTAA COURSE CARD - COMPACT & CENTERED */}
       <div className="max-w-md mx-auto pt-2">
