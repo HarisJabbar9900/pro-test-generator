@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 import { getUserStats } from '../utils/userActivityTracker';
+import { isSuperAdmin } from '../utils/pricingPlansService';
 
 export default function PTMDashboardView({
   onGoToGenerate,
@@ -19,11 +20,12 @@ export default function PTMDashboardView({
   savedPapers = [],
   currentUser = null
 }) {
+  const isSuper = isSuperAdmin(currentUser);
   const userStats = getUserStats(currentUser?.email);
 
   // Compute specific user metrics
   const userTotalCreated = Math.max(userStats.createdCount || 0, savedPapers?.length || 0);
-  const isUnlimited = currentUser?.isAdmin || Number(currentUser?.maxPapers) === -1;
+  const isUnlimited = isSuper || Number(currentUser?.maxPapers) === -1;
   const userMaxLimit = Number(currentUser?.maxPapers) || 50;
   const remainingQuota = isUnlimited ? 'Unlimited' : Math.max(0, userMaxLimit - (savedPapers?.length || 0));
 
@@ -73,7 +75,7 @@ export default function PTMDashboardView({
             {currentUser?.name ? `${currentUser.name} • Faculty Dashboard` : 'Teacher Overview'}
           </span>
           <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-            {currentUser?.isAdmin ? 'Super Admin' : (currentUser?.package || 'Active Member')}
+            {isSuper ? 'Super Admin' : (currentUser?.package || 'Verified Faculty')}
           </span>
         </div>
 
@@ -150,13 +152,15 @@ export default function PTMDashboardView({
                 </div>
                 <div className="text-sm font-bold mt-1 text-white/95">Remaining Quota</div>
                 <p className="text-[11px] text-white/75 font-medium mt-0.5">
-                  {isUnlimited ? 'Unlimited Generations' : `Of ${userMaxLimit} Papers Limit`}
+                  {isUnlimited 
+                    ? (isSuper ? 'Unlimited Generations (Admin)' : 'Unlimited Paper Generations') 
+                    : `Of ${userMaxLimit} Papers Limit`}
                 </p>
               </div>
               <Layers className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>{isUnlimited ? 'Unlimited Admin' : 'Manage Subscription'}</span>
+              <span>{isSuper ? 'Admin Quota' : (isUnlimited ? 'Active Plan' : 'Manage Subscription')}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -169,9 +173,9 @@ export default function PTMDashboardView({
             <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
               <div>
                 <div className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-xs">
-                  {currentUser?.isAdmin ? 'Admin' : (currentUser?.package && currentUser?.package !== 'None' ? currentUser.package.split(' ')[0] : 'Active')}
+                  {isSuper ? 'Super Admin' : (currentUser?.package && currentUser?.package !== 'None' ? currentUser.package.split(' ')[0] : 'Faculty')}
                 </div>
-                <div className="text-sm font-bold mt-1 text-white/95">My Faculty Plan</div>
+                <div className="text-sm font-bold mt-1 text-white/95">{isSuper ? 'Admin Console' : 'My Faculty Plan'}</div>
                 <p className="text-[11px] text-white/75 font-medium mt-0.5 truncate max-w-[150px]">
                   {currentUser?.institute || 'Educators Academy'}
                 </p>
