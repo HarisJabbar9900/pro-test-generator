@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Plus, Trash2, ArrowUp, ArrowDown, RefreshCw, 
   Eye, ZoomIn, ZoomOut, Printer, Key, RotateCcw, Columns,
@@ -79,6 +79,27 @@ export default function PaperCanvas({
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
+
+  // Dynamically observe paper's actual DOM height so container height perfectly collapses
+  // when scaled down, removing all dead whitespace below the paper on mobile
+  const paperRef = useRef(null);
+  const [paperHeight, setPaperHeight] = useState(1123);
+
+  useEffect(() => {
+    if (!paperRef.current) return;
+    const updateHeight = () => {
+      if (paperRef.current) {
+        const h = paperRef.current.offsetHeight || 1123;
+        setPaperHeight(h);
+      }
+    };
+    updateHeight();
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(updateHeight);
+      ro.observe(paperRef.current);
+      return () => ro.disconnect();
+    }
+  }, [currentActiveData, paperConfig, fontSize, questionGap, topMargin]);
 
   // Sync with paperConfig if changed from Settings
   useEffect(() => {
@@ -225,6 +246,12 @@ export default function PaperCanvas({
   const effectiveWatermark = (configWatermarkText && configWatermarkText !== 'PRO TEST MAKER')
     ? configWatermarkText
     : (watermarkType === 'Text Watermark' ? 'AL-ZIA SCIENCE ACADEMY' : (configWatermarkText || 'AL-ZIA SCIENCE ACADEMY'));
+
+  // Dynamic scaled dimensions & negative margin compensation to eliminate unscaled dead whitespace below paper
+  const currentScale = zoomLevel / 100;
+  const scaledPaperHeight = Math.round(paperHeight * currentScale);
+  const scaledPaperWidth = Math.round(794 * currentScale);
+  const marginBottomCompensation = currentScale < 1 ? -Math.round(paperHeight * (1 - currentScale)) : 0;
 
   // Helper to resolve font color hex
   const getHeaderColorHex = (colorName) => {
@@ -901,17 +928,17 @@ export default function PaperCanvas({
 
       {/* A4 PAPER SHEET CONTAINER (WITH RESPONSIVE ZOOM CONTAINER) */}
       <div 
-        className="a4-paper-wrapper w-full flex justify-center overflow-x-auto pb-12 transition-all"
+        className="a4-paper-wrapper w-full flex justify-center overflow-x-auto pb-3 sm:pb-6 transition-all"
         style={{
-          minHeight: `${Math.round(1123 * (zoomLevel / 100))}px`
+          minHeight: `${scaledPaperHeight}px`
         }}
       >
         <div
           className="a4-paper-zoom-container"
           style={{
-            width: `${Math.round(794 * (zoomLevel / 100))}px`,
-            minHeight: `${Math.round(1123 * (zoomLevel / 100))}px`,
-            transition: 'width 0.15s ease, min-height 0.15s ease',
+            width: `${scaledPaperWidth}px`,
+            height: `${scaledPaperHeight}px`,
+            transition: 'width 0.15s ease, height 0.15s ease',
             position: 'relative',
             display: 'block',
             margin: '0 auto',
@@ -920,13 +947,15 @@ export default function PaperCanvas({
         >
           <div
             id="printable-paper"
+            ref={paperRef}
             className={`a4-paper theme-${theme} relative ${isUrdu ? 'lang-urdu' : ''}`}
             style={{ 
               width: '794px',
               minWidth: '794px',
               maxWidth: '794px',
               margin: '0',
-              transform: `scale(${zoomLevel / 100})`, 
+              marginBottom: `${marginBottomCompensation}px`,
+              transform: `scale(${currentScale})`, 
               transformOrigin: 'top left',
               paddingTop: `${topMargin}mm`,
               fontSize: `${fontSize}pt`,

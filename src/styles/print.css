@@ -60,6 +60,7 @@
     max-width: 100% !important;
     min-height: 0 !important;
     height: auto !important;
+    overflow: visible !important;
     transform: none !important;
     display: block !important;
     margin: 0 !important;
