@@ -39,11 +39,11 @@ export function getUserStats(email) {
       }
     }
 
-    // 4. Activity Logs (Always keep latest 20 actions)
+    // 4. Activity Logs (Always keep latest 15 actions)
     const storedActivity = localStorage.getItem(`ptm_activity_log_${key}`);
     let activityLog = [];
     if (storedActivity) {
-      activityLog = JSON.parse(storedActivity).slice(0, 20);
+      activityLog = JSON.parse(storedActivity).slice(0, 15);
     }
 
     return {
@@ -66,7 +66,7 @@ export function recordPaperCreated(email, paperTitle = 'Examination Paper') {
     const newCount = currentCreated + 1;
     localStorage.setItem(`ptm_created_papers_count_${key}`, newCount.toString());
 
-    // Append to personal activity log
+    // Append to personal activity log (Max 15 recent actions)
     const nowFormatted = new Date().toLocaleString('en-PK', { dateStyle: 'medium', timeStyle: 'short' });
     const logItem = {
       id: `act-${Date.now()}`,
@@ -76,7 +76,7 @@ export function recordPaperCreated(email, paperTitle = 'Examination Paper') {
       timeIso: new Date().toISOString()
     };
     const stored = JSON.parse(localStorage.getItem(`ptm_activity_log_${key}`) || '[]');
-    const updatedLogs = [logItem, ...stored].slice(0, 20);
+    const updatedLogs = [logItem, ...stored].slice(0, 15);
     localStorage.setItem(`ptm_activity_log_${key}`, JSON.stringify(updatedLogs));
   } catch (err) {
     console.error("Error recording paper created:", err);
@@ -91,7 +91,7 @@ export function recordPaperDeleted(email, paperTitle = 'Examination Paper') {
     const newCount = currentDeleted + 1;
     localStorage.setItem(`ptm_deleted_papers_count_${key}`, newCount.toString());
 
-    // Append to personal activity log (Max 20 recent actions)
+    // Append to personal activity log (Max 15 recent actions)
     const nowFormatted = new Date().toLocaleString('en-PK', { dateStyle: 'medium', timeStyle: 'short' });
     const logItem = {
       id: `act-${Date.now()}`,
@@ -101,7 +101,7 @@ export function recordPaperDeleted(email, paperTitle = 'Examination Paper') {
       timeIso: new Date().toISOString()
     };
     const stored = JSON.parse(localStorage.getItem(`ptm_activity_log_${key}`) || '[]');
-    const updatedLogs = [logItem, ...stored].slice(0, 20);
+    const updatedLogs = [logItem, ...stored].slice(0, 15);
     localStorage.setItem(`ptm_activity_log_${key}`, JSON.stringify(updatedLogs));
   } catch (err) {
     console.error("Error recording paper deleted:", err);
@@ -116,7 +116,7 @@ export function recordUserLoginEvent(email, userName = 'User') {
     const newCount = currentLogins + 1;
     localStorage.setItem(`ptm_login_count_${key}`, newCount.toString());
 
-    // Append to personal activity log (Max 20 recent actions)
+    // Append to personal activity log (Max 15 recent actions)
     const nowFormatted = new Date().toLocaleString('en-PK', { dateStyle: 'medium', timeStyle: 'short' });
     const logItem = {
       id: `act-${Date.now()}`,
@@ -126,7 +126,7 @@ export function recordUserLoginEvent(email, userName = 'User') {
       timeIso: new Date().toISOString()
     };
     const stored = JSON.parse(localStorage.getItem(`ptm_activity_log_${key}`) || '[]');
-    const updatedLogs = [logItem, ...stored].slice(0, 20);
+    const updatedLogs = [logItem, ...stored].slice(0, 15);
     localStorage.setItem(`ptm_activity_log_${key}`, JSON.stringify(updatedLogs));
   } catch (err) {
     console.error("Error recording login event:", err);

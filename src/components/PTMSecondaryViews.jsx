@@ -2066,7 +2066,7 @@ export default function PTMSecondaryViews({
               </div>
               <div className="flex items-center gap-2 self-start sm:self-auto">
                 <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
-                  تازہ ترین {userStats.activityLog?.length || 0} سرگرمیاں (Max 20)
+                  تازہ ترین {userStats.activityLog?.length || 0} سرگرمیاں (Recent 15)
                 </span>
                 {userStats.activityLog && userStats.activityLog.length > 0 && (
                   <button
