@@ -327,7 +327,7 @@ export default function PTMTopicSelectionView({
                 <button
                   type="button"
                   onClick={handleProceedToCriteria}
-                  className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-lg shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                  className="hidden sm:flex px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-lg shadow-sm transition-all items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
                   title="Continue to Question Criteria"
                 >
                   <span>Next: Criteria</span>
@@ -481,21 +481,21 @@ export default function PTMTopicSelectionView({
             )}
           </div>
 
-          {/* SINGLE UNIFIED BOTTOM ACTION BAR: CONTINUE TO QUESTION CRITERIA */}
-          <div className="p-3.5 sm:p-4 bg-white/95 backdrop-blur-md border border-slate-300 rounded-2xl shadow-xl sticky bottom-3 sm:bottom-4 z-30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 animate-fadeIn">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
+          {/* SINGLE UNIFIED BOTTOM FLOATING ACTION BAR: CONTINUE TO QUESTION CRITERIA */}
+          <div className="fixed bottom-3 left-3 right-3 sm:static sm:bottom-auto sm:left-auto sm:right-auto z-40 p-2.5 sm:p-4 bg-white/95 backdrop-blur-md border border-slate-300/90 rounded-2xl shadow-2xl sm:shadow-xl flex items-center justify-between gap-2.5 animate-fadeIn">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-xs">
                 ✓
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-black text-slate-900">
-                    {selectedTopicIds.length} of {allTopicIds.length} Topics Selected
+              <div className="truncate">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs sm:text-sm font-black text-slate-900 truncate">
+                    {selectedTopicIds.length} of {allTopicIds.length} Selected
                   </span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 animate-pulse"></span>
                 </div>
-                <p className="text-[11px] text-slate-500 font-semibold">
-                  Pool: <strong className="text-blue-600 font-mono font-bold">{availableQuestions.total}</strong> Questions Ready
+                <p className="text-[10px] sm:text-[11px] text-slate-500 font-semibold truncate">
+                  Pool: <strong className="text-blue-600 font-mono font-bold">{availableQuestions.total}</strong> Qs Ready
                 </p>
               </div>
             </div>
@@ -504,10 +504,11 @@ export default function PTMTopicSelectionView({
               type="button"
               disabled={selectedTopicIds.length === 0}
               onClick={handleProceedToCriteria}
-              className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:via-indigo-700 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-xs sm:text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
+              className="px-4 sm:px-6 py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:via-indigo-700 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-xs sm:text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shrink-0"
             >
-              <span>Continue to Question Criteria (سوالات کی ترتیب)</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="hidden sm:inline">Continue to Question Criteria (سوالات کی ترتیب)</span>
+              <span className="sm:hidden">Next: Criteria</span>
+              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </div>
 

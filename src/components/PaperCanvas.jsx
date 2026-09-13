@@ -75,6 +75,11 @@ export default function PaperCanvas({
   const [mcqCols, setMcqCols] = useState(Number(paperConfig.mcqOptionsCols) || 2); // 1, 2, or 4
   const [showAnswerLines] = useState(false); // Student answer writing lines
 
+  // Scroll to top immediately when PaperCanvas mounts to eliminate blank screen on mobile
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, []);
+
   // Sync with paperConfig if changed from Settings
   useEffect(() => {
     if (paperConfig.mcqLayout) {
@@ -211,7 +216,12 @@ export default function PaperCanvas({
 
   const gradeClass = rawGradeClass || (selectedClass ? `${selectedClass} Class` : '11th Class');
 
-  const isWatermarkEnabled = configShowWatermark !== false && watermarkType !== 'None';
+  // Quick Watermark Toggle Local State (ensures 0ms instant UI and DOM toggle)
+  const [localWatermarkOverride, setLocalWatermarkOverride] = useState(null);
+  const isWatermarkEnabled = localWatermarkOverride !== null 
+    ? localWatermarkOverride 
+    : (configShowWatermark !== false && watermarkType !== 'None');
+
   const effectiveWatermark = (configWatermarkText && configWatermarkText !== 'PRO TEST MAKER')
     ? configWatermarkText
     : (watermarkType === 'Text Watermark' ? 'AL-ZIA SCIENCE ACADEMY' : (configWatermarkText || 'AL-ZIA SCIENCE ACADEMY'));
@@ -806,13 +816,19 @@ export default function PaperCanvas({
               type="button"
               onClick={() => {
                 const next = !isWatermarkEnabled;
-                setIsWatermarkEnabled(next);
+                setLocalWatermarkOverride(next);
                 setPaperConfig?.(prev => ({ 
                   ...prev, 
                   showWatermark: next, 
                   watermarkType: next ? 'Text Watermark' : 'None',
-                  watermarkText: 'AL-ZIA SCIENCE ACADEMY'
+                  watermarkText: (prev?.watermarkText && prev.watermarkText !== 'PRO TEST MAKER')
+                    ? prev.watermarkText
+                    : 'AL-ZIA SCIENCE ACADEMY'
                 }));
+                notify.info(next 
+                  ? "واٹر مارک فعال کر دیا گیا (Watermark: ON)" 
+                  : "واٹر مارک بند کر دیا گیا (Watermark: OFF)"
+                );
               }}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs border ${
                 isWatermarkEnabled
@@ -896,8 +912,9 @@ export default function PaperCanvas({
             width: `${Math.round(794 * (zoomLevel / 100))}px`,
             minHeight: `${Math.round(1123 * (zoomLevel / 100))}px`,
             transition: 'width 0.15s ease, min-height 0.15s ease',
-            display: 'flex',
-            justifyContent: 'center',
+            position: 'relative',
+            display: 'block',
+            margin: '0 auto',
             flexShrink: 0
           }}
         >
@@ -905,8 +922,12 @@ export default function PaperCanvas({
             id="printable-paper"
             className={`a4-paper theme-${theme} relative ${isUrdu ? 'lang-urdu' : ''}`}
             style={{ 
+              width: '794px',
+              minWidth: '794px',
+              maxWidth: '794px',
+              margin: '0',
               transform: `scale(${zoomLevel / 100})`, 
-              transformOrigin: 'top center',
+              transformOrigin: 'top left',
               paddingTop: `${topMargin}mm`,
               fontSize: `${fontSize}pt`,
               fontFamily: `'${englishFont}', system-ui, sans-serif`

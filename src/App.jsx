@@ -470,6 +470,12 @@ export default function App() {
       });
     }
   }, [selectedClass]);
+
+  // Ensure viewport immediately scrolls to top whenever activeNav or paperStep changes
+  // so mobile users never land in empty whitespace below the fold
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [activeNav, paperStep]);
   const [paperData, setPaperData] = useState(() => {
     try {
       const raw = localStorage.getItem('ptm_active_paper_data');
