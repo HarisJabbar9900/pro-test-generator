@@ -88,6 +88,7 @@
     box-sizing: border-box !important;
     width: 100% !important;
     max-width: 100% !important;
+    min-width: 0 !important;
     min-height: 0 !important;
     height: auto !important;
     padding: 0 !important;
@@ -477,6 +478,14 @@
 /* ========================================================= */
 /* OFFICIAL BOARD TABULAR LAYOUT STYLING (بورڈ ٹیبل فارمیٹ) */
 /* ========================================================= */
+.board-table-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  padding-right: 1.5px;
+}
+
 .board-paper-table {
   width: 100% !important;
   max-width: 100% !important;
@@ -493,7 +502,7 @@
 .board-paper-table th {
   background-color: #f1f5f9;
   border: 1px solid #0f172a;
-  padding: 3px 4px;
+  padding: 0 !important;
   font-weight: 800;
   text-align: center;
   font-size: 0.88em;
@@ -501,19 +510,30 @@
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
   box-sizing: border-box !important;
-  overflow-wrap: break-word;
-  word-break: normal;
 }
 
 .board-paper-table td {
   border: 1px solid #475569;
-  padding: 3px 4px;
+  padding: 0 !important;
   vertical-align: middle;
   line-height: 1.35;
   color: inherit;
   box-sizing: border-box !important;
-  overflow-wrap: break-word;
-  word-break: normal;
+}
+
+.board-paper-table th:last-child,
+.board-paper-table td:last-child {
+  border-right: 1.5px solid #0f172a !important;
+}
+
+.board-cell-inner {
+  padding: 3px 4px;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
 }
 
 .board-paper-table tr {
@@ -526,6 +546,13 @@
 }
 
 @media print {
+  .board-table-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    padding-right: 1.5px !important;
+  }
   .board-paper-table {
     width: 100% !important;
     max-width: 100% !important;
@@ -541,16 +568,25 @@
     color: #000000 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    padding: 2.5px 3.5px !important;
+    padding: 0 !important;
     box-sizing: border-box !important;
-    overflow-wrap: break-word !important;
-    word-break: normal !important;
   }
   .board-paper-table td {
     border: 1px solid #000000 !important;
     color: #000000 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+  .board-paper-table th:last-child,
+  .board-paper-table td:last-child {
+    border-right: 1.5px solid #000000 !important;
+  }
+  .board-cell-inner {
     padding: 2.5px 3.5px !important;
     box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     overflow-wrap: break-word !important;
     word-break: normal !important;
   }
