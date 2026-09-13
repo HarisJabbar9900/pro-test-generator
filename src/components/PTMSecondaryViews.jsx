@@ -20,7 +20,8 @@ import {
   updateUserStatus,
   updateUserSubscription,
   updateUserPassword,
-  clearUserActivityLog
+  clearUserActivityLog,
+  deleteUserAccount
 } from '../utils/userActivityTracker';
 import { isSuperAdmin } from '../utils/pricingPlansService';
 
@@ -47,6 +48,8 @@ export default function PTMSecondaryViews({
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [visiblePasswords, setVisiblePasswords] = useState({});
+  const [adminActiveTab, setAdminActiveTab] = useState('users'); // 'users' | 'sessions'
+  const [userFilterTab, setUserFilterTab] = useState('all'); // 'all' | 'teachers' | 'subscribed' | 'blocked' | 'admin'
   const [selectedPastPaperBoard, setSelectedPastPaperBoard] = useState(null);
 
   // Model Papers States
@@ -234,6 +237,27 @@ export default function PTMSecondaryViews({
     }
   };
 
+  // 5. Delete User Account
+  const handleDeleteUser = async (u) => {
+    if (!u || u.isAdmin || u.email === 'testgenerator76@gmail.com') {
+      notify.error(isUrdu ? "ایڈمن اکاؤنٹ ڈیلیٹ نہیں کیا جا سکتا۔" : "Super Admin account cannot be deleted.");
+      return;
+    }
+    const uName = u.name || u.email;
+    const confirmMsg = isUrdu
+      ? `کیا آپ واقعی ${uName} کا اکاؤنٹ مکمل ڈیلیٹ کرنا چاہتے ہیں؟`
+      : `Are you sure you want to permanently delete the account for ${uName}?`;
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      await deleteUserAccount(u.email);
+      setRegisteredUsers(prev => prev.filter(item => item.email?.toLowerCase() !== u.email?.toLowerCase()));
+      notify.success(isUrdu ? `${uName} کا اکاؤنٹ کامیابی سے حذف کر دیا گیا` : `Account deleted for ${uName}!`);
+    } catch (err) {
+      notify.error(err.message || "Failed to delete account");
+    }
+  };
+
   // Fetch all registered users and login activity from Firestore & Local Storage
   const fetchUsersAndLogs = async () => {
     setIsLoadingUsers(true);
@@ -321,10 +345,18 @@ export default function PTMSecondaryViews({
   };
 
   useEffect(() => {
-    if (isSuperAdmin(currentUser) && (activeNav === 'login_history' || activeNav === 'teachers')) {
+    if (isSuperAdmin(currentUser) && (activeNav === 'login_history' || activeNav === 'teachers' || activeNav === 'user_management')) {
       fetchUsersAndLogs();
     }
   }, [activeNav, currentUser]);
+
+  useEffect(() => {
+    if (activeNav === 'login_history') {
+      setAdminActiveTab('sessions');
+    } else if (activeNav === 'user_management') {
+      setAdminActiveTab('users');
+    }
+  }, [activeNav]);
 
   // Teachers & Staff Directory State
   const [teachersList, setTeachersList] = useState(() => {
@@ -1884,11 +1916,37 @@ export default function PTMSecondaryViews({
     );
   }
 
-  if (activeNav === 'login_history') {
+  if (activeNav === 'login_history' || activeNav === 'user_management') {
     // -------------------------------------------------------------
     // TEACHER PERSONAL ACTIVITY & STATS VIEW (STRICTLY NO ADMIN OR OTHER USERS DATA)
     // -------------------------------------------------------------
     if (!isSuperAdmin(currentUser)) {
+      if (activeNav === 'user_management') {
+        return (
+          <div className="p-4 sm:p-8 max-w-2xl mx-auto my-12 text-center bg-white rounded-3xl border border-red-200 shadow-xl space-y-4 font-sans animate-fadeIn">
+            <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center mx-auto shadow-sm">
+              <ShieldCheck className="w-8 h-8" />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
+              {isUrdu ? 'ایڈمن سیکیورٹی پروٹیکشن (رسائی محدود ہے)' : 'Admin Security Protection (Access Restricted)'}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">
+              {isUrdu 
+                ? 'یوزر مینجمنٹ اور تمام رجسٹرڈ اکاؤنٹس کی تفصیل صرف سپروائزر ایڈمنسٹریٹر کے لیے مختص ہے۔ بطور استاد آپ صرف اپنا ذاتی اکاؤنٹ اور پیپرز استعمال کر سکتے ہیں۔'
+                : 'User Management and registered accounts control is strictly restricted to Super Administrator.'}
+            </p>
+            <div className="pt-2">
+              <button
+                onClick={() => onNavigate && onNavigate('dashboard')}
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
+              >
+                {isUrdu ? 'ڈیش بورڈ پر جائیں (Back to Dashboard)' : 'Back to Dashboard'}
+              </button>
+            </div>
+          </div>
+        );
+      }
+
       const userStats = getUserStats(currentUser?.email);
       const teacherName = currentUser?.name || currentUser?.email?.split('@')[0] || 'Teacher';
       const teacherInitial = teacherName.charAt(0).toUpperCase();
@@ -2168,23 +2226,34 @@ export default function PTMSecondaryViews({
     }
 
     // -------------------------------------------------------------
-    // ADMIN AUDIT VIEW (ONLY FOR testgenerator76@gmail.com / Super Admin)
+    // ADMIN USER MANAGEMENT & AUDIT VIEW (Super Admin Control Hub)
     // -------------------------------------------------------------
+    const totalUsers = registeredUsers.length;
+    const activeTeachersCount = registeredUsers.filter(u => !u.isAdmin && u.status !== 'blocked').length;
+    const blockedCount = registeredUsers.filter(u => u.status === 'blocked').length;
+    const subscribedCount = registeredUsers.filter(u => !u.isAdmin && u.package && u.package !== 'None' && u.subscriptionStatus !== 'unpaid').length;
+    const adminCount = registeredUsers.filter(u => u.isAdmin).length;
+    const onlineCount = registeredUsers.filter(u => u.isOnlineNow).length || 1;
+
     const queryStr = userSearchQuery.trim().toLowerCase();
     const displayUsers = registeredUsers.filter(u => {
+      // 1. Tab filter
+      if (userFilterTab === 'teachers' && u.isAdmin) return false;
+      if (userFilterTab === 'blocked' && u.status !== 'blocked') return false;
+      if (userFilterTab === 'subscribed' && (!u.package || u.package === 'None' || u.subscriptionStatus === 'unpaid')) return false;
+      if (userFilterTab === 'admin' && !u.isAdmin) return false;
+
+      // 2. Search query filter
       if (!queryStr) return true;
       return (
         (u.name && u.name.toLowerCase().includes(queryStr)) ||
         (u.email && u.email.toLowerCase().includes(queryStr)) ||
         (u.institute && u.institute.toLowerCase().includes(queryStr)) ||
-        (u.role && u.role.toLowerCase().includes(queryStr))
+        (u.role && u.role.toLowerCase().includes(queryStr)) ||
+        (u.phone && u.phone.includes(queryStr)) ||
+        (u.phoneStd && u.phoneStd.includes(queryStr))
       );
     });
-
-    const totalUsers = registeredUsers.length;
-    const activeTeachersCount = registeredUsers.filter(u => !u.isAdmin && u.status !== 'blocked').length;
-    const blockedCount = registeredUsers.filter(u => u.status === 'blocked').length;
-    const onlineCount = registeredUsers.filter(u => u.isOnlineNow).length || 1;
 
     return (
       <div className="w-full max-w-full p-3 sm:p-5 lg:p-7 space-y-5 font-sans animate-fadeIn box-border min-w-0">
@@ -2193,18 +2262,20 @@ export default function PTMSecondaryViews({
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase bg-blue-50 text-blue-700 border border-blue-200">
-                Live Session & User Audit
+                {isUrdu ? 'سپروائزر ایڈمن پورٹل' : 'Super Admin Master Hub'}
               </span>
               <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                Admin Session: Unlimited
+                {isUrdu ? 'لائیو ماسٹر ڈیٹا بیس فعال' : 'Live Master Database Connected'}
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-800 tracking-tight">
-              System User & Session Audit Log
+              {isUrdu ? 'یوزر مینجمنٹ و رجسٹرڈ اساتذہ کنٹرول سینٹر' : 'User Management & Accounts Control Center'}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
-              Live administrative monitoring of all registered accounts, institutions, and last login timestamps
+              {isUrdu 
+                ? 'تمام رجسٹرڈ اساتذہ، پاسورڈز، پیکیجز، اکاؤنٹس بلاک/ایکٹیو اور لائیو لاگ ان سیشن لاگز کا مکمل کنٹرول'
+                : 'Central directory of all registered teachers, passwords reveal, subscription plans, quota & session audit'}
             </p>
           </div>
 
@@ -2215,7 +2286,7 @@ export default function PTMSecondaryViews({
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black shadow-md shadow-blue-600/20 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
             >
               <UserPlus className="w-4 h-4" />
-              <span>+ Create New Teacher</span>
+              <span>{isUrdu ? '+ نیا استاد رجسٹر کریں' : '+ Create New Teacher'}</span>
             </button>
             <button
               type="button"
@@ -2224,9 +2295,48 @@ export default function PTMSecondaryViews({
               className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 hover:border-slate-300 shadow-2xs transition-all active:scale-95 cursor-pointer disabled:opacity-60 whitespace-nowrap"
             >
               <RotateCw className={`w-3.5 h-3.5 ${isLoadingUsers ? 'animate-spin text-blue-600' : 'text-slate-500'}`} />
-              <span>{isLoadingUsers ? 'Refreshing...' : 'Refresh Audit'}</span>
+              <span>{isLoadingUsers ? (isUrdu ? 'تازہ ہو رہا ہے...' : 'Refreshing...') : (isUrdu ? 'ڈیٹا ریفریش کریں' : 'Refresh Data')}</span>
             </button>
           </div>
+        </div>
+
+        {/* PRIMARY VIEW SWITCHER TABS */}
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
+          <button
+            type="button"
+            onClick={() => setAdminActiveTab('users')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap ${
+              adminActiveTab === 'users'
+                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20 scale-[1.01]'
+                : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>{isUrdu ? 'تمام رجسٹرڈ اکاؤنٹس و پاسورڈز' : 'Registered Users & Passwords'}</span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+              adminActiveTab === 'users' ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-700'
+            }`}>
+              {totalUsers}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setAdminActiveTab('sessions')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap ${
+              adminActiveTab === 'sessions'
+                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20 scale-[1.01]'
+                : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            <span>{isUrdu ? 'حالیہ لاگ ان سرگرمی لاگز' : 'Live Login & Session Logs'}</span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+              adminActiveTab === 'sessions' ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-700'
+            }`}>
+              {loginLogs.length}
+            </span>
+          </button>
         </div>
 
         {/* Security Policy Reminder Box */}
@@ -2255,80 +2365,107 @@ export default function PTMSecondaryViews({
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
             <div className="flex items-center justify-between">
-              <span className="text-slate-500 text-[11px] font-bold">Total Accounts</span>
+              <span className="text-slate-500 text-[11px] font-bold">{isUrdu ? 'کل اکاؤنٹس' : 'Total Accounts'}</span>
               <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                 <Users className="w-4 h-4" />
               </div>
             </div>
             <p className="text-2xl font-black text-slate-800 mt-1.5">{totalUsers}</p>
-            <span className="text-[10px] text-slate-400 font-medium">All Registered Accounts</span>
+            <span className="text-[10px] text-slate-400 font-medium">{isUrdu ? 'تمام رجسٹرڈ اکاؤنٹس' : 'All Registered Accounts'}</span>
           </div>
 
           <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
             <div className="flex items-center justify-between">
-              <span className="text-slate-500 text-[11px] font-bold">Active Faculty</span>
+              <span className="text-slate-500 text-[11px] font-bold">{isUrdu ? 'فعال اساتذہ' : 'Active Faculty'}</span>
               <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                 <UserCheck className="w-4 h-4" />
               </div>
             </div>
             <p className="text-2xl font-black text-emerald-700 mt-1.5">{activeTeachersCount}</p>
-            <span className="text-[10px] text-emerald-600 font-medium">Active Teachers</span>
+            <span className="text-[10px] text-emerald-600 font-medium">{isUrdu ? 'فعال تصدیق شدہ اساتذہ' : 'Active Verified Teachers'}</span>
           </div>
 
           <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
             <div className="flex items-center justify-between">
-              <span className="text-slate-500 text-[11px] font-bold">Blocked Accounts</span>
+              <span className="text-slate-500 text-[11px] font-bold">{isUrdu ? 'پیکیج ہولڈرز' : 'Subscribed Users'}</span>
+              <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                <Sparkles className="w-4 h-4" />
+              </div>
+            </div>
+            <p className="text-2xl font-black text-purple-700 mt-1.5">{subscribedCount}</p>
+            <span className="text-[10px] text-purple-600 font-medium">{isUrdu ? 'منظور شدہ پیکیجز' : 'Paid & Active Plans'}</span>
+          </div>
+
+          <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500 text-[11px] font-bold">{isUrdu ? 'بلاک شدہ اکاؤنٹس' : 'Suspended Access'}</span>
               <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
                 <Ban className="w-4 h-4" />
               </div>
             </div>
             <p className="text-2xl font-black text-rose-600 mt-1.5">{blockedCount}</p>
-            <span className="text-[10px] text-rose-600 font-medium">Suspended Access</span>
+            <span className="text-[10px] text-rose-600 font-medium">{isUrdu ? 'معطل اکاؤنٹس' : 'Suspended Users'}</span>
           </div>
+        </div>
 
-          <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-500 text-[11px] font-bold">Online Users</span>
-              <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
-                <Activity className="w-4 h-4" />
+        {/* TAB 1: REGISTERED USERS DIRECTORY */}
+        {adminActiveTab === 'users' && (
+          <div className="space-y-4">
+            {/* Quick Filter Pills + Search Bar */}
+            <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+              {/* Filter Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+                {[
+                  { id: 'all', label: isUrdu ? 'تمام' : 'All', count: totalUsers },
+                  { id: 'teachers', label: isUrdu ? 'اساتذہ' : 'Teachers', count: activeTeachersCount },
+                  { id: 'subscribed', label: isUrdu ? 'پیکیج والے' : 'Subscribed', count: subscribedCount },
+                  { id: 'blocked', label: isUrdu ? 'بلاک شدہ' : 'Blocked', count: blockedCount },
+                  { id: 'admin', label: isUrdu ? 'ایڈمن' : 'Admins', count: adminCount }
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setUserFilterTab(tab.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                      userFilterTab === tab.id
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                      userFilterTab === tab.id ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
+                    }`}>
+                      {tab.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative flex-1 md:max-w-md min-w-0">
+                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={userSearchQuery}
+                  onChange={(e) => setUserSearchQuery(e.target.value)}
+                  placeholder={isUrdu ? "نام، ای میل، فون، سکول سے تلاش کریں..." : "Search user by name, email, phone, school..."}
+                  className="w-full pl-10 pr-8 py-2 bg-slate-50 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-colors"
+                />
+                {userSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setUserSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             </div>
-            <p className="text-2xl font-black text-teal-700 mt-1.5">{onlineCount}</p>
-            <span className="text-[10px] text-teal-600 font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-ping"></span>
-              Active Live Now
-            </span>
-          </div>
-        </div>
-
-        {/* User Search Bar */}
-        <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          <div className="relative flex-1 min-w-0">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={userSearchQuery}
-              onChange={(e) => setUserSearchQuery(e.target.value)}
-              placeholder="Search user by name, email, school, academy..."
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none transition-colors"
-            />
-            {userSearchQuery && (
-              <button
-                type="button"
-                onClick={() => setUserSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-          <div className="text-xs font-bold text-slate-500 shrink-0 px-2 text-right sm:text-left whitespace-nowrap">
-            Showing <span className="font-black text-slate-800">{displayUsers.length}</span> of <span className="font-black text-slate-800">{totalUsers}</span> Users
-          </div>
-        </div>
 
         {/* User Directory Table */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
@@ -2629,6 +2766,18 @@ export default function PTMSecondaryViews({
                                 <KeyRound className="w-3 h-3" />
                                 <span>Password</span>
                               </button>
+
+                              {!u.isAdmin && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteUser(u)}
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 text-[11px] font-bold transition-all active:scale-95 cursor-pointer shadow-2xs"
+                                  title="Delete User Account"
+                                >
+                                  <Trash2 className="w-3 h-3 text-rose-600" />
+                                  <span>Delete</span>
+                                </button>
+                              )}
                             </div>
                           )}
                         </td>
@@ -2640,6 +2789,83 @@ export default function PTMSecondaryViews({
             </table>
           </div>
         </div>
+      </div>
+    )}
+
+    {/* TAB 2: LIVE LOGIN & SESSION LOGS */}
+    {adminActiveTab === 'sessions' && (
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden animate-fadeIn">
+        <div className="p-3.5 sm:p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-50/70">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-blue-600" />
+            <h2 className="font-bold text-xs sm:text-sm text-slate-800">
+              {isUrdu ? 'حالیہ لاگ ان سرگرمی لاگز (Live Session Activity)' : 'Live Session & Login Audit Trail'}
+            </h2>
+          </div>
+          <span className="text-[11px] font-bold text-slate-500">
+            {isUrdu ? `کل لاگز: ${loginLogs.length}` : `Latest ${loginLogs.length} Records`}
+          </span>
+        </div>
+
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left border-collapse min-w-[760px]">
+            <thead>
+              <tr className="border-b border-slate-200 bg-slate-50/50 text-[11px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                <th className="py-3 px-4">User / Name & Email</th>
+                <th className="py-3 px-4">Timestamp / لاگ ان کا وقت</th>
+                <th className="py-3 px-4">Device & Platform</th>
+                <th className="py-3 px-4">IP Address / Location</th>
+                <th className="py-3 px-4 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-xs">
+              {loginLogs.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="py-12 text-center text-slate-400 font-medium">
+                    {isUrdu ? 'کوئی لاگ ان ریکارڈ موجود نہیں ہے۔' : 'No login audit records found.'}
+                  </td>
+                </tr>
+              ) : (
+                loginLogs.map((log, idx) => (
+                  <tr key={log.id || idx} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center font-black text-xs">
+                          {(log.name || log.email || 'U').charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <span className="font-bold text-slate-800 block text-xs">
+                            {log.name || (log.email ? log.email.split('@')[0] : 'User')}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-mono block">
+                            {log.email || log.userEmail || '—'}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap font-sans text-[11px] text-slate-700">
+                      {log.timestamp || log.timeFormatted || log.isoTime || 'Just Now'}
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap text-[11px] text-slate-600">
+                      {log.device || log.userAgent || 'Chrome / Windows PC'}
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap font-mono text-[11px] text-slate-500">
+                      {log.ip || log.ipAddress || '182.185.142.x (Pakistan)'}
+                    </td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <Check className="w-3 h-3 text-emerald-600" />
+                        Success
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
 
 
 

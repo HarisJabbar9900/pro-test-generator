@@ -1367,7 +1367,7 @@ export default function App() {
           )}
 
           {/* 5. SECONDARY PTM VIEWS (Saved Papers, Past Papers, Model Papers, Teachers, etc.) */}
-          {['saved_papers', 'past_papers', 'model_papers', 'teachers', 'papers_history', 'login_history', 'default_paper_settings'].includes(activeNav) && (
+          {['saved_papers', 'past_papers', 'model_papers', 'teachers', 'papers_history', 'login_history', 'user_management', 'default_paper_settings'].includes(activeNav) && (
             <div className="w-full max-w-full min-w-0 overflow-x-hidden">
               <PTMSecondaryViews
                 activeNav={activeNav}

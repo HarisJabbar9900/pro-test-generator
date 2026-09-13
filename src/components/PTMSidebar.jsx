@@ -49,11 +49,11 @@ export default function PTMSidebar({
     },
     ...(isAdmin ? [
       { 
-        id: 'login_history', 
-        label: isUrdu ? 'Users & Passwords • رجسٹرڈ یوزرز' : 'Registered Users & Passwords', 
+        id: 'user_management', 
+        label: isUrdu ? 'User Management • یوزر مینجمنٹ' : 'User Management', 
         icon: Users, 
         isAdmin: true, 
-        badge: 'Live DB' 
+        badge: 'Users' 
       },
       { 
         id: 'question_bank_editor', 

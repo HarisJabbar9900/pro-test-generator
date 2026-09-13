@@ -1,7 +1,7 @@
 // Utility to track and retrieve per-user statistics, personal activity log,
 // and administrative management (create account, block/unblock, subscription & quota, password reset).
 import { db } from '../firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 export function getCleanUserKey(email) {
   return (email || 'anonymous').toLowerCase().trim();
@@ -351,6 +351,34 @@ export async function updateUserPassword(email, newPassword) {
       }
       return u;
     });
+    localStorage.setItem('ptm_registered_users', JSON.stringify(updated));
+  } catch (err) {}
+
+  return true;
+}
+
+/**
+ * 5. Delete User Account (Admin Only)
+ */
+export async function deleteUserAccount(email) {
+  const cleanEmail = getCleanUserKey(email);
+  if (!cleanEmail) return;
+  if (cleanEmail === 'testgenerator76@gmail.com' || cleanEmail === 'testgenerator76') {
+    throw new Error('Super Admin account cannot be deleted!');
+  }
+
+  // A. Delete from Firestore
+  try {
+    const docRef = doc(db, "users", cleanEmail);
+    await deleteDoc(docRef);
+  } catch (err) {
+    console.warn("Firestore delete user note:", err.message);
+  }
+
+  // B. Delete from LocalStorage
+  try {
+    const localUsers = JSON.parse(localStorage.getItem('ptm_registered_users') || '[]');
+    const updated = localUsers.filter(u => u.email?.toLowerCase() !== cleanEmail);
     localStorage.setItem('ptm_registered_users', JSON.stringify(updated));
   } catch (err) {}
 

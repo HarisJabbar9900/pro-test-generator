@@ -104,12 +104,12 @@ export default function PTMDashboardView({
             {isSuper && (
               <button
                 type="button"
-                onClick={() => onNavigate && onNavigate('login_history')}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-300 transition-all cursor-pointer shadow-2xs"
-                title="Manage all registered teachers, passwords, and sessions"
+                onClick={() => handleNav('user_management')}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-300 transition-all cursor-pointer shadow-2xs"
+                title="User Management (تمام رجسٹرڈ اساتذہ اور پاسورڈز دیکھیں)"
               >
-                <Users className="w-3.5 h-3.5 text-purple-600" />
-                <span>{isUrdu ? 'رجسٹرڈ یوزرز و پاسورڈز' : 'Users & Passwords'}</span>
+                <Users className="w-3.5 h-3.5 text-blue-600" />
+                <span>{isUrdu ? 'یوزر مینجمنٹ • User Management' : 'User Management'}</span>
               </button>
             )}
 
@@ -262,6 +262,39 @@ export default function PTMDashboardView({
 
         </div>
       </div>
+
+      {/* ADMIN CONTROL: USER MANAGEMENT BANNER */}
+      {isSuper && (
+        <div 
+          onClick={() => handleNav('user_management')}
+          className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-600/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer hover:shadow-xl transition-all hover:scale-[1.005] group"
+        >
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-xs">
+              <Users className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-base sm:text-lg font-black tracking-tight">
+                  User Management • یوزر مینجمنٹ
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-[10px] font-black uppercase tracking-wider border border-white/25 shadow-2xs">
+                  Admin Portal
+                </span>
+              </div>
+              <p className="text-xs text-white/90 mt-0.5 font-medium">
+                {isUrdu 
+                  ? 'تمام رجسٹرڈ اساتذہ، ان کے پاسورڈز، اسکول کا نام، فیس کی منظوری اور لائیو اسٹیٹس چیک کریں' 
+                  : 'View all registered teachers, passwords, approve subscription packages, and control user access.'}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 self-start sm:self-auto bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl border border-white/25 text-xs font-bold shrink-0 transition-colors">
+            <span>{isUrdu ? 'یوزر مینجمنٹ کھولیں' : 'Open User Management'}</span>
+            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </div>
+      )}
 
       {/* 2. REFINED PROFESSIONAL DASHBOARD UTILITY & ACADEMIC HUB */}
       <div className="space-y-3.5 pt-1">
