@@ -1,3 +1,4 @@
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Menu, User, Maximize2, Cloud, LogOut, KeyRound, 
   ChevronDown, Settings, ShieldCheck, CheckCircle2, Phone, Bot, Languages
