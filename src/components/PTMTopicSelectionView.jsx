@@ -469,21 +469,21 @@ export default function PTMTopicSelectionView({
             )}
           </div>
 
-          {/* PERMANENT FLOATING ACTION BAR AT BOTTOM OF SCREEN */}
-          <div className="fixed bottom-4 left-4 right-4 max-w-4xl mx-auto z-40 p-3 sm:p-4 bg-white/95 backdrop-blur-md border border-slate-300 rounded-2xl shadow-2xl flex items-center justify-between gap-3 animate-fadeIn">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-xs">
+          {/* PROFESSIONAL CENTERED FLOATING DOCK AT BOTTOM OF SCREEN */}
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl z-40 p-2.5 sm:p-3.5 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 text-white rounded-2xl shadow-2xl flex items-center justify-between gap-3 animate-fadeIn ring-1 ring-white/10">
+            <div className="flex items-center gap-2.5 min-w-0 pl-1">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-500 to-cyan-400 text-slate-950 flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-sm">
                 ✓
               </div>
               <div className="truncate">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs sm:text-sm font-black text-slate-900 truncate">
+                  <span className="text-xs sm:text-sm font-black text-white truncate">
                     {selectedTopicIds.length} of {allTopicIds.length} Selected
                   </span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 animate-pulse"></span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse"></span>
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 font-semibold truncate">
-                  Pool: <strong className="text-blue-600 font-mono font-bold">{availableQuestions.total}</strong> Qs Ready
+                <p className="text-[10px] sm:text-[11px] text-slate-300 font-medium truncate">
+                  Pool: <strong className="text-cyan-400 font-mono font-bold">{availableQuestions.total}</strong> Questions Ready
                 </p>
               </div>
             </div>
@@ -492,10 +492,9 @@ export default function PTMTopicSelectionView({
               type="button"
               disabled={selectedTopicIds.length === 0}
               onClick={handleProceedToCriteria}
-              className="px-5 sm:px-7 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:via-indigo-700 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 shrink-0"
+              className="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-400 hover:from-blue-600 hover:via-indigo-600 hover:to-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-cyan-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 shrink-0"
             >
-              <span className="hidden sm:inline">Continue to Criteria (سوالات کی ترتیب)</span>
-              <span className="sm:hidden">Next: Criteria</span>
+              <span>Continue to Criteria (سوالات کی ترتیب)</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
