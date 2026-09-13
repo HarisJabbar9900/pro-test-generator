@@ -410,8 +410,8 @@ export default function PTMDashboardView({
   const recentPapers = (savedPapers || []).slice(0, 3);
 
   return (
-    <div className="p-3 sm:p-6 max-w-7xl mx-auto font-sans min-h-full flex-1 flex flex-col justify-between w-full">
-      <div className="space-y-6 sm:space-y-8">
+    <div className="p-2.5 sm:p-6 pb-24 sm:pb-8 max-w-7xl mx-auto font-sans min-h-full flex-1 flex flex-col justify-between w-full">
+      <div className="space-y-3.5 sm:space-y-8">
       
       {/* ACTIVE DRAFT BANNER (PRESERVED GENERATED PAPER) */}
       {hasActiveDraft && (
@@ -484,44 +484,50 @@ export default function PTMDashboardView({
         </div>
 
         {/* Live Countdown Badges */}
-        <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto relative z-10">
-          <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs text-center">
-            <div className="text-base sm:text-lg font-black text-amber-300 leading-tight">
-              {daysToMatric} <span className="text-[10px] text-white/70 font-semibold uppercase">Days</span>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0 self-stretch md:self-auto relative z-10 w-full md:w-auto">
+          {/* Days Sub-Row (side-by-side on mobile) */}
+          <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:items-center">
+            <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs text-center flex-1 sm:flex-initial">
+              <div className="text-base sm:text-lg font-black text-amber-300 leading-tight">
+                {daysToMatric} <span className="text-[10px] text-white/70 font-semibold uppercase">Days</span>
+              </div>
+              <div className="text-[9px] font-bold text-white/80">
+                {isUrdu ? 'میٹرک بورڈ 2026' : 'Matric Annual'}
+              </div>
             </div>
-            <div className="text-[9px] font-bold text-white/80">
-              {isUrdu ? 'میٹرک بورڈ 2026' : 'Matric Annual'}
+
+            <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs text-center flex-1 sm:flex-initial">
+              <div className="text-base sm:text-lg font-black text-cyan-300 leading-tight">
+                {daysToInter} <span className="text-[10px] text-white/70 font-semibold uppercase">Days</span>
+              </div>
+              <div className="text-[9px] font-bold text-white/80">
+                {isUrdu ? 'انٹر بورڈ 2026' : 'Inter Annual'}
+              </div>
             </div>
           </div>
 
-          <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs text-center">
-            <div className="text-base sm:text-lg font-black text-cyan-300 leading-tight">
-              {daysToInter} <span className="text-[10px] text-white/70 font-semibold uppercase">Days</span>
-            </div>
-            <div className="text-[9px] font-bold text-white/80">
-              {isUrdu ? 'انٹر بورڈ 2026' : 'Inter Annual'}
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => handleNav('model_papers')}
-            className="px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1 shrink-0"
-          >
-            <span>{isUrdu ? 'ماڈل پیپرز' : 'Model Papers'}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-
-          {onOpenPairingSchemeModal && (
+          {/* Action Buttons Sub-Row (side-by-side on mobile, never cut off) */}
+          <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:items-center">
             <button
               type="button"
-              onClick={onOpenPairingSchemeModal}
-              className="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-slate-950 text-xs font-black transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1.5 shrink-0"
+              onClick={() => handleNav('model_papers')}
+              className="px-3 py-2 sm:py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 w-full sm:w-auto"
             >
-              <Award className="w-3.5 h-3.5 text-slate-950" />
-              <span>{isUrdu ? 'پیئرنگ اسکیم 2026' : 'Pairing Scheme 2026'}</span>
+              <span>{isUrdu ? 'ماڈل پیپرز' : 'Model Papers'}</span>
+              <ArrowRight className="w-3.5 h-3.5 shrink-0" />
             </button>
-          )}
+
+            {onOpenPairingSchemeModal && (
+              <button
+                type="button"
+                onClick={onOpenPairingSchemeModal}
+                className="px-3 py-2 sm:py-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-slate-950 text-xs font-black transition-all shadow-sm active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 w-full sm:w-auto"
+              >
+                <Award className="w-3.5 h-3.5 text-slate-950 shrink-0" />
+                <span className="truncate">{isUrdu ? 'پیئرنگ اسکیم 2026' : 'Pairing Scheme 2026'}</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -554,19 +560,19 @@ export default function PTMDashboardView({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
           
-          {/* User Card 1: Generate Paper (Royal Blue / Cyan Gradient) */}
+          {/* User Card 1: Generate Paper (Full Width on mobile, compact on desktop) */}
           <div 
             onClick={onGoToGenerate}
-            className="rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
+            className="col-span-2 sm:col-span-1 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
           >
-            <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
+            <div className="p-3.5 sm:p-5 flex items-center sm:items-start justify-between relative z-10">
               <div>
-                <div className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-xs">
+                <div className="text-2xl sm:text-4xl font-black tracking-tight drop-shadow-xs">
                   Instant
                 </div>
-                <div className="text-sm font-bold mt-1 text-white/95 leading-snug">
+                <div className="text-sm font-bold mt-0.5 sm:mt-1 text-white/95 leading-snug">
                   Generate Paper
                   {isUrdu && <span className="block text-xs font-bold text-cyan-100">امتحانی پرچہ تیار کریں</span>}
                 </div>
@@ -575,9 +581,9 @@ export default function PTMDashboardView({
                   {isUrdu && <span className="block text-[10px] text-white/80">فوری ٹیسٹ بنانے کا نظام</span>}
                 </p>
               </div>
-              <Send className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
+              <Send className="w-12 h-12 sm:w-16 sm:h-16 text-white/20 sm:text-white/15 sm:absolute sm:right-3 sm:top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shrink-0" />
             </div>
-            <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
+            <div className="w-full py-2 sm:py-2.5 px-3.5 sm:px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
               <span>{isUrdu ? 'Generate Now • ابھی بنائیں' : 'Generate Now'}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
@@ -586,114 +592,114 @@ export default function PTMDashboardView({
           {/* User Card 2: My Saved Papers (Emerald / Teal Gradient) */}
           <div 
             onClick={() => handleNav('saved_papers')}
-            className="rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-emerald-600 via-teal-600 to-green-700 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
+            className="col-span-1 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-emerald-600 via-teal-600 to-green-700 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
           >
-            <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
+            <div className="p-3 sm:p-5 flex items-start justify-between relative z-10">
               <div>
-                <div className="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">{savedPapers?.length || 0}</div>
-                <div className="text-sm font-bold mt-1 text-white/95 leading-snug">
+                <div className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight drop-shadow-xs">{savedPapers?.length || 0}</div>
+                <div className="text-xs sm:text-sm font-bold mt-1 text-white/95 leading-snug">
                   My Saved Papers
-                  {isUrdu && <span className="block text-xs font-bold text-emerald-100">محفوظ شدہ پرچے</span>}
+                  {isUrdu && <span className="block text-[10px] sm:text-xs font-bold text-emerald-100">محفوظ شدہ پرچے</span>}
                 </div>
-                <p className="text-[11px] text-white/75 font-medium mt-0.5 leading-tight">
+                <p className="text-[10px] sm:text-[11px] text-white/75 font-medium mt-0.5 leading-tight line-clamp-1 sm:line-clamp-none">
                   Ready to Print & PDF
-                  {isUrdu && <span className="block text-[10px] text-white/80">پرنٹ اور پی ڈی ایف کے لیے تیار</span>}
+                  {isUrdu && <span className="block text-[9px] sm:text-[10px] text-white/80">پرنٹ کے لیے تیار</span>}
                 </p>
               </div>
-              <Save className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
+              <Save className="w-8 h-8 sm:w-16 sm:h-16 text-white/15 absolute right-2 top-2 sm:right-3 sm:top-3 pointer-events-none group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
             </div>
-            <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>{isUrdu ? 'Open Saved Papers • پرچے دیکھیں' : 'Open Saved Papers'}</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <div className="w-full py-2 sm:py-2.5 px-3 sm:px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-[11px] sm:text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
+              <span className="truncate">{isUrdu ? 'Open Saved • پرچے' : 'Open Saved Papers'}</span>
+              <ArrowRight className="w-3.5 h-3.5 shrink-0 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
           {/* User Card 3: Total Papers Created (Amber / Golden Gradient) */}
           <div 
             onClick={() => handleNav('papers_history')}
-            className="rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
+            className="col-span-1 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
           >
-            <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
+            <div className="p-3 sm:p-5 flex items-start justify-between relative z-10">
               <div>
-                <div className="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">
+                <div className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight drop-shadow-xs">
                   {userTotalCreated}
                 </div>
-                <div className="text-sm font-bold mt-1 text-white leading-snug">
+                <div className="text-xs sm:text-sm font-bold mt-1 text-white leading-snug">
                   Created Papers
-                  {isUrdu && <span className="block text-xs font-bold text-amber-100">کل تیار کردہ پیپرز</span>}
+                  {isUrdu && <span className="block text-[10px] sm:text-xs font-bold text-amber-100">کل تیار کردہ پیپرز</span>}
                 </div>
-                <p className="text-[11px] text-white/80 font-medium mt-0.5 leading-tight">
-                  My Generated Archives
-                  {isUrdu && <span className="block text-[10px] text-white/80">بنائے گئے ٹیسٹوں کی تاریخ</span>}
+                <p className="text-[10px] sm:text-[11px] text-white/80 font-medium mt-0.5 leading-tight line-clamp-1 sm:line-clamp-none">
+                  Generated Archives
+                  {isUrdu && <span className="block text-[9px] sm:text-[10px] text-white/80">تاریخچہ</span>}
                 </p>
               </div>
-              <Copy className="w-14 h-14 sm:w-16 sm:h-16 text-white/20 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
+              <Copy className="w-8 h-8 sm:w-16 sm:h-16 text-white/20 absolute right-2 top-2 sm:right-3 sm:top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
             </div>
-            <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>{isUrdu ? 'View Paper History • تاریخچہ کھولیں' : 'View Paper History'}</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <div className="w-full py-2 sm:py-2.5 px-3 sm:px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-[11px] sm:text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
+              <span className="truncate">{isUrdu ? 'History • تاریخچہ' : 'View History'}</span>
+              <ArrowRight className="w-3.5 h-3.5 shrink-0 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
           {/* User Card 4: Paper Quota Remaining (Warm Rose / Coral Gradient) */}
           <div 
             onClick={() => handleNav('pricing_plans')}
-            className="rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
+            className="col-span-1 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
           >
-            <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
+            <div className="p-3 sm:p-5 flex items-start justify-between relative z-10">
               <div>
-                <div className="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">
+                <div className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight drop-shadow-xs">
                   {isUnlimited ? '∞' : remainingQuota}
                 </div>
-                <div className="text-sm font-bold mt-1 text-white/95 leading-snug">
+                <div className="text-xs sm:text-sm font-bold mt-1 text-white/95 leading-snug">
                   Remaining Quota
-                  {isUrdu && <span className="block text-xs font-bold text-rose-100">پیپرز کی باقی گنجائش</span>}
+                  {isUrdu && <span className="block text-[10px] sm:text-xs font-bold text-rose-100">باقی گنجائش</span>}
                 </div>
-                <p className="text-[11px] text-white/75 font-medium mt-0.5 leading-tight">
+                <p className="text-[10px] sm:text-[11px] text-white/75 font-medium mt-0.5 leading-tight line-clamp-1 sm:line-clamp-none">
                   {isUnlimited 
-                    ? (isSuper ? 'Unlimited Generations (Admin)' : 'Unlimited Paper Generations') 
-                    : `Of ${userMaxLimit} Papers Limit`}
+                    ? (isSuper ? 'Admin Unlimited' : 'Unlimited Plan') 
+                    : `Limit: ${userMaxLimit}`}
                   {isUrdu && (
-                    <span className="block text-[10px] text-white/80">
-                      {isUnlimited ? 'لامحدود پیپرز بنانے کی سہولت' : `کل ${userMaxLimit} پیپرز میں سے باقی`}
+                    <span className="block text-[9px] sm:text-[10px] text-white/80">
+                      {isUnlimited ? 'لامحدود سہولت' : `کل: ${userMaxLimit}`}
                     </span>
                   )}
                 </p>
               </div>
-              <Layers className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
+              <Layers className="w-8 h-8 sm:w-16 sm:h-16 text-white/15 absolute right-2 top-2 sm:right-3 sm:top-3 pointer-events-none group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
             </div>
-            <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>{isSuper ? 'Admin Quota' : (isUnlimited ? (isUrdu ? 'Active Plan • فعال پلان' : 'Active Plan') : (isUrdu ? 'Manage Plan • پلان اپگریڈ' : 'Manage Subscription'))}</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <div className="w-full py-2 sm:py-2.5 px-3 sm:px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-[11px] sm:text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
+              <span className="truncate">{isSuper ? 'Admin Quota' : (isUnlimited ? 'Active Plan' : 'Manage Plan')}</span>
+              <ArrowRight className="w-3.5 h-3.5 shrink-0 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
           {/* User Card 5: My Plan & Profile Status (Deep Purple / Indigo Gradient) */}
           <div 
             onClick={() => handleNav('pricing')}
-            className="rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-800 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
+            className="col-span-1 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-800 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
           >
-            <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
+            <div className="p-3 sm:p-5 flex items-start justify-between relative z-10">
               <div>
-                <div className="text-base sm:text-lg font-black tracking-tight drop-shadow-xs leading-snug line-clamp-2">
+                <div className="text-sm sm:text-lg font-black tracking-tight drop-shadow-xs leading-snug line-clamp-1">
                   {isSuper ? 'Super Admin' : (currentUser?.package && currentUser?.package !== 'None' ? currentUser.package : 'Basic Plan')}
                 </div>
-                <div className="text-xs font-bold mt-1 text-white/90 leading-snug">
+                <div className="text-[11px] sm:text-xs font-bold mt-1 text-white/90 leading-snug truncate">
                   {currentUser?.institute || 'Educators Academy'}
-                  {isUrdu && <span className="block text-[10px] text-purple-200">منسلک ادارہ</span>}
+                  {isUrdu && <span className="block text-[9px] text-purple-200">ادارہ</span>}
                 </div>
 
                 {/* Expiry Date Badge inside Card 5 */}
-                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/25 backdrop-blur-xs text-[11px] font-bold text-amber-200 border border-white/10">
-                  <Calendar className="w-3.5 h-3.5 text-amber-300" />
-                  <span>{isUrdu ? 'میعاد ختم:' : 'Expires:'} {currentUser?.expiryDate || '31-12-2026'}</span>
+                <div className="mt-1.5 sm:mt-2 inline-flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-black/25 backdrop-blur-xs text-[10px] sm:text-[11px] font-bold text-amber-200 border border-white/10 truncate max-w-full">
+                  <Calendar className="w-3 h-3 text-amber-300 shrink-0" />
+                  <span className="truncate">{currentUser?.expiryDate || '31-12-2026'}</span>
                 </div>
               </div>
-              <ShieldCheck className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
+              <ShieldCheck className="w-8 h-8 sm:w-16 sm:h-16 text-white/15 absolute right-2 top-2 sm:right-3 sm:top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
             </div>
-            <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>{isUrdu ? 'View Plan Details • تفصیلات' : 'View Plan Details'}</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <div className="w-full py-2 sm:py-2.5 px-3 sm:px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-[11px] sm:text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
+              <span className="truncate">{isUrdu ? 'Plan Details • تفصیل' : 'Plan Details'}</span>
+              <ArrowRight className="w-3.5 h-3.5 shrink-0 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
