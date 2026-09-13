@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   CheckCircle2, Sliders, Eye, Sparkles, Building2, 
-  RotateCcw, Info, ArrowRight, ArrowLeft, Layout 
+  RotateCcw, Info, ArrowRight, ArrowLeft, Layout,
+  ChevronDown, Check, X, Layers, Image
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 
@@ -50,9 +51,27 @@ export default function DefaultPaperSettingsView({
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [saveStatus, setSaveStatus] = useState('idle'); // 'idle' | 'saved'
 
+  // Header Layout Interactive Selector & Live Hover Preview States
+  const [isLayoutMenuOpen, setIsLayoutMenuOpen] = useState(false);
+  const [hoveredLayoutId, setHoveredLayoutId] = useState(null);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const layoutDropdownRef = useRef(null);
+
   const isUserEdit = useRef(false);
   const isInternalUpdate = useRef(false);
   const statusTimeoutRef = useRef(null);
+
+  // Click outside to close layout dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (layoutDropdownRef.current && !layoutDropdownRef.current.contains(e.target)) {
+        setIsLayoutMenuOpen(false);
+        setHoveredLayoutId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Cleanup timers on unmount
   useEffect(() => {
@@ -207,6 +226,9 @@ export default function DefaultPaperSettingsView({
   };
 
   const fontColorHex = getColorHex(formData.paperFontColor);
+  const currentLayoutObj = HEADER_LAYOUTS.find(l => l.id === formData.headerLayout) || HEADER_LAYOUTS[12];
+  const hoveredLayoutObj = hoveredLayoutId ? HEADER_LAYOUTS.find(l => l.id === hoveredLayoutId) : null;
+  const activePreviewLayoutId = hoveredLayoutId || formData.headerLayout;
 
   return (
     <div className="p-3 sm:p-8 max-w-6xl mx-auto space-y-4 sm:space-y-6 font-sans select-none">
@@ -270,22 +292,143 @@ export default function DefaultPaperSettingsView({
         {/* ROW 1: 4 Dropdowns / Inputs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
-          {/* 1. Paper Header Layout */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-800 block">
-              Paper Header Layout:
-            </label>
-            <select
-              value={formData.headerLayout}
-              onChange={(e) => handleChange('headerLayout', e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-slate-300 hover:border-slate-400 focus:border-blue-500 rounded-lg text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer shadow-2xs"
+          {/* 1. Paper Header Layout with Interactive Live Hover Preview */}
+          <div className="space-y-1.5 relative" ref={layoutDropdownRef}>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-800 block">
+                Paper Header Layout:
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowGalleryModal(true)}
+                className="text-[10px] text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 hover:underline cursor-pointer"
+                title="Browse All 13 Header Designs with Live Visuals"
+              >
+                <Layers className="w-3 h-3 text-blue-600" />
+                <span>Gallery</span>
+              </button>
+            </div>
+
+            {/* Custom Dropdown Trigger Button */}
+            <button
+              type="button"
+              onClick={() => setIsLayoutMenuOpen(prev => !prev)}
+              className="w-full px-3 py-2 bg-white border border-slate-300 hover:border-blue-400 focus:border-blue-500 rounded-lg text-xs font-semibold text-slate-900 flex items-center justify-between gap-1.5 cursor-pointer shadow-2xs transition-all text-left"
             >
-              {HEADER_LAYOUTS.map(layout => (
-                <option key={layout.id} value={layout.id}>
-                  {layout.name}
-                </option>
-              ))}
-            </select>
+              <div className="flex items-center gap-1.5 truncate">
+                <Layout className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="truncate">{currentLayoutObj?.name || formData.headerLayout}</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-500 shrink-0 transition-transform ${isLayoutMenuOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* DROPDOWN MENU + FLOATING HOVER PREVIEW CARD */}
+            {isLayoutMenuOpen && (
+              <div className="absolute left-0 top-full mt-1.5 z-50 w-full sm:w-80 bg-white border border-slate-200 rounded-xl shadow-2xl p-1.5 space-y-1 animate-fadeIn">
+                <div className="px-2.5 py-1.5 border-b border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-500">
+                  <span>Hover to Preview Layout</span>
+                  <span className="text-[10px] text-blue-600 font-mono font-bold">13 Styles</span>
+                </div>
+
+                <div 
+                  className="max-h-72 overflow-y-auto space-y-1 pr-1 custom-scrollbar"
+                  onMouseLeave={() => setHoveredLayoutId(null)}
+                >
+                  {HEADER_LAYOUTS.map(layout => {
+                    const isSelected = formData.headerLayout === layout.id;
+                    const isHovered = hoveredLayoutId === layout.id;
+                    return (
+                      <div
+                        key={layout.id}
+                        onMouseEnter={() => setHoveredLayoutId(layout.id)}
+                        onClick={() => {
+                          handleChange('headerLayout', layout.id);
+                          setIsLayoutMenuOpen(false);
+                          setHoveredLayoutId(null);
+                          notify.success(`${layout.id} لاگو کر دیا گیا (Layout Applied)`);
+                        }}
+                        className={`px-2.5 py-2 rounded-lg text-xs cursor-pointer transition-all flex items-start justify-between gap-2 ${
+                          isSelected
+                            ? 'bg-blue-50 text-blue-900 font-bold border border-blue-200 shadow-2xs'
+                            : isHovered
+                            ? 'bg-slate-100 text-slate-900'
+                            : 'hover:bg-slate-50 text-slate-700'
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-black ${
+                              isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'
+                            }`}>
+                              {layout.id}
+                            </span>
+                            <span className="truncate text-xs">
+                              {layout.name.replace(/^Layout \d+\s*\((.+)\)$/, '$1')}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-500 line-clamp-1 mt-0.5 leading-tight">
+                            {layout.desc}
+                          </p>
+                        </div>
+                        {isSelected && (
+                          <Check className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* DESKTOP FLOATING HOVER PREVIEW SIDE-CARD */}
+                {hoveredLayoutObj && (
+                  <div className="hidden lg:block absolute left-full top-0 ml-3 w-[470px] bg-white rounded-2xl shadow-2xl border-2 border-blue-500 p-3 z-50 pointer-events-none animate-fadeIn">
+                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white font-black text-xs shadow-xs">
+                          {hoveredLayoutObj.id}
+                        </span>
+                        <span className="font-bold text-xs text-slate-900 truncate max-w-[260px]">
+                          {hoveredLayoutObj.name}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200 animate-pulse">
+                        ✨ Live Hover Preview
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-slate-500 mb-2 leading-tight">
+                      {hoveredLayoutObj.desc}
+                    </p>
+
+                    {/* Miniature Scaled Header Frame */}
+                    <div className="w-full bg-slate-50/70 p-2 rounded-xl border border-slate-200 overflow-hidden relative" style={{ height: '145px' }}>
+                      <div 
+                        style={{ 
+                          width: '740px', 
+                          transform: 'scale(0.58)', 
+                          transformOrigin: 'top left',
+                          pointerEvents: 'none',
+                          color: fontColorHex
+                        }}
+                      >
+                        <PreviewHeaderRenderer
+                          layoutId={hoveredLayoutObj.id}
+                          academyName={formData.academyName}
+                          tagline={formData.tagline}
+                          syllabus={formData.syllabus}
+                          headerFontSize={formData.headerFontSize}
+                          headingFontSize={formData.headingFontSize}
+                          headerFontStyle={formData.headerFontStyle}
+                          fontColor={fontColorHex}
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-2 text-center text-[10px] text-slate-400 font-semibold">
+                      👆 Click item on left to apply this layout
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* 2. Header Font Style */}
@@ -495,12 +638,17 @@ export default function DefaultPaperSettingsView({
 
       {/* 4. LIVE INTERACTIVE HEADER PREVIEW */}
       <div className="mt-8 pt-6 border-t border-slate-200 space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Eye className="w-4 h-4 text-blue-600" />
             <h2 className="text-sm font-bold text-slate-900">
-              Live Paper Header Preview: <span className="text-blue-600 font-extrabold">{formData.headerLayout}</span>
+              Live Paper Header Preview: <span className="text-blue-600 font-extrabold">{activePreviewLayoutId}</span>
             </h2>
+            {hoveredLayoutId && hoveredLayoutId !== formData.headerLayout && (
+              <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-300 animate-pulse">
+                ✨ Hover Preview Mode (Click dropdown to select)
+              </span>
+            )}
           </div>
           <span className="text-[11px] font-semibold text-slate-500">
             Font: {formData.headerFontSize}pt • Color: {formData.paperFontColor}
@@ -509,13 +657,13 @@ export default function DefaultPaperSettingsView({
 
         {/* PREVIEW CONTAINER */}
         <div 
-          className="bg-white rounded-xl border border-slate-300 p-2.5 sm:p-6 shadow-xs overflow-x-auto relative"
+          className="bg-white rounded-xl border border-slate-300 p-2.5 sm:p-6 shadow-xs overflow-x-auto relative transition-all"
           style={{ color: fontColorHex }}
         >
           <div className="min-w-[620px]">
-            {/* RENDER SELECTED LAYOUT PREVIEW */}
+            {/* RENDER SELECTED OR HOVERED LAYOUT PREVIEW */}
             <PreviewHeaderRenderer
-              layoutId={formData.headerLayout}
+              layoutId={activePreviewLayoutId}
               academyName={formData.academyName}
               tagline={formData.tagline}
               syllabus={formData.syllabus}
@@ -614,6 +762,119 @@ export default function DefaultPaperSettingsView({
           </div>
         </div>
       </div>
+
+      {/* 13-LAYOUT VISUAL GALLERY MODAL */}
+      {showGalleryModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn">
+          <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-xs">
+                  <Layout className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-black text-slate-900">
+                    Header Layouts Gallery (امتحانی پیپر ہیڈر ڈیزائنز)
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Click any design below to instantly apply it to your exam papers.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowGalleryModal(false)}
+                className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-all cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Cards Grid */}
+            <div className="p-4 sm:p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+              {HEADER_LAYOUTS.map(layout => {
+                const isSelected = formData.headerLayout === layout.id;
+                return (
+                  <div
+                    key={layout.id}
+                    onClick={() => {
+                      handleChange('headerLayout', layout.id);
+                      setShowGalleryModal(false);
+                      notify.success(`${layout.id} لاگو کر دیا گیا (Layout Applied)`);
+                    }}
+                    className={`rounded-xl border-2 p-3 sm:p-4 transition-all cursor-pointer group flex flex-col justify-between ${
+                      isSelected
+                        ? 'border-blue-600 bg-blue-50/40 shadow-md ring-2 ring-blue-400/20'
+                        : 'border-slate-200 hover:border-blue-400 bg-white hover:shadow-lg'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2 py-0.5 rounded text-xs font-black ${
+                            isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-800 group-hover:bg-blue-100 group-hover:text-blue-800'
+                          }`}>
+                            {layout.id}
+                          </span>
+                          <span className="font-bold text-xs text-slate-900 truncate">
+                            {layout.name.replace(/^Layout \d+\s*\((.+)\)$/, '$1')}
+                          </span>
+                        </div>
+                        {isSelected && (
+                          <span className="text-[11px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            ✓ Active
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-500 mb-3 leading-tight">
+                        {layout.desc}
+                      </p>
+                      
+                      {/* Live Header Render Preview in Card */}
+                      <div className="w-full bg-slate-50 p-2 rounded-lg border border-slate-200 overflow-hidden relative" style={{ height: '135px' }}>
+                        <div 
+                          style={{ 
+                            width: '720px', 
+                            transform: 'scale(0.52)', 
+                            transformOrigin: 'top left',
+                            pointerEvents: 'none',
+                            color: fontColorHex
+                          }}
+                        >
+                          <PreviewHeaderRenderer
+                            layoutId={layout.id}
+                            academyName={formData.academyName}
+                            tagline={formData.tagline}
+                            syllabus={formData.syllabus}
+                            headerFontSize={formData.headerFontSize}
+                            headingFontSize={formData.headingFontSize}
+                            headerFontStyle={formData.headerFontStyle}
+                            fontColor={fontColorHex}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-end">
+                      <button
+                        type="button"
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-slate-100 group-hover:bg-blue-600 group-hover:text-white text-slate-700'
+                        }`}
+                      >
+                        {isSelected ? 'Selected' : 'Use This Layout'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
