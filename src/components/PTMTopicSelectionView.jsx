@@ -481,64 +481,35 @@ export default function PTMTopicSelectionView({
             )}
           </div>
 
-          {/* STICKY BOTTOM ACTION BAR: CONTINUE TO QUESTION CRITERIA */}
-          <div className="p-3 sm:p-4 bg-white/95 backdrop-blur-md border border-slate-300 rounded-xl shadow-lg sticky bottom-3 sm:bottom-4 z-20 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 animate-fadeIn">
-            <div className="flex items-center justify-between sm:justify-start gap-3">
-              <span className="px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 font-bold rounded-lg text-xs">
-                {selectedTopicIds.length} of {allTopicIds.length} Topics Selected
-              </span>
-              <span className="text-xs text-slate-500 font-semibold">
-                Pool: <strong className="text-slate-800 font-mono">{availableQuestions.total}</strong> Qs
-              </span>
+          {/* SINGLE UNIFIED BOTTOM ACTION BAR: CONTINUE TO QUESTION CRITERIA */}
+          <div className="p-3.5 sm:p-4 bg-white/95 backdrop-blur-md border border-slate-300 rounded-2xl shadow-xl sticky bottom-3 sm:bottom-4 z-30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 animate-fadeIn">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
+                ✓
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-black text-slate-900">
+                    {selectedTopicIds.length} of {allTopicIds.length} Topics Selected
+                  </span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                </div>
+                <p className="text-[11px] text-slate-500 font-semibold">
+                  Pool: <strong className="text-blue-600 font-mono font-bold">{availableQuestions.total}</strong> Questions Ready
+                </p>
+              </div>
             </div>
 
             <button
               type="button"
               disabled={selectedTopicIds.length === 0}
               onClick={handleProceedToCriteria}
-              className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
+              className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:via-indigo-700 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-xs sm:text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
             >
-              <span>Continue to Question Criteria</span>
+              <span>Continue to Question Criteria (سوالات کی ترتیب)</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-
-          {/* ALWAYS-VISIBLE FLOATING ACTION BAR ACROSS VIEWPORT (NO SCROLLING NEEDED) */}
-          {selectedTopicIds.length > 0 && (
-            <div className="fixed bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[94%] sm:w-auto max-w-xl transition-all duration-300 transform animate-fadeIn drop-shadow-2xl">
-              <div className="bg-slate-900/95 text-white backdrop-blur-md px-4 sm:px-6 py-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 sm:gap-6 ring-4 ring-blue-500/20">
-                
-                {/* Status Indicator & Topic Count */}
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs sm:text-sm shrink-0 shadow-sm border border-white/20">
-                    ✓
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs sm:text-sm font-black text-white truncate tracking-tight">
-                        {selectedTopicIds.length} {selectedTopicIds.length === 1 ? 'Topic' : 'Topics'} Selected
-                      </span>
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                    </div>
-                    <p className="text-[11px] text-slate-300 font-semibold truncate hidden sm:block">
-                      Pool: <strong className="text-cyan-300 font-mono">{availableQuestions.total}</strong> Questions Ready
-                    </p>
-                  </div>
-                </div>
-
-                {/* Floating Proceed Button */}
-                <button
-                  type="button"
-                  onClick={handleProceedToCriteria}
-                  className="px-4 sm:px-6 py-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs sm:text-sm rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all flex items-center gap-2 cursor-pointer active:scale-95 shrink-0 border border-white/20"
-                >
-                  <span>Next: Criteria</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-              </div>
-            </div>
-          )}
 
         </div>
       )}
