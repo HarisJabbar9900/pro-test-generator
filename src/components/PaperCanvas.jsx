@@ -2270,23 +2270,23 @@ export default function PaperCanvas({
                               style={{ width: '100%', maxWidth: '100%', tableLayout: 'fixed' }}
                             >
                               <colgroup>
-                                <col style={{ width: '6.5%' }} />
-                                <col style={{ width: '45.5%' }} />
-                                <col style={{ width: '12%' }} />
-                                <col style={{ width: '12%' }} />
-                                <col style={{ width: '12%' }} />
-                                <col style={{ width: '12%' }} />
+                                <col style={{ width: '5.5%' }} />
+                                <col style={{ width: '36.5%' }} />
+                                <col style={{ width: '14.5%' }} />
+                                <col style={{ width: '14.5%' }} />
+                                <col style={{ width: '14.5%' }} />
+                                <col style={{ width: '14.5%' }} />
                               </colgroup>
                               <thead>
                                 <tr>
-                                  <th style={{ width: '6.5%' }}>Q.#</th>
-                                  <th style={{ width: '45.5%', textAlign: 'left', paddingLeft: '6px' }}>
+                                  <th style={{ width: '5.5%' }}>Q.#</th>
+                                  <th style={{ width: '36.5%', textAlign: 'left', paddingLeft: '6px' }}>
                                     {isBlend ? 'Question Statement / سوال' : isUrdu ? 'سوال' : 'Question Statement'}
                                   </th>
-                                  <th style={{ width: '12%' }}>(A) الف</th>
-                                  <th style={{ width: '12%' }}>(B) ب</th>
-                                  <th style={{ width: '12%' }}>(C) ج</th>
-                                  <th style={{ width: '12%' }}>(D) د</th>
+                                  <th style={{ width: '14.5%' }}>(A) الف</th>
+                                  <th style={{ width: '14.5%' }}>(B) ب</th>
+                                  <th style={{ width: '14.5%' }}>(C) ج</th>
+                                  <th style={{ width: '14.5%' }}>(D) د</th>
                                 </tr>
                               </thead>
                               <tbody>

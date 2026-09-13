@@ -502,7 +502,7 @@
   print-color-adjust: exact;
   box-sizing: border-box !important;
   overflow-wrap: break-word;
-  word-break: break-word;
+  word-break: normal;
 }
 
 .board-paper-table td {
@@ -513,7 +513,7 @@
   color: inherit;
   box-sizing: border-box !important;
   overflow-wrap: break-word;
-  word-break: break-word;
+  word-break: normal;
 }
 
 .board-paper-table tr {
@@ -544,7 +544,7 @@
     padding: 2.5px 3.5px !important;
     box-sizing: border-box !important;
     overflow-wrap: break-word !important;
-    word-break: break-word !important;
+    word-break: normal !important;
   }
   .board-paper-table td {
     border: 1px solid #000000 !important;
@@ -552,7 +552,7 @@
     padding: 2.5px 3.5px !important;
     box-sizing: border-box !important;
     overflow-wrap: break-word !important;
-    word-break: break-word !important;
+    word-break: normal !important;
   }
   .board-paper-table tr {
     page-break-inside: avoid !important;
