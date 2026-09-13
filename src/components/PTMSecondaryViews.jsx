@@ -19,7 +19,8 @@ import {
   createTeacherAccount,
   updateUserStatus,
   updateUserSubscription,
-  updateUserPassword
+  updateUserPassword,
+  clearUserActivityLog
 } from '../utils/userActivityTracker';
 import { isSuperAdmin } from '../utils/pricingPlansService';
 
@@ -50,6 +51,7 @@ export default function PTMSecondaryViews({
   const [showAnswerKeys, setShowAnswerKeys] = useState(false);
   const [copiedPaperText, setCopiedPaperText] = useState(false);
   const [selectedClassFilter, setSelectedClassFilter] = useState('12th');
+  const [activityRefreshTick, setActivityRefreshTick] = useState(0);
 
   const handleCopyModelPaper = (paper) => {
     if (!paper) return;
@@ -2055,16 +2057,35 @@ export default function PTMSecondaryViews({
 
           {/* TEACHER'S PERSONAL ACTIVITY TIMELINE */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-2">
               <div className="flex items-center gap-2">
                 <FileClock className="w-4 h-4 text-blue-600" />
                 <h3 className="font-black text-slate-800 text-xs sm:text-sm">
                   میری ذاتی سرگرمی کی ٹائم لائن (Personal Activity Log)
                 </h3>
               </div>
-              <span className="text-[11px] font-bold text-slate-400">
-                Only Your Actions
-              </span>
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
+                  تازہ ترین {userStats.activityLog?.length || 0} سرگرمیاں (Max 20)
+                </span>
+                {userStats.activityLog && userStats.activityLog.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (window.confirm("کیا آپ واقعی اپنی سرگرمی ہسٹری (Activity Log) صاف کرنا چاہتے ہیں؟")) {
+                        clearUserActivityLog(currentUser?.email);
+                        notify.success("سرگرمی لاگ کامیابی سے صاف کر دیا گیا!");
+                        setActivityRefreshTick(t => t + 1);
+                      }
+                    }}
+                    className="text-[11px] font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-2.5 py-0.5 rounded-md border border-rose-200 transition-colors cursor-pointer flex items-center gap-1 active:scale-95"
+                    title="Clear recent activity history"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    <span>صاف کریں</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {(!userStats.activityLog || userStats.activityLog.length === 0) ? (
