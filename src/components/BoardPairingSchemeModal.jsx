@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { 
   BOARD_AUTHORITIES, 
+  AVAILABLE_SCHEME_SUBJECTS,
   PAIRING_SCHEMES_DATA, 
   getBoardPairingScheme, 
   generateBoardPairingPaper 
@@ -31,8 +32,8 @@ export default function BoardPairingSchemeModal({
   isOpen,
   onClose,
   bank = {},
-  selectedClass: initialClass = '12th',
-  selectedSubjectId = 'computer_science',
+  selectedClass: initialClass = '10th',
+  selectedSubjectId = 'physics',
   currentUser,
   onApplyBoardPaper, // (paperData, paperConfig) => void
   appLanguage = 'ur'
@@ -42,22 +43,23 @@ export default function BoardPairingSchemeModal({
   // Board selector: 'punjab' | 'federal' | 'sindh' | 'kpk'
   const [activeBoard, setActiveBoard] = useState('punjab');
   const [activeClass, setActiveClass] = useState(() => {
-    return initialClass.replace(/\s*class/i, '').trim() || '12th';
+    return initialClass.replace(/\s*class/i, '').trim() || '10th';
   });
+  const [activeSubjectId, setActiveSubjectId] = useState(selectedSubjectId || 'physics');
   const [copiedScheme, setCopiedScheme] = useState(false);
 
   // Available classes
   const classesList = [
-    { key: '12th', label: '12th Class (Inter Part-II)', badge: 'HSSC-II' },
-    { key: '11th', label: '11th Class (Inter Part-I)', badge: 'HSSC-I' },
     { key: '10th', label: '10th Class (Matric Part-II)', badge: 'SSC-II' },
-    { key: '9th', label: '9th Class (Matric Part-I)', badge: 'SSC-I' }
+    { key: '9th', label: '9th Class (Matric Part-I)', badge: 'SSC-I' },
+    { key: '12th', label: '12th Class (Inter Part-II)', badge: 'HSSC-II' },
+    { key: '11th', label: '11th Class (Inter Part-I)', badge: 'HSSC-I' }
   ];
 
   // Active scheme data
   const currentScheme = useMemo(() => {
-    return getBoardPairingScheme(activeClass, selectedSubjectId, activeBoard);
-  }, [activeClass, selectedSubjectId, activeBoard]);
+    return getBoardPairingScheme(activeClass, activeSubjectId, activeBoard);
+  }, [activeClass, activeSubjectId, activeBoard]);
 
   const currentBoardMeta = BOARD_AUTHORITIES[activeBoard.toUpperCase()] || BOARD_AUTHORITIES.PUNJAB;
 
@@ -68,7 +70,7 @@ export default function BoardPairingSchemeModal({
     try {
       const result = generateBoardPairingPaper({
         classKey: activeClass,
-        subjectId: selectedSubjectId,
+        subjectId: activeSubjectId,
         boardId: activeBoard,
         bank,
         options: {
@@ -257,6 +259,30 @@ export default function BoardPairingSchemeModal({
               </button>
             </div>
           </div>
+
+          {/* SUBJECT SELECTOR PILLS */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar pt-1.5 border-t border-slate-200/60">
+            <span className="text-xs font-black text-slate-600 uppercase mr-1 shrink-0">
+              {isUrdu ? 'مضمون منتخب کریں:' : 'Subject:'}
+            </span>
+            {AVAILABLE_SCHEME_SUBJECTS.map(s => {
+              const isSubjActive = activeSubjectId === s.id;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => setActiveSubjectId(s.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                    isSubjActive
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+                  }`}
+                >
+                  <span>{isUrdu ? s.urdu : s.name}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* SCROLLABLE BLUEPRINT CONTENT */}
@@ -271,7 +297,10 @@ export default function BoardPairingSchemeModal({
                     {currentBoardMeta.fullName}
                   </span>
                   <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">
-                    Computer Science • {activeClass} Class
+                    {currentScheme.subjectName || 'Subject'} • {activeClass} Class
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
+                    {isUrdu ? 'نیا نصاب و کتب' : 'New Syllabus (Latest)'}
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed">

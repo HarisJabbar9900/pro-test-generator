@@ -1,8 +1,9 @@
 /**
  * Official Board Examination Pairing Schemes & Paper Blueprints (Session 2025-2026)
+ * New Curriculum & Updated Textbooks Edition
  * Covers:
  * 1. Punjab Boards (PBCC - Lahore, Rawalpindi, Gujranwala, Faisalabad, Multan, Sahiwal, Sargodha, Bahawalpur, DG Khan)
- * 2. Federal Board (FBISE Islamabad - SLO Based Curriculum)
+ * 2. Federal Board (FBISE Islamabad - SLO Based Assessment Framework)
  * 3. Sindh Boards (BIEK / BSEK Karachi, Hyderabad, Sukkur, Larkana, Mirpurkhas)
  * 4. KPK Boards (Peshawar, Mardan, Abbottabad, Swat, Kohat, Bannu, Malakand)
  */
@@ -14,8 +15,8 @@ export const BOARD_AUTHORITIES = {
     fullName: "Punjab Boards Committee of Chairmen (PBCC)",
     boardsList: ["BISE Lahore", "BISE Rawalpindi", "BISE Gujranwala", "BISE Faisalabad", "BISE Multan", "BISE Sahiwal", "BISE Sargodha", "BISE Bahawalpur", "BISE DG Khan"],
     color: "emerald",
-    badge: "Punjab Standard",
-    curriculum: "Punjab Curriculum & Textbook Board (PCTB)",
+    badge: "Punjab PBCC Standard",
+    curriculum: "Punjab Curriculum & Textbook Board (PCTB - New Books)",
     session: "2025 - 2026"
   },
   FEDERAL: {
@@ -50,722 +51,473 @@ export const BOARD_AUTHORITIES = {
   }
 };
 
+export const AVAILABLE_SCHEME_SUBJECTS = [
+  { id: 'physics', name: 'Physics', urdu: 'طبیعیات (فزکس)', icon: 'Atom', marksMatric: 60, marksInter: 85 },
+  { id: 'chemistry', name: 'Chemistry', urdu: 'کیمیاء (کیمسٹری)', icon: 'FlaskConical', marksMatric: 60, marksInter: 85 },
+  { id: 'biology', name: 'Biology', urdu: 'حیاتیات (بائیولوجی)', icon: 'Dna', marksMatric: 60, marksInter: 85 },
+  { id: 'mathematics', name: 'Mathematics', urdu: 'ریاضی (سائنس گروپ)', icon: 'Calculator', marksMatric: 75, marksInter: 100 },
+  { id: 'computer_science', name: 'Computer Science', urdu: 'کمپیوٹر سائنس', icon: 'Laptop', marksMatric: 50, marksInter: 75 },
+  { id: 'english', name: 'English Compulsory', urdu: 'انگریزی لازمی', icon: 'BookOpen', marksMatric: 75, marksInter: 100 },
+  { id: 'urdu', name: 'Urdu Compulsory', urdu: 'اردو لازمی', icon: 'Feather', marksMatric: 75, marksInter: 100 },
+  { id: 'islamiat', name: 'Islamiat Compulsory', urdu: 'اسلامیات لازمی (50 نمبر)', icon: 'Moon', marksMatric: 50, marksInter: 50 },
+  { id: 'tarjuma_tul_quran', name: 'Tarjuma-tul-Quran', urdu: 'ترجمۃ القرآن المجید (نیا لازمی مضمون)', icon: 'BookMarked', marksMatric: 50, marksInter: 50 },
+  { id: 'pak_studies', name: 'Pakistan Studies', urdu: 'مطالعہ پاکستان (50 نمبر)', icon: 'Flag', marksMatric: 50, marksInter: 50 }
+];
+
 /**
- * Detailed Subject Pairing Schemes Catalog
+ * Detailed Subject Pairing Schemes Catalog (New Curriculum 2025 - 2026)
  */
 export const PAIRING_SCHEMES_DATA = {
   // =========================================================================
-  // 12TH CLASS (INTER PART-II)
-  // =========================================================================
-  "12th": {
-    "computer_science": {
-      subjectName: "Computer Science",
-      punjab: {
-        totalMarks: 75,
-        timeAllowed: "2 Hours 30 Minutes",
-        objectiveMarks: 15,
-        subjectiveMarks: 60,
-        passingMarks: 25,
-        description: "Official Punjab Board (PBCC) 12th Computer Science 2025-2026 Pairing Scheme. 15 MCQs, 36 Marks Short Questions (Attempt 18/27), 24 Marks Long Questions (Attempt 3/5).",
-        mcqs: {
-          total: 15,
-          distribution: [
-            { chapter: 1, count: 2, name: "Data Basics & Database Overview" },
-            { chapter: 2, count: 2, name: "Basic Concepts & Terminology of Databases" },
-            { chapter: 3, count: 1, name: "Database Design Process" },
-            { chapter: 4, count: 1, name: "Data Integrity and Normalization" },
-            { chapter: 5, count: 1, name: "Introduction to Microsoft Access" },
-            { chapter: 6, count: 1, name: "Table and Queries" },
-            { chapter: 7, count: 1, name: "Microsoft Access Forms and Reports" },
-            { chapter: 8, count: 2, name: "Getting Started with C / Programming Basics" },
-            { chapter: 9, count: 2, name: "Elements of C / Programming Variables" },
-            { chapter: 10, count: 1, name: "Input / Output Handling" },
-            { chapter: 11, count: 1, name: "Decision Structures in Programming" }
-          ]
-        },
-        shortQuestions: [
-          {
-            qNum: "Q2",
-            title: "Question No. 2 (Short Questions)",
-            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
-            totalOptions: 9,
-            required: 6,
-            marksEach: 2,
-            totalMarks: 12,
-            breakdown: [
-              { chapter: 1, count: 3, name: "Chapter 1" },
-              { chapter: 2, count: 2, name: "Chapter 2" },
-              { chapter: 3, count: 2, name: "Chapter 3" },
-              { chapter: 4, count: 2, name: "Chapter 4" }
-            ]
-          },
-          {
-            qNum: "Q3",
-            title: "Question No. 3 (Short Questions)",
-            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
-            totalOptions: 9,
-            required: 6,
-            marksEach: 2,
-            totalMarks: 12,
-            breakdown: [
-              { chapter: 5, count: 2, name: "Chapter 5" },
-              { chapter: 6, count: 2, name: "Chapter 6" },
-              { chapter: 7, count: 2, name: "Chapter 7" },
-              { chapter: 8, count: 3, name: "Chapter 8" }
-            ]
-          },
-          {
-            qNum: "Q4",
-            title: "Question No. 4 (Short Questions)",
-            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
-            totalOptions: 9,
-            required: 6,
-            marksEach: 2,
-            totalMarks: 12,
-            breakdown: [
-              { chapter: 9, count: 3, name: "Chapter 9" },
-              { chapter: 10, count: 3, name: "Chapter 10" },
-              { chapter: 11, count: 3, name: "Chapter 11" }
-            ]
-          }
-        ],
-        longQuestions: {
-          instruction: "Attempt any 3 questions out of 5. (Each carries 8 Marks = 24 Marks)",
-          totalOptions: 5,
-          required: 3,
-          marksEach: 8,
-          totalMarks: 24,
-          questions: [
-            { qNum: "Q5", chapter: 1, topic: "Chapter 1: Database System Architecture & Traditional File System comparison" },
-            { qNum: "Q6", chapter: 3, topic: "Chapter 3 or 4: ERD, Normalization (1NF, 2NF, 3NF)" },
-            { qNum: "Q7", chapter: 8, topic: "Chapter 8: Basic C/Python structure, compiler, linker & loader" },
-            { qNum: "Q8", chapter: 11, topic: "Chapter 11: Control structures (if-else, switch, nested conditions) with Code" },
-            { qNum: "Q9", chapter: 12, topic: "Chapter 12: Loop structures (for, while, do-while) with complete working program" }
-          ]
-        }
-      },
-      federal: {
-        totalMarks: 75,
-        timeAllowed: "2 Hours 40 Minutes",
-        objectiveMarks: 15,
-        subjectiveMarks: 60,
-        passingMarks: 25,
-        description: "FBISE Federal Board SLO-Based Pattern. Focuses on Knowledge (30%), Understanding (50%), and Application / Programming (20%).",
-        mcqs: {
-          total: 15,
-          distribution: [
-            { chapter: 1, count: 2, name: "Computational Thinking & Architecture" },
-            { chapter: 2, count: 2, name: "Python / C Syntax & Algorithms" },
-            { chapter: 3, count: 2, name: "Object Oriented Principles" },
-            { chapter: 4, count: 2, name: "Data Structures & Trees/Graphs" },
-            { chapter: 5, count: 2, name: "Relational Database Management Systems" },
-            { chapter: 6, count: 2, name: "Computer Networks & Cybersecurity" },
-            { chapter: 7, count: 1, name: "Artificial Intelligence Concepts" },
-            { chapter: 8, count: 1, name: "Web Technologies & Protocols" },
-            { chapter: 9, count: 1, name: "Digital Ethics & Legal Framework" }
-          ]
-        },
-        shortQuestions: [
-          {
-            qNum: "Section B",
-            title: "Section B: Conceptual & Analytical Short Questions",
-            instruction: "Attempt any 12 questions out of 16. (Each carries 3 Marks = 36 Marks)",
-            totalOptions: 16,
-            required: 12,
-            marksEach: 3,
-            totalMarks: 36,
-            breakdown: [
-              { chapter: 1, count: 2, name: "Ch 1 (Knowledge/Recall)" },
-              { chapter: 2, count: 3, name: "Ch 2 (Syntax & Code Dry-run)" },
-              { chapter: 3, count: 2, name: "Ch 3 (OOP Concepts)" },
-              { chapter: 4, count: 2, name: "Ch 4 (Structures & Analysis)" },
-              { chapter: 5, count: 3, name: "Ch 5 (SQL Queries & Tables)" },
-              { chapter: 6, count: 2, name: "Ch 6 (Network Models)" },
-              { chapter: 7, count: 2, name: "Ch 7 & 8 (Emerging Tech)" }
-            ]
-          }
-        ],
-        longQuestions: {
-          instruction: "Section C: Comprehensive Questions. Attempt any 3 questions out of 4. (8 Marks each = 24 Marks)",
-          totalOptions: 4,
-          required: 3,
-          marksEach: 8,
-          totalMarks: 24,
-          questions: [
-            { qNum: "Q3", chapter: 2, topic: "Algorithmic Problem Solving & Python / C program writing with functions" },
-            { qNum: "Q4", chapter: 3, topic: "Object-Oriented Programming (Classes, Inheritance, Polymorphism) implementation" },
-            { qNum: "Q5", chapter: 5, topic: "Database Normalization (up to 3NF) with ER Diagram & Schema Design" },
-            { qNum: "Q6", chapter: 6, topic: "Cybersecurity threats, encryption mechanisms & Network architecture" }
-          ]
-        }
-      },
-      sindh: {
-        totalMarks: 75,
-        timeAllowed: "2 Hours 30 Minutes",
-        objectiveMarks: 15,
-        subjectiveMarks: 60,
-        passingMarks: 25,
-        description: "Sindh Board (BIEK Karachi & Hyderabad) Revised Blueprint. Section A (MCQs 20%), Section B (CRQs Short 40%), Section C (ERQs Descriptive 40%).",
-        mcqs: {
-          total: 15,
-          distribution: [
-            { chapter: 1, count: 2, name: "Overview of Computer Systems" },
-            { chapter: 2, count: 3, name: "Database & Information Systems" },
-            { chapter: 3, count: 3, name: "Programming Methodologies" },
-            { chapter: 4, count: 3, name: "Control Structures & Arrays" },
-            { chapter: 5, count: 2, name: "Functions & Pointers" },
-            { chapter: 6, count: 2, name: "Operating Systems & Networking" }
-          ]
-        },
-        shortQuestions: [
-          {
-            qNum: "Section B",
-            title: "Section B: Short Answer Questions (CRQs)",
-            instruction: "Attempt any 6 questions. (Each carries 6 Marks = 36 Marks)",
-            totalOptions: 9,
-            required: 6,
-            marksEach: 6,
-            totalMarks: 36,
-            breakdown: [
-              { chapter: 1, count: 2, name: "Computer Organization" },
-              { chapter: 2, count: 2, name: "DBMS & Keys" },
-              { chapter: 3, count: 2, name: "Flowcharts & Logic" },
-              { chapter: 4, count: 2, name: "Selection & Repetition" },
-              { chapter: 5, count: 1, name: "Modular Programming" }
-            ]
-          }
-        ],
-        longQuestions: {
-          instruction: "Section C: Detailed Answer Questions (ERQs). Attempt any 2 questions. (12 Marks each = 24 Marks)",
-          totalOptions: 3,
-          required: 2,
-          marksEach: 12,
-          totalMarks: 24,
-          questions: [
-            { qNum: "Q1", chapter: 2, topic: "Detailed explanation of DBMS Architecture, Data Independence and Normalization" },
-            { qNum: "Q2", chapter: 4, topic: "Complete Programming question with Loops, Arrays and Conditionals" },
-            { qNum: "Q3", chapter: 6, topic: "Network topologies, OSI Reference Model layers and Transmission media" }
-          ]
-        }
-      },
-      kpk: {
-        totalMarks: 75,
-        timeAllowed: "2 Hours 30 Minutes",
-        objectiveMarks: 15,
-        subjectiveMarks: 60,
-        passingMarks: 25,
-        description: "KPK Board Standard Blueprint (Peshawar, Mardan, Abbottabad, Swat).",
-        mcqs: {
-          total: 15,
-          distribution: [
-            { chapter: 1, count: 2, name: "Unit 1: Fundamentals of Database" },
-            { chapter: 2, count: 2, name: "Unit 2: Database Life Cycle" },
-            { chapter: 3, count: 2, name: "Unit 3: MS Access" },
-            { chapter: 4, count: 2, name: "Unit 4: Programming Essentials" },
-            { chapter: 5, count: 3, name: "Unit 5: Control Structures" },
-            { chapter: 6, count: 2, name: "Unit 6: Functions & Sub-routines" },
-            { chapter: 7, count: 2, name: "Unit 7: Applications & Trends" }
-          ]
-        },
-        shortQuestions: [
-          {
-            qNum: "Section B",
-            title: "Section B: Conceptual Short Questions",
-            instruction: "Attempt any 12 questions out of 16. (Each carries 3 Marks = 36 Marks)",
-            totalOptions: 16,
-            required: 12,
-            marksEach: 3,
-            totalMarks: 36,
-            breakdown: [
-              { chapter: 1, count: 3, name: "Unit 1 Database Concepts" },
-              { chapter: 2, count: 2, name: "Unit 2 Data Modeling" },
-              { chapter: 3, count: 3, name: "Unit 3 MS Access Queries" },
-              { chapter: 4, count: 3, name: "Unit 4 Programming Basics" },
-              { chapter: 5, count: 3, name: "Unit 5 Decision & Iteration" },
-              { chapter: 6, count: 2, name: "Unit 6 User Defined Functions" }
-            ]
-          }
-        ],
-        longQuestions: {
-          instruction: "Section C: Long / Comprehensive Questions. Attempt any 3 out of 4. (8 Marks each = 24 Marks)",
-          totalOptions: 4,
-          required: 3,
-          marksEach: 8,
-          totalMarks: 24,
-          questions: [
-            { qNum: "Q3", chapter: 1, topic: "Components of Database Environment and Roles of DBA" },
-            { qNum: "Q4", chapter: 2, topic: "Normalization steps with 1NF, 2NF and 3NF anomalies resolution" },
-            { qNum: "Q5", chapter: 5, topic: "Program development with nested selection and while loop" },
-            { qNum: "Q6", chapter: 6, topic: "Function declaration, definition, parameter passing and scope" }
-          ]
-        }
-      }
-    }
-  },
-
-  // =========================================================================
-  // 11TH CLASS (INTER PART-I)
-  // =========================================================================
-  "11th": {
-    "computer_science": {
-      subjectName: "Computer Science",
-      punjab: {
-        totalMarks: 75,
-        timeAllowed: "2 Hours 30 Minutes",
-        objectiveMarks: 15,
-        subjectiveMarks: 60,
-        passingMarks: 25,
-        description: "Official Punjab Board 11th Computer Science 2025-2026 Pairing Scheme. Covers Software Development, Python Programming, Algorithms, Structures, and Analytics.",
-        mcqs: {
-          total: 15,
-          distribution: [
-            { chapter: 1, count: 2, name: "Software Development Lifecycle" },
-            { chapter: 2, count: 3, name: "Python Programming Basics" },
-            { chapter: 3, count: 2, name: "Algorithms & Problem Solving" },
-            { chapter: 4, count: 2, name: "Computational Structures & Logic" },
-            { chapter: 5, count: 2, name: "Data Analytics & Management" },
-            { chapter: 6, count: 1, name: "Emerging Technologies & AI" },
-            { chapter: 7, count: 1, name: "Legal and Ethical Computing" },
-            { chapter: 8, count: 1, name: "Online Research & Literacy" },
-            { chapter: 9, count: 1, name: "Digital Entrepreneurship" }
-          ]
-        },
-        shortQuestions: [
-          {
-            qNum: "Q2",
-            title: "Question No. 2 (Short Questions)",
-            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
-            totalOptions: 9,
-            required: 6,
-            marksEach: 2,
-            totalMarks: 12,
-            breakdown: [
-              { chapter: 1, count: 4, name: "Chapter 1: Software Development" },
-              { chapter: 2, count: 3, name: "Chapter 2: Python Programming" },
-              { chapter: 3, count: 2, name: "Chapter 3: Algorithms" }
-            ]
-          },
-          {
-            qNum: "Q3",
-            title: "Question No. 3 (Short Questions)",
-            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
-            totalOptions: 9,
-            required: 6,
-            marksEach: 2,
-            totalMarks: 12,
-            breakdown: [
-              { chapter: 4, count: 4, name: "Chapter 4: Computational Structures" },
-              { chapter: 5, count: 3, name: "Chapter 5: Data Analytics" },
-              { chapter: 6, count: 2, name: "Chapter 6: Emerging Technologies" }
-            ]
-          },
-          {
-            qNum: "Q4",
-            title: "Question No. 4 (Short Questions)",
-            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
-            totalOptions: 9,
-            required: 6,
-            marksEach: 2,
-            totalMarks: 12,
-            breakdown: [
-              { chapter: 7, count: 3, name: "Chapter 7: Legal & Ethical Aspects" },
-              { chapter: 8, count: 3, name: "Chapter 8: Online Research" },
-              { chapter: 9, count: 3, name: "Chapter 9: Entrepreneurship" }
-            ]
-          }
-        ],
-        longQuestions: {
-          instruction: "Attempt any 3 questions out of 5. (Each carries 8 Marks = 24 Marks)",
-          totalOptions: 5,
-          required: 3,
-          marksEach: 8,
-          totalMarks: 24,
-          questions: [
-            { qNum: "Q5", chapter: 1, topic: "Chapter 1: SDLC Phases (Analysis, Design, Implementation & Testing)" },
-            { qNum: "Q6", chapter: 2, topic: "Chapter 2: Python Data Types, Loops, and Functions with working code example" },
-            { qNum: "Q7", chapter: 3, topic: "Chapter 3: Algorithm efficiency, Big-O notation, and flowchart conversion" },
-            { qNum: "Q8", chapter: 4, topic: "Chapter 4: Computational Boolean Logic, Truth Tables & Karnaugh Maps" },
-            { qNum: "Q9", chapter: 5, topic: "Chapter 5: Data Analytics Pipeline (Cleaning, Visualization & Insights)" }
-          ]
-        }
-      },
-      federal: {
-        totalMarks: 75,
-        timeAllowed: "2 Hours 40 Minutes",
-        objectiveMarks: 15,
-        subjectiveMarks: 60,
-        passingMarks: 25,
-        description: "Federal Board 11th Computer Science SLO Model. Emphasis on analytical reasoning and Python coding.",
-        mcqs: {
-          total: 15,
-          distribution: [
-            { chapter: 1, count: 2, name: "SDLC & Software Models" },
-            { chapter: 2, count: 3, name: "Python Basics & Operators" },
-            { chapter: 3, count: 2, name: "Sorting & Searching Algorithms" },
-            { chapter: 4, count: 2, name: "Logic Gates & Simplification" },
-            { chapter: 5, count: 2, name: "Data Warehousing & Analytics" },
-            { chapter: 6, count: 1, name: "Cloud & IoT Systems" },
-            { chapter: 7, count: 1, name: "Cyber Laws & Ethics" },
-            { chapter: 8, count: 1, name: "Research Validation" },
-            { chapter: 9, count: 1, name: "Business Model Canvas" }
-          ]
-        },
-        shortQuestions: [
-          {
-            qNum: "Section B",
-            title: "Section B: Conceptual & Application Short Questions",
-            instruction: "Attempt any 12 questions out of 16. (Each carries 3 Marks = 36 Marks)",
-            totalOptions: 16,
-            required: 12,
-            marksEach: 3,
-            totalMarks: 36,
-            breakdown: [
-              { chapter: 1, count: 2, name: "Ch 1 SDLC Models" },
-              { chapter: 2, count: 4, name: "Ch 2 Python Syntax & Output Tracing" },
-              { chapter: 3, count: 2, name: "Ch 3 Algorithm Steps" },
-              { chapter: 4, count: 2, name: "Ch 4 Logic Expressions" },
-              { chapter: 5, count: 2, name: "Ch 5 Data Visualization" },
-              { chapter: 6, count: 2, name: "Ch 6 Emerging Tech" },
-              { chapter: 7, count: 2, name: "Ch 7-9 Ethics & Business" }
-            ]
-          }
-        ],
-        longQuestions: {
-          instruction: "Section C: Detailed Questions. Attempt any 3 out of 4. (8 Marks each = 24 Marks)",
-          totalOptions: 4,
-          required: 3,
-          marksEach: 8,
-          totalMarks: 24,
-          questions: [
-            { qNum: "Q3", chapter: 2, topic: "Python practical program with list manipulation, dictionary and file handling" },
-            { qNum: "Q4", chapter: 3, topic: "Linear Search vs Binary Search algorithms with trace tables and complexity" },
-            { qNum: "Q5", chapter: 4, topic: "Boolean Algebra minimization using K-Maps and Logic Circuit realization" },
-            { qNum: "Q6", chapter: 5, topic: "Data Analytics lifecycle with statistical measures and visual graphs" }
-          ]
-        }
-      },
-      sindh: {
-        totalMarks: 75,
-        timeAllowed: "2 Hours 30 Minutes",
-        objectiveMarks: 15,
-        subjectiveMarks: 60,
-        passingMarks: 25,
-        description: "Sindh Board (BIEK) XI Computer Science Blueprint. 15 MCQs, 36 Marks CRQs, 24 Marks ERQs.",
-        mcqs: {
-          total: 15,
-          distribution: [
-            { chapter: 1, count: 2, name: "Computer Fundamentals" },
-            { chapter: 2, count: 3, name: "Number Systems & Codes" },
-            { chapter: 3, count: 3, name: "Software & Operating Systems" },
-            { chapter: 4, count: 3, name: "Data Communications & Networks" },
-            { chapter: 5, count: 2, name: "Internet Applications" },
-            { chapter: 6, count: 2, name: "Security & Viruses" }
-          ]
-        },
-        shortQuestions: [
-          {
-            qNum: "Section B",
-            title: "Section B: Short Answer Questions",
-            instruction: "Attempt any 6 questions out of 9. (Each carries 6 Marks = 36 Marks)",
-            totalOptions: 9,
-            required: 6,
-            marksEach: 6,
-            totalMarks: 36,
-            breakdown: [
-              { chapter: 1, count: 2, name: "Hardware Components" },
-              { chapter: 2, count: 2, name: "Conversions & Arithmetic" },
-              { chapter: 3, count: 2, name: "OS Types & Kernels" },
-              { chapter: 4, count: 2, name: "Transmission Media" },
-              { chapter: 5, count: 1, name: "Protocols" }
-            ]
-          }
-        ],
-        longQuestions: {
-          instruction: "Section C: Detailed Questions. Attempt any 2 out of 3. (12 Marks each = 24 Marks)",
-          totalOptions: 3,
-          required: 2,
-          marksEach: 12,
-          totalMarks: 24,
-          questions: [
-            { qNum: "Q1", chapter: 1, topic: "Architecture of CPU, Von Neumann model and memory hierarchy" },
-            { qNum: "Q2", chapter: 4, topic: "LAN topologies (Bus, Star, Ring, Mesh) with advantages & diagrams" },
-            { qNum: "Q3", chapter: 6, topic: "Malicious software types, prevention and biometric security controls" }
-          ]
-        }
-      },
-      kpk: {
-        totalMarks: 75,
-        timeAllowed: "2 Hours 30 Minutes",
-        objectiveMarks: 15,
-        subjectiveMarks: 60,
-        passingMarks: 25,
-        description: "KPK Board 11th Computer Science Blueprint.",
-        mcqs: {
-          total: 15,
-          distribution: [
-            { chapter: 1, count: 3, name: "Information Technology" },
-            { chapter: 2, count: 3, name: "Information Networks" },
-            { chapter: 3, count: 2, name: "Data Communications" },
-            { chapter: 4, count: 2, name: "Applications of Computers" },
-            { chapter: 5, count: 2, name: "Computer Architecture" },
-            { chapter: 6, count: 2, name: "Security & Copyright" },
-            { chapter: 7, count: 1, name: "Windows Operating System" }
-          ]
-        },
-        shortQuestions: [
-          {
-            qNum: "Section B",
-            title: "Section B: Conceptual Short Questions",
-            instruction: "Attempt any 12 questions out of 16. (Each carries 3 Marks = 36 Marks)",
-            totalOptions: 16,
-            required: 12,
-            marksEach: 3,
-            totalMarks: 36,
-            breakdown: [
-              { chapter: 1, count: 3, name: "IT & Hardware" },
-              { chapter: 2, count: 3, name: "Network Models" },
-              { chapter: 3, count: 3, name: "Modulation & Media" },
-              { chapter: 4, count: 2, name: "Automation" },
-              { chapter: 5, count: 3, name: "Instruction Cycle" },
-              { chapter: 6, count: 2, name: "Antivirus & Protection" }
-            ]
-          }
-        ],
-        longQuestions: {
-          instruction: "Section C: Comprehensive Questions. Attempt any 3 out of 4. (8 Marks each = 24 Marks)",
-          totalOptions: 4,
-          required: 3,
-          marksEach: 8,
-          totalMarks: 24,
-          questions: [
-            { qNum: "Q3", chapter: 1, topic: "Components of Modern Computer System and Classification of Computers" },
-            { qNum: "Q4", chapter: 2, topic: "OSI Reference Model: Layers, Functions and Data Encapsulation" },
-            { qNum: "Q5", chapter: 3, topic: "Guided vs Unguided transmission media characteristics and comparison" },
-            { qNum: "Q6", chapter: 5, topic: "CPU Fetch-Decode-Execute cycle and Bus Interconnection system" }
-          ]
-        }
-      }
-    }
-  },
-
-  // =========================================================================
-  // 10TH CLASS (MATRIC PART-II)
+  // 10TH CLASS (MATRIC PART-II) - NEW SYLLABUS
   // =========================================================================
   "10th": {
-    "computer_science": {
-      subjectName: "Computer Science",
+    "physics": {
+      subjectName: "Physics",
       punjab: {
-        totalMarks: 50,
+        totalMarks: 60,
         timeAllowed: "2 Hours",
-        objectiveMarks: 10,
-        subjectiveMarks: 40,
-        passingMarks: 17,
-        description: "Official Punjab Board 10th Computer Science 2025-2026 Pairing Scheme. 10 MCQs, 24 Marks Short Questions (Attempt 12/18), 16 Marks Long Questions (Attempt 2/3).",
+        objectiveMarks: 12,
+        subjectiveMarks: 48,
+        description: "Official Punjab Board 10th Physics 2025-2026 Pairing Scheme. 12 MCQs, 30 Marks Short Questions (Attempt 15/24), 18 Marks Long Questions (Attempt 2/3 with a+b parts).",
         mcqs: {
-          total: 10,
+          total: 12,
           distribution: [
-            { chapter: 1, count: 2, name: "Introduction to Programming" },
-            { chapter: 2, count: 2, name: "User Interaction" },
-            { chapter: 3, count: 2, name: "Conditional Logic" },
-            { chapter: 4, count: 2, name: "Data Structures / Arrays" },
-            { chapter: 5, count: 2, name: "Functions" }
+            { chapter: 10, count: 1, name: "Unit 10: Simple Harmonic Motion and Waves" },
+            { chapter: 11, count: 1, name: "Unit 11: Sound" },
+            { chapter: 12, count: 2, name: "Unit 12: Geometrical Optics" },
+            { chapter: 13, count: 1, name: "Unit 13: Electrostatics" },
+            { chapter: 14, count: 2, name: "Unit 14: Current Electricity" },
+            { chapter: 15, count: 1, name: "Unit 15: Electromagnetism" },
+            { chapter: 16, count: 2, name: "Unit 16: Basic Electronics" },
+            { chapter: 17, count: 1, name: "Unit 17: Information & Communication Technology" },
+            { chapter: 18, count: 1, name: "Unit 18: Atomic and Nuclear Physics" }
           ]
         },
         shortQuestions: [
           {
             qNum: "Q2",
             title: "Question No. 2 (Short Questions)",
-            instruction: "Attempt any 4 questions out of 6. (Each carries 2 Marks = 8 Marks)",
-            totalOptions: 6,
-            required: 4,
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
             marksEach: 2,
-            totalMarks: 8,
+            totalMarks: 10,
             breakdown: [
-              { chapter: 1, count: 3, name: "Chapter 1: Programming Basics" },
-              { chapter: 2, count: 3, name: "Chapter 2: User Interaction" }
+              { chapter: 10, count: 3, name: "Unit 10: SHM & Waves" },
+              { chapter: 11, count: 2, name: "Unit 11: Sound" },
+              { chapter: 15, count: 3, name: "Unit 15: Electromagnetism" }
             ]
           },
           {
             qNum: "Q3",
             title: "Question No. 3 (Short Questions)",
-            instruction: "Attempt any 4 questions out of 6. (Each carries 2 Marks = 8 Marks)",
-            totalOptions: 6,
-            required: 4,
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
             marksEach: 2,
-            totalMarks: 8,
+            totalMarks: 10,
             breakdown: [
-              { chapter: 2, count: 2, name: "Chapter 2: Formatting & Escape sequences" },
-              { chapter: 3, count: 4, name: "Chapter 3: Conditional Logic" }
+              { chapter: 13, count: 3, name: "Unit 13: Electrostatics" },
+              { chapter: 14, count: 3, name: "Unit 14: Current Electricity" },
+              { chapter: 16, count: 2, name: "Unit 16: Basic Electronics" }
             ]
           },
           {
             qNum: "Q4",
             title: "Question No. 4 (Short Questions)",
-            instruction: "Attempt any 4 questions out of 6. (Each carries 2 Marks = 8 Marks)",
-            totalOptions: 6,
-            required: 4,
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
             marksEach: 2,
-            totalMarks: 8,
+            totalMarks: 10,
             breakdown: [
-              { chapter: 4, count: 3, name: "Chapter 4: Data Structures" },
-              { chapter: 5, count: 3, name: "Chapter 5: Functions" }
+              { chapter: 12, count: 3, name: "Unit 12: Geometrical Optics" },
+              { chapter: 17, count: 2, name: "Unit 17: ICT" },
+              { chapter: 18, count: 3, name: "Unit 18: Atomic & Nuclear Physics" }
             ]
           }
         ],
         longQuestions: {
-          instruction: "Attempt any 2 questions out of 3. (Each carries 8 Marks = 16 Marks)",
+          instruction: "Attempt any 2 questions out of 3. (Each carries 9 Marks = (a) 5 Marks Theory + (b) 4 Marks Numerical = 18 Marks)",
           totalOptions: 3,
           required: 2,
-          marksEach: 8,
-          totalMarks: 16,
+          marksEach: 9,
+          totalMarks: 18,
           questions: [
-            { qNum: "Q5", chapter: 1, topic: "Chapter 1: C Program structure, IDE, Linker & Compiler roles" },
-            { qNum: "Q6", chapter: 3, topic: "Chapter 3: Nested selection structures (nested if-else) with working code" },
-            { qNum: "Q7", chapter: 4, topic: "Chapter 4 or 5: Array initialization & traversal OR user-defined functions" }
+            { qNum: "Q5", chapter: 10, topic: "(a) Theory from Unit 10/11 (SHM/Sound) & (b) Numerical from Unit 10/12" },
+            { qNum: "Q6", chapter: 13, topic: "(a) Theory from Unit 13/14 (Electrostatics/Current) & (b) Numerical from Unit 13/14" },
+            { qNum: "Q7", chapter: 16, topic: "(a) Theory from Unit 16/18 (Electronics/Nuclear) & (b) Numerical from Unit 18" }
           ]
         }
       },
       federal: {
-        totalMarks: 50,
+        totalMarks: 60,
         timeAllowed: "2 Hours 15 Minutes",
-        objectiveMarks: 10,
-        subjectiveMarks: 40,
-        passingMarks: 17,
-        description: "Federal Board 10th Computer Science SLO Model. 10 MCQs, 24 Marks Section B, 16 Marks Section C.",
+        objectiveMarks: 12,
+        subjectiveMarks: 48,
+        description: "Federal Board (FBISE) 10th Physics SLO Model Paper Blueprint.",
+        mcqs: { total: 12, distribution: [{ chapter: 10, count: 1 }, { chapter: 11, count: 1 }, { chapter: 12, count: 2 }, { chapter: 13, count: 2 }, { chapter: 14, count: 2 }, { chapter: 15, count: 1 }, { chapter: 16, count: 1 }, { chapter: 17, count: 1 }, { chapter: 18, count: 1 }] },
+        shortQuestions: [{ qNum: "Section B", title: "Section B: Conceptual Short Questions", instruction: "Attempt any 10 questions out of 14. (3 Marks each = 30 Marks)", totalOptions: 14, required: 10, marksEach: 3, totalMarks: 30, breakdown: [{ chapter: 10, count: 2 }, { chapter: 11, count: 1 }, { chapter: 12, count: 2 }, { chapter: 13, count: 2 }, { chapter: 14, count: 2 }, { chapter: 15, count: 1 }, { chapter: 16, count: 1 }, { chapter: 17, count: 1 }, { chapter: 18, count: 2 }] }],
+        longQuestions: { instruction: "Section C: Comprehensive Questions. Attempt any 2 out of 3. (9 Marks each = 18 Marks)", totalOptions: 3, required: 2, marksEach: 9, totalMarks: 18, questions: [{ qNum: "Q3", chapter: 10, topic: "Wave motion derivation and numerical application" }, { qNum: "Q4", chapter: 13, topic: "Coulomb's Law, Electric Potential and Capacitance circuit analysis" }, { qNum: "Q5", chapter: 18, topic: "Radioactivity, Half-life decay and nuclear fission calculations" }] }
+      }
+    },
+    "chemistry": {
+      subjectName: "Chemistry",
+      punjab: {
+        totalMarks: 60,
+        timeAllowed: "2 Hours",
+        objectiveMarks: 12,
+        subjectiveMarks: 48,
+        description: "Official Punjab Board 10th Chemistry 2025-2026 Pairing Scheme. 12 MCQs, 30 Marks Shorts, 18 Marks Longs.",
         mcqs: {
-          total: 10,
+          total: 12,
           distribution: [
-            { chapter: 1, count: 2, name: "Problem Solving & IDEs" },
-            { chapter: 2, count: 2, name: "Data Types & Operators" },
-            { chapter: 3, count: 2, name: "Branching Logic" },
-            { chapter: 4, count: 2, name: "Loops and Arrays" },
-            { chapter: 5, count: 2, name: "Functions & Scope" }
+            { chapter: 9, count: 2, name: "Unit 9: Chemical Equilibrium" },
+            { chapter: 10, count: 2, name: "Unit 10: Acids, Bases and Salts" },
+            { chapter: 11, count: 1, name: "Unit 11: Organic Chemistry" },
+            { chapter: 12, count: 1, name: "Unit 12: Hydrocarbons" },
+            { chapter: 13, count: 2, name: "Unit 13: Biochemistry" },
+            { chapter: 14, count: 1, name: "Unit 14: Environmental Chemistry I (Atmosphere)" },
+            { chapter: 15, count: 2, name: "Unit 15: Environmental Chemistry II (Water)" },
+            { chapter: 16, count: 1, name: "Unit 16: Chemical Industries" }
           ]
         },
         shortQuestions: [
           {
-            qNum: "Section B",
-            title: "Section B: Conceptual Short Questions",
-            instruction: "Attempt any 8 questions out of 11. (Each carries 3 Marks = 24 Marks)",
-            totalOptions: 11,
-            required: 8,
-            marksEach: 3,
-            totalMarks: 24,
+            qNum: "Q2",
+            title: "Question No. 2 (Short Questions)",
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
+            marksEach: 2,
+            totalMarks: 10,
             breakdown: [
-              { chapter: 1, count: 2, name: "Ch 1 Concepts" },
-              { chapter: 2, count: 3, name: "Ch 2 Operators & Formats" },
-              { chapter: 3, count: 2, name: "Ch 3 Logic Trace" },
-              { chapter: 4, count: 2, name: "Ch 4 Array Indexing" },
-              { chapter: 5, count: 2, name: "Ch 5 Function Prototypes" }
+              { chapter: 9, count: 2, name: "Unit 9: Chemical Equilibrium" },
+              { chapter: 11, count: 4, name: "Unit 11: Organic Chemistry" },
+              { chapter: 12, count: 2, name: "Unit 12: Hydrocarbons" }
+            ]
+          },
+          {
+            qNum: "Q3",
+            title: "Question No. 3 (Short Questions)",
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
+            marksEach: 2,
+            totalMarks: 10,
+            breakdown: [
+              { chapter: 10, count: 3, name: "Unit 10: Acids, Bases and Salts" },
+              { chapter: 13, count: 2, name: "Unit 13: Biochemistry" },
+              { chapter: 15, count: 3, name: "Unit 15: Environmental Chemistry II (Water)" }
+            ]
+          },
+          {
+            qNum: "Q4",
+            title: "Question No. 4 (Short Questions)",
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
+            marksEach: 2,
+            totalMarks: 10,
+            breakdown: [
+              { chapter: 14, count: 4, name: "Unit 14: Atmosphere" },
+              { chapter: 16, count: 4, name: "Unit 16: Chemical Industries" }
             ]
           }
         ],
         longQuestions: {
-          instruction: "Section C: Analytical Questions. Attempt any 2 out of 3. (8 Marks each = 16 Marks)",
+          instruction: "Attempt any 2 questions out of 3. (Each carries 9 Marks = (a) 5 Marks + (b) 4 Marks = 18 Marks)",
           totalOptions: 3,
           required: 2,
-          marksEach: 8,
-          totalMarks: 16,
+          marksEach: 9,
+          totalMarks: 18,
           questions: [
-            { qNum: "Q3", chapter: 2, topic: "Input/Output statements (scanf, printf) and format specifiers with program" },
-            { qNum: "Q4", chapter: 3, topic: "If-else if ladder vs Switch statement with flowcharts and comparative code" },
-            { qNum: "Q5", chapter: 4, topic: "1D Array operations: searching an element and calculating average/sum" }
+            { qNum: "Q5", chapter: 9, topic: "(a) Unit 9: Law of Mass Action / Kc & (b) Unit 10: Lewis Acid-Base theory / pH" },
+            { qNum: "Q6", chapter: 11, topic: "(a) Unit 11: Functional Groups / Homologous series & (b) Unit 12: Alkanes/Alkenes preparation & reactions" },
+            { qNum: "Q7", chapter: 15, topic: "(a) Unit 15: Water hardness removal & (b) Unit 16: Solvay's process / Fractional distillation of petroleum" }
           ]
         }
-      },
-      sindh: {
-        totalMarks: 50,
+      }
+    },
+    "biology": {
+      subjectName: "Biology",
+      punjab: {
+        totalMarks: 60,
         timeAllowed: "2 Hours",
-        objectiveMarks: 10,
-        subjectiveMarks: 40,
-        passingMarks: 17,
-        description: "Sindh Board (BSEK Karachi) 10th Computer Science Pattern.",
+        objectiveMarks: 12,
+        subjectiveMarks: 48,
+        description: "Official Punjab Board 10th Biology 2025-2026 Pairing Scheme.",
         mcqs: {
-          total: 10,
+          total: 12,
           distribution: [
-            { chapter: 1, count: 2, name: "Programming in C" },
-            { chapter: 2, count: 2, name: "Input & Output" },
-            { chapter: 3, count: 2, name: "Decision Making" },
-            { chapter: 4, count: 2, name: "Looping Structures" },
-            { chapter: 5, count: 2, name: "Sub-programs" }
+            { chapter: 10, count: 1, name: "Unit 10: Gaseous Exchange" },
+            { chapter: 11, count: 1, name: "Unit 11: Homeostasis" },
+            { chapter: 12, count: 2, name: "Unit 12: Coordination and Control" },
+            { chapter: 13, count: 1, name: "Unit 13: Support and Movement" },
+            { chapter: 14, count: 2, name: "Unit 14: Reproduction" },
+            { chapter: 15, count: 2, name: "Unit 15: Inheritance" },
+            { chapter: 16, count: 2, name: "Unit 16: Man and His Environment" },
+            { chapter: 17, count: 1, name: "Unit 17: Biotechnology" }
           ]
         },
         shortQuestions: [
           {
-            qNum: "Section B",
-            title: "Section B: Short Questions (CRQs)",
-            instruction: "Attempt any 6 questions out of 9. (Each carries 4 Marks = 24 Marks)",
+            qNum: "Q2",
+            title: "Question No. 2 (Short Questions)",
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
+            marksEach: 2,
+            totalMarks: 10,
+            breakdown: [
+              { chapter: 10, count: 3, name: "Unit 10: Gaseous Exchange" },
+              { chapter: 11, count: 2, name: "Unit 11: Homeostasis" },
+              { chapter: 12, count: 3, name: "Unit 12: Coordination & Control" }
+            ]
+          },
+          {
+            qNum: "Q3",
+            title: "Question No. 3 (Short Questions)",
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
+            marksEach: 2,
+            totalMarks: 10,
+            breakdown: [
+              { chapter: 13, count: 2, name: "Unit 13: Support & Movement" },
+              { chapter: 14, count: 4, name: "Unit 14: Reproduction" },
+              { chapter: 15, count: 2, name: "Unit 15: Inheritance" }
+            ]
+          },
+          {
+            qNum: "Q4",
+            title: "Question No. 4 (Short Questions)",
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
+            marksEach: 2,
+            totalMarks: 10,
+            breakdown: [
+              { chapter: 16, count: 4, name: "Unit 16: Man & Environment" },
+              { chapter: 17, count: 2, name: "Unit 17: Biotechnology" },
+              { chapter: 18, count: 2, name: "Unit 18: Pharmacology" }
+            ]
+          }
+        ],
+        longQuestions: {
+          instruction: "Attempt any 2 questions out of 3. (Each carries 9 Marks = (a) 5 Marks + (b) 4 Marks = 18 Marks)",
+          totalOptions: 3,
+          required: 2,
+          marksEach: 9,
+          totalMarks: 18,
+          questions: [
+            { qNum: "Q5", chapter: 11, topic: "(a) Unit 11: Nephron structure & functioning & (b) Unit 13: Joint types and human skeleton" },
+            { qNum: "Q6", chapter: 12, topic: "(a) Unit 12: Endocrine glands / Neuron reflex arc & (b) Unit 14: Spermatogenesis / Asexual reproduction in plants" },
+            { qNum: "Q7", chapter: 16, topic: "(a) Unit 16: Nitrogen Cycle / Acid rain impacts & (b) Unit 17: Fermentation and Genetic Engineering applications" }
+          ]
+        }
+      }
+    },
+    "mathematics": {
+      subjectName: "Mathematics (Science Group)",
+      punjab: {
+        totalMarks: 75,
+        timeAllowed: "2 Hours 30 Minutes",
+        objectiveMarks: 15,
+        subjectiveMarks: 60,
+        description: "Official Punjab Board 10th Math (Science Group) 2025-2026 Pairing Scheme. Question 9 (Theorems) is Compulsory!",
+        mcqs: {
+          total: 15,
+          distribution: [
+            { chapter: 1, count: 1, name: "Quadratic Equations" },
+            { chapter: 2, count: 2, name: "Theory of Quadratic Equations" },
+            { chapter: 3, count: 2, name: "Variations" },
+            { chapter: 4, count: 1, name: "Partial Fractions" },
+            { chapter: 5, count: 2, name: "Sets and Functions" },
+            { chapter: 6, count: 1, name: "Basic Statistics" },
+            { chapter: 7, count: 2, name: "Introduction to Trigonometry" },
+            { chapter: 8, count: 1, name: "Projection of a Side of Triangle" },
+            { chapter: 9, count: 1, name: "Chords of a Circle" },
+            { chapter: 10, count: 1, name: "Tangent to a Circle" },
+            { chapter: 13, count: 1, name: "Practical Geometry (Circles)" }
+          ]
+        },
+        shortQuestions: [
+          {
+            qNum: "Q2",
+            title: "Question No. 2 (Short Questions)",
+            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
             totalOptions: 9,
             required: 6,
-            marksEach: 4,
-            totalMarks: 24,
+            marksEach: 2,
+            totalMarks: 12,
             breakdown: [
-              { chapter: 1, count: 2, name: "Syntax & Keywords" },
-              { chapter: 2, count: 2, name: "I/O Functions" },
-              { chapter: 3, count: 2, name: "Conditions" },
-              { chapter: 4, count: 2, name: "Loop Types" },
-              { chapter: 5, count: 1, name: "Functions" }
+              { chapter: 1, count: 3, name: "Unit 1: Quadratic Equations" },
+              { chapter: 2, count: 3, name: "Unit 2: Theory of Quadratic Equations" },
+              { chapter: 3, count: 3, name: "Unit 3: Variations" }
+            ]
+          },
+          {
+            qNum: "Q3",
+            title: "Question No. 3 (Short Questions)",
+            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
+            totalOptions: 9,
+            required: 6,
+            marksEach: 2,
+            totalMarks: 12,
+            breakdown: [
+              { chapter: 4, count: 2, name: "Unit 4: Partial Fractions" },
+              { chapter: 5, count: 4, name: "Unit 5: Sets and Functions" },
+              { chapter: 6, count: 3, name: "Unit 6: Basic Statistics" }
+            ]
+          },
+          {
+            qNum: "Q4",
+            title: "Question No. 4 (Short Questions)",
+            instruction: "Attempt any 6 questions out of 9. (Each carries 2 Marks = 12 Marks)",
+            totalOptions: 9,
+            required: 6,
+            marksEach: 2,
+            totalMarks: 12,
+            breakdown: [
+              { chapter: 7, count: 4, name: "Unit 7: Introduction to Trigonometry" },
+              { chapter: 8, count: 1, name: "Unit 8: Geometry Projections" },
+              { chapter: 9, count: 1, name: "Unit 9: Circle Chords" },
+              { chapter: 10, count: 1, name: "Unit 10: Circle Tangents" },
+              { chapter: 13, count: 2, name: "Unit 13: Practical Geometry" }
             ]
           }
         ],
         longQuestions: {
-          instruction: "Section C: Descriptive Questions (ERQs). Attempt any 2 out of 3. (8 Marks each = 16 Marks)",
-          totalOptions: 3,
-          required: 2,
+          instruction: "Attempt any 3 questions out of 5. Question 9 (Theorems) is COMPULSORY! (8 Marks each = 24 Marks)",
+          totalOptions: 5,
+          required: 3,
           marksEach: 8,
-          totalMarks: 16,
+          totalMarks: 24,
           questions: [
-            { qNum: "Q1", chapter: 3, topic: "Control statements in C: if, if-else, switch with clear syntax and examples" },
-            { qNum: "Q2", chapter: 4, topic: "For loop, while loop, and do-while loop comparison with complete program" },
-            { qNum: "Q3", chapter: 5, topic: "User-defined functions, return types, and arguments passing" }
+            { qNum: "Q5", chapter: 1, topic: "(a) Unit 1 (Ex 1.1 - 1.4) & (b) Unit 2 (Ex 2.1 - 2.8)" },
+            { qNum: "Q6", chapter: 3, topic: "(a) Unit 3 (Ex 3.4 / 3.6 theorem on proportions) & (b) Unit 4 (Partial fractions)" },
+            { qNum: "Q7", chapter: 5, topic: "(a) Unit 5 (De Morgan's Laws / Cartesian Product) & (b) Unit 6 (Standard Deviation / Mean)" },
+            { qNum: "Q8", chapter: 7, topic: "(a) Unit 7 (Ex 7.4 Trigonometric Identities) & (b) Unit 13 (Inscribed / Circumscribed Circle)" },
+            { qNum: "Q9 (COMPULSORY THEOREM)", chapter: 9, topic: "Prove Theorem from Chapter 9 OR Chapter 12 (8 Marks Compulsory)" }
           ]
         }
-      },
-      kpk: {
+      }
+    },
+    "tarjuma_tul_quran": {
+      subjectName: "Tarjuma-tul-Quran-ul-Majeed",
+      punjab: {
         totalMarks: 50,
         timeAllowed: "2 Hours",
         objectiveMarks: 10,
         subjectiveMarks: 40,
-        passingMarks: 17,
-        description: "KPK Board 10th Computer Science Blueprint.",
+        description: "Official Punjab Board 10th Tarjuma-tul-Quran (New Compulsory Subject 2025-2026). Surah Maryam, Surah Taha, Surah Anbiya, Surah Hajj, Surah Furqan, Surah Shu'ara, Surah Naml, Surah Qasas, Surah Ankabut.",
         mcqs: {
           total: 10,
           distribution: [
-            { chapter: 1, count: 2, name: "Programming Techniques" },
-            { chapter: 2, count: 2, name: "Programming in C" },
-            { chapter: 3, count: 2, name: "Input/Output in C" },
-            { chapter: 4, count: 2, name: "Control Structures" },
-            { chapter: 5, count: 2, name: "Functions in C" }
+            { chapter: 1, count: 2, name: "سورۃ مریم اور سورۃ طہٰ" },
+            { chapter: 2, count: 2, name: "سورۃ الانبیاء اور سورۃ الحج" },
+            { chapter: 3, count: 2, name: "سورۃ الفرقان اور سورۃ الشعراء" },
+            { chapter: 4, count: 2, name: "سورۃ النمل اور سورۃ القصص" },
+            { chapter: 5, count: 2, name: "سورۃ العنکبوت اور دیگر مقررہ سورتیں" }
           ]
         },
         shortQuestions: [
           {
-            qNum: "Section B",
-            title: "Section B: Short Questions",
-            instruction: "Attempt any 8 questions out of 11. (Each carries 3 Marks = 24 Marks)",
-            totalOptions: 11,
-            required: 8,
-            marksEach: 3,
-            totalMarks: 24,
-            breakdown: [
-              { chapter: 1, count: 2, name: "Algorithm & Flowcharts" },
-              { chapter: 2, count: 3, name: "Data Types & Constants" },
-              { chapter: 3, count: 2, name: "Scanf & Printf" },
-              { chapter: 4, count: 2, name: "Conditionals" },
-              { chapter: 5, count: 2, name: "Functions" }
-            ]
+            qNum: "Q2",
+            title: "سوال نمبر 2: قرآنی الفاظ و کلمات کے معانی",
+            instruction: "کوئی سے 5 قرآنی الفاظ کے معانی تحریر کریں۔ (کل 8 الفاظ = 5 نمبر)",
+            totalOptions: 8,
+            required: 5,
+            marksEach: 1,
+            totalMarks: 5,
+            breakdown: [{ chapter: 1, count: 8, name: "مقررہ سورتوں کے اہم قرآنی کلمات" }]
+          },
+          {
+            qNum: "Q3",
+            title: "سوال نمبر 3: سورتوں کے تعارف و مضامین پر مختصر سوالات",
+            instruction: "کوئی سے 5 سوالات کے مختصر جوابات لکھیں۔ (8 میں سے 5 سوالات = 10 نمبر)",
+            totalOptions: 8,
+            required: 5,
+            marksEach: 2,
+            totalMarks: 10,
+            breakdown: [{ chapter: 1, count: 8, name: "سورتوں کا پس منظر، مرکزی خیال، اور اہم احکامات" }]
+          },
+          {
+            qNum: "Q4",
+            title: "سوال نمبر 4: قرآنی آیات کا با محاورہ سلیس اردو ترجمہ",
+            instruction: "دی گئی 5 قرآنی آیات میں سے کوئی سی 3 آیات کا ترجمہ کریں۔ (5 x 3 = 15 نمبر)",
+            totalOptions: 5,
+            required: 3,
+            marksEach: 5,
+            totalMarks: 15,
+            breakdown: [{ chapter: 1, count: 5, name: "منتخب قرآنی آیات کا ترجمہ" }]
           }
         ],
         longQuestions: {
-          instruction: "Section C: Long Questions. Attempt any 2 out of 3. (8 Marks each = 16 Marks)",
+          instruction: "کسی ایک سورت کے تعارف، مرکزی مضمون اور اہم علمی و عملی نکات پر جامع نوٹ لکھیں۔ (10 نمبر)",
+          totalOptions: 2,
+          required: 1,
+          marksEach: 10,
+          totalMarks: 10,
+          questions: [
+            { qNum: "Q5", chapter: 1, topic: "الف) سورۃ الانبیاء یا سورۃ مریم کا تعارف، مرکزی مضمون اور سبق آموز نکات" },
+            { qNum: "Q5 متبادل", chapter: 2, topic: "ب) سورۃ الفرقان یا سورۃ الحج کا جامع تعارف اور تفصیلی اہم نکات" }
+          ]
+        }
+      }
+    },
+    "islamiat": {
+      subjectName: "Islamiat Compulsory (50 Marks)",
+      punjab: {
+        totalMarks: 50,
+        timeAllowed: "2 Hours",
+        objectiveMarks: 10,
+        subjectiveMarks: 40,
+        description: "Official Punjab Board 10th Islamiat Compulsory 2025-2026 (50 Marks Revised Pattern).",
+        mcqs: { total: 10, distribution: [{ chapter: 1, count: 3, name: "قرآن و حدیث" }, { chapter: 2, count: 3, name: "ایمانیات و عبادات" }, { chapter: 3, count: 2, name: "سیرت النبی ﷺ" }, { chapter: 4, count: 2, name: "اخلاق و آداب اور حسن معاملات" }] },
+        shortQuestions: [
+          { qNum: "Q2", title: "سوال نمبر 2 (مختصر سوالات)", instruction: "کوئی سے 6 سوالات کے جوابات دیں۔ (9 میں سے 6 = 12 نمبر)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 1, count: 5, name: "باب اول و دوم" }, { chapter: 2, count: 4, name: "باب سوم" }] },
+          { qNum: "Q3", title: "سوال نمبر 3 (مختصر سوالات)", instruction: "کوئی سے 6 سوالات کے جوابات دیں۔ (9 میں سے 6 = 12 نمبر)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 3, count: 5, name: "باب چہارم (سیرت طیبہ)" }, { chapter: 4, count: 4, name: "باب پنجم (اخلاق و آداب)" }] }
+        ],
+        longQuestions: {
+          instruction: "آیات کا ترجمہ، حدیث کا ترجمہ و تشریح، اور سیرت النبی ﷺ پر تفصیلی سوال۔",
+          totalOptions: 3,
+          required: 3,
+          marksEach: 8,
+          totalMarks: 16,
+          questions: [
+            { qNum: "Q4", chapter: 1, topic: "قرآنی آیات کا ترجمہ (3 میں سے 2 آیات = 8 نمبر)" },
+            { qNum: "Q5", chapter: 2, topic: "حدیث مبارکہ کا ترجمہ و تشریح (3 نمبر)" },
+            { qNum: "Q6", chapter: 3, topic: "سیرت النبی ﷺ یا اخلاقی موضوع پر جامع تفصیلی نوٹ (5 نمبر)" }
+          ]
+        }
+      }
+    },
+    "pak_studies": {
+      subjectName: "Pakistan Studies",
+      punjab: {
+        totalMarks: 50,
+        timeAllowed: "2 Hours",
+        objectiveMarks: 10,
+        subjectiveMarks: 40,
+        description: "Official Punjab Board 10th Pak Studies (مطالعہ پاکستان) 2025-2026 Pairing Scheme.",
+        mcqs: { total: 10, distribution: [{ chapter: 5, count: 2, name: "باب 5: تاریخِ پاکستان حصہ دوم" }, { chapter: 6, count: 3, name: "باب 6: پاکستان اور بین الاقوامی امور" }, { chapter: 7, count: 3, name: "باب 7: پاکستان کی معاشی ترقی" }, { chapter: 8, count: 2, name: "باب 8: آبادی، معاشرہ اور ثقافت" }] },
+        shortQuestions: [
+          { qNum: "Q2", title: "سوال نمبر 2 (مختصر سوالات)", instruction: "کوئی سے 6 سوالات کے جوابات دیں۔ (9 میں سے 6 = 12 نمبر)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 5, count: 4, name: "باب 5: تاریخِ پاکستان" }, { chapter: 6, count: 5, name: "باب 6: پاکستان کے خارجہ تعلقات" }] },
+          { qNum: "Q3", title: "سوال نمبر 3 (مختصر سوالات)", instruction: "کوئی سے 6 سوالات کے جوابات دیں۔ (9 میں سے 6 = 12 نمبر)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 7, count: 5, name: "باب 7: معاشی ترقی" }, { chapter: 8, count: 4, name: "باب 8: آبادی و ثقافت" }] }
+        ],
+        longQuestions: {
+          instruction: "کوئی سے 2 تفصیلی سوالات کے جوابات تحریر کریں۔ (3 میں سے 2 = 16 نمبر)",
           totalOptions: 3,
           required: 2,
           marksEach: 8,
           totalMarks: 16,
           questions: [
-            { qNum: "Q3", chapter: 1, topic: "Problem Solving steps: Analysis, Algorithm design and Flowchart symbols" },
-            { qNum: "Q4", chapter: 4, topic: "Conditional statements: if-else statement vs switch statement with programs" },
-            { qNum: "Q5", chapter: 5, topic: "Function definition, function call, and types of functions with program" }
+            { qNum: "Q4", chapter: 5, topic: "باب 5: ذوالفقار علی بھٹو / نواز شریف / جنرل ضیاء الحق دور کے اصلاحات پر تفصیلی نوٹ" },
+            { qNum: "Q5", chapter: 6, topic: "باب 6: مسئلہ کشمیر اور پاک چین تعلقات / پاکستان کے ہمسایہ ممالک سے تعلقات" },
+            { qNum: "Q6", chapter: 7, topic: "باب 7 یا 8: پاکستان کی زراعت کے اہم مسائل و حل یا پاکستان کی اہم صنعتیں / سیاحت" }
           ]
         }
       }
@@ -773,223 +525,341 @@ export const PAIRING_SCHEMES_DATA = {
   },
 
   // =========================================================================
-  // 9TH CLASS (MATRIC PART-I)
+  // 9TH CLASS (MATRIC PART-I) - NEW SYLLABUS
   // =========================================================================
   "9th": {
-    "computer_science": {
-      subjectName: "Computer Science",
+    "physics": {
+      subjectName: "Physics",
       punjab: {
-        totalMarks: 50,
+        totalMarks: 60,
         timeAllowed: "2 Hours",
-        objectiveMarks: 10,
-        subjectiveMarks: 40,
-        passingMarks: 17,
-        description: "Official Punjab Board 9th Computer Science 2025-2026 Pairing Scheme. 10 MCQs, 24 Marks Short Questions (Attempt 12/18), 16 Marks Long Questions (Attempt 2/3).",
+        objectiveMarks: 12,
+        subjectiveMarks: 48,
+        description: "Official Punjab Board 9th Physics 2025-2026 Pairing Scheme (New Book Pattern).",
         mcqs: {
-          total: 10,
+          total: 12,
           distribution: [
-            { chapter: 1, count: 2, name: "Problem Solving" },
-            { chapter: 2, count: 2, name: "Binary System / Number System" },
-            { chapter: 3, count: 2, name: "Networks" },
-            { chapter: 4, count: 2, name: "Data and Privacy" },
-            { chapter: 5, count: 2, name: "Designing Website (HTML)" }
+            { chapter: 1, count: 2, name: "Unit 1: Physical Quantities and Measurement" },
+            { chapter: 2, count: 1, name: "Unit 2: Kinematics" },
+            { chapter: 3, count: 2, name: "Unit 3: Dynamics" },
+            { chapter: 4, count: 1, name: "Unit 4: Turning Effect of Forces" },
+            { chapter: 5, count: 1, name: "Unit 5: Gravitation" },
+            { chapter: 6, count: 1, name: "Unit 6: Work and Energy" },
+            { chapter: 7, count: 1, name: "Unit 7: Properties of Matter" },
+            { chapter: 8, count: 2, name: "Unit 8: Thermal Properties of Matter" },
+            { chapter: 9, count: 1, name: "Unit 9: Transfer of Heat" }
           ]
         },
         shortQuestions: [
           {
             qNum: "Q2",
             title: "Question No. 2 (Short Questions)",
-            instruction: "Attempt any 4 questions out of 6. (Each carries 2 Marks = 8 Marks)",
-            totalOptions: 6,
-            required: 4,
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
             marksEach: 2,
-            totalMarks: 8,
+            totalMarks: 10,
             breakdown: [
-              { chapter: 1, count: 4, name: "Chapter 1: Problem Solving" },
-              { chapter: 2, count: 2, name: "Chapter 2: Binary Systems" }
+              { chapter: 1, count: 3, name: "Unit 1: Physical Quantities" },
+              { chapter: 2, count: 3, name: "Unit 2: Kinematics" },
+              { chapter: 4, count: 2, name: "Unit 4: Turning Effect of Forces" }
             ]
           },
           {
             qNum: "Q3",
             title: "Question No. 3 (Short Questions)",
-            instruction: "Attempt any 4 questions out of 6. (Each carries 2 Marks = 8 Marks)",
-            totalOptions: 6,
-            required: 4,
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
             marksEach: 2,
-            totalMarks: 8,
+            totalMarks: 10,
             breakdown: [
-              { chapter: 2, count: 2, name: "Chapter 2: Conversions & Memory" },
-              { chapter: 3, count: 4, name: "Chapter 3: Networks" }
+              { chapter: 3, count: 3, name: "Unit 3: Dynamics" },
+              { chapter: 5, count: 2, name: "Unit 5: Gravitation" },
+              { chapter: 6, count: 3, name: "Unit 6: Work and Energy" }
             ]
           },
           {
             qNum: "Q4",
             title: "Question No. 4 (Short Questions)",
-            instruction: "Attempt any 4 questions out of 6. (Each carries 2 Marks = 8 Marks)",
-            totalOptions: 6,
-            required: 4,
+            instruction: "Attempt any 5 questions out of 8. (Each carries 2 Marks = 10 Marks)",
+            totalOptions: 8,
+            required: 5,
             marksEach: 2,
-            totalMarks: 8,
+            totalMarks: 10,
             breakdown: [
-              { chapter: 4, count: 3, name: "Chapter 4: Data and Privacy" },
-              { chapter: 5, count: 3, name: "Chapter 5: Designing Website" }
+              { chapter: 7, count: 3, name: "Unit 7: Properties of Matter" },
+              { chapter: 8, count: 3, name: "Unit 8: Thermal Properties" },
+              { chapter: 9, count: 2, name: "Unit 9: Transfer of Heat" }
             ]
           }
         ],
         longQuestions: {
-          instruction: "Attempt any 2 questions out of 3. (Each carries 8 Marks = 16 Marks)",
+          instruction: "Attempt any 2 questions out of 3. (Each carries 9 Marks = Theory (a) 5M + Numerical (b) 4M = 18 Marks)",
           totalOptions: 3,
           required: 2,
-          marksEach: 8,
-          totalMarks: 16,
+          marksEach: 9,
+          totalMarks: 18,
           questions: [
-            { qNum: "Q5", chapter: 1, topic: "Chapter 1: Problem Solving steps OR Flowchart construction with symbols" },
-            { qNum: "Q6", chapter: 3, topic: "Chapter 3: Computer Network topologies (Star, Ring, Bus) OR TCP/IP Model layers" },
-            { qNum: "Q7", chapter: 4, topic: "Chapter 4 or 5: Security threats (Phishing, Patents, Cryptography) OR HTML web elements" }
+            { qNum: "Q5", chapter: 2, topic: "(a) Theory from Unit 2/3 (Equations of motion / Newton's 2nd Law) & (b) Numerical from Unit 2/3" },
+            { qNum: "Q6", chapter: 4, topic: "(a) Theory from Unit 4/6 (Torque / Kinetic & Potential Energy) & (b) Numerical from Unit 4/6" },
+            { qNum: "Q7", chapter: 7, topic: "(a) Theory from Unit 7/8 (Archimedes principle / Specific heat capacity) & (b) Numerical from Unit 7/8" }
           ]
         }
-      },
-      federal: {
-        totalMarks: 50,
-        timeAllowed: "2 Hours 15 Minutes",
-        objectiveMarks: 10,
-        subjectiveMarks: 40,
-        passingMarks: 17,
-        description: "Federal Board 9th Computer Science SLO Pattern. High conceptual depth on algorithms, binary math, networking, and security.",
+      }
+    },
+    "chemistry": {
+      subjectName: "Chemistry",
+      punjab: {
+        totalMarks: 60,
+        timeAllowed: "2 Hours",
+        objectiveMarks: 12,
+        subjectiveMarks: 48,
+        description: "Official Punjab Board 9th Chemistry 2025-2026 Pairing Scheme.",
         mcqs: {
-          total: 10,
+          total: 12,
           distribution: [
-            { chapter: 1, count: 2, name: "Problem Analysis & Algorithms" },
-            { chapter: 2, count: 2, name: "Number Systems & ASCII/Unicode" },
-            { chapter: 3, count: 2, name: "Protocols & Addressing (IP/MAC)" },
-            { chapter: 4, count: 2, name: "Cyber Threats & Privacy Laws" },
-            { chapter: 5, count: 2, name: "HTML Tags, Links & Tables" }
+            { chapter: 1, count: 2, name: "Unit 1: Fundamentals of Chemistry" },
+            { chapter: 2, count: 1, name: "Unit 2: Structure of Atoms" },
+            { chapter: 3, count: 2, name: "Unit 3: Periodic Table & Periodicity" },
+            { chapter: 4, count: 2, name: "Unit 4: Structure of Molecules" },
+            { chapter: 5, count: 1, name: "Unit 5: Physical States of Matter" },
+            { chapter: 6, count: 2, name: "Unit 6: Solutions" },
+            { chapter: 7, count: 1, name: "Unit 7: Electrochemistry" },
+            { chapter: 8, count: 1, name: "Unit 8: Chemical Reactivity" }
           ]
         },
         shortQuestions: [
-          {
-            qNum: "Section B",
-            title: "Section B: Conceptual Short Questions",
-            instruction: "Attempt any 8 questions out of 11. (Each carries 3 Marks = 24 Marks)",
-            totalOptions: 11,
-            required: 8,
-            marksEach: 3,
-            totalMarks: 24,
-            breakdown: [
-              { chapter: 1, count: 3, name: "Ch 1 Flowchart trace & algorithms" },
-              { chapter: 2, count: 2, name: "Ch 2 Binary arithmetic & conversions" },
-              { chapter: 3, count: 2, name: "Ch 3 Router/Switch roles & routing" },
-              { chapter: 4, count: 2, name: "Ch 4 Encryption & confidentiality" },
-              { chapter: 5, count: 2, name: "Ch 5 HTML structure & tags" }
-            ]
-          }
+          { qNum: "Q2", title: "Question No. 2", instruction: "Attempt any 5/8 (10 Marks)", totalOptions: 8, required: 5, marksEach: 2, totalMarks: 10, breakdown: [{ chapter: 1, count: 3 }, { chapter: 2, count: 2 }, { chapter: 3, count: 3 }] },
+          { qNum: "Q3", title: "Question No. 3", instruction: "Attempt any 5/8 (10 Marks)", totalOptions: 8, required: 5, marksEach: 2, totalMarks: 10, breakdown: [{ chapter: 4, count: 3 }, { chapter: 5, count: 2 }, { chapter: 8, count: 3 }] },
+          { qNum: "Q4", title: "Question No. 4", instruction: "Attempt any 5/8 (10 Marks)", totalOptions: 8, required: 5, marksEach: 2, totalMarks: 10, breakdown: [{ chapter: 6, count: 4 }, { chapter: 7, count: 4 }] }
         ],
         longQuestions: {
-          instruction: "Section C: Analytical Questions. Attempt any 2 out of 3. (8 Marks each = 16 Marks)",
+          instruction: "Attempt any 2 out of 3. (9 Marks each = 18 Marks)",
           totalOptions: 3,
           required: 2,
-          marksEach: 8,
-          totalMarks: 16,
+          marksEach: 9,
+          totalMarks: 18,
           questions: [
-            { qNum: "Q3", chapter: 1, topic: "Draw complete Flowchart and write step-by-step Algorithm for a given problem" },
-            { qNum: "Q4", chapter: 3, topic: "TCP/IP Five-Layer Model: Detailed role of each layer and packet movement" },
-            { qNum: "Q5", chapter: 4, topic: "Caesar Cipher vs Vigenere Cipher encryption and intellectual property protection" }
+            { qNum: "Q5", chapter: 1, topic: "(a) Unit 1: Empirical & Molecular formula / Mole & (b) Unit 2: Rutherford vs Bohr atomic model / isotopes" },
+            { qNum: "Q6", chapter: 4, topic: "(a) Unit 4: Ionic & Covalent bond / Hydrogen bonding & (b) Unit 5: Boyle's Law / Charles's Law / Evaporation" },
+            { qNum: "Q7", chapter: 6, topic: "(a) Unit 6: Molarity / Saturated vs Unsaturated solutions & (b) Unit 7: Rusting of Iron / Electrolytic cell" }
           ]
         }
-      },
-      sindh: {
+      }
+    },
+    "mathematics": {
+      subjectName: "Mathematics",
+      punjab: {
+        totalMarks: 75,
+        timeAllowed: "2 Hours 30 Minutes",
+        objectiveMarks: 15,
+        subjectiveMarks: 60,
+        description: "Official Punjab Board 9th Math (Science Group) 2025-2026 Pairing Scheme. Q9 Theorem Compulsory.",
+        mcqs: { total: 15, distribution: [{ chapter: 1, count: 1 }, { chapter: 2, count: 1 }, { chapter: 3, count: 1 }, { chapter: 4, count: 1 }, { chapter: 5, count: 1 }, { chapter: 6, count: 1 }, { chapter: 7, count: 1 }, { chapter: 8, count: 1 }, { chapter: 9, count: 1 }, { chapter: 10, count: 1 }, { chapter: 11, count: 1 }, { chapter: 12, count: 1 }, { chapter: 13, count: 1 }, { chapter: 14, count: 1 }, { chapter: 17, count: 1 }] },
+        shortQuestions: [
+          { qNum: "Q2", title: "Question No. 2", instruction: "Attempt any 6/9 (12 Marks)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 1, count: 2 }, { chapter: 2, count: 2 }, { chapter: 3, count: 2 }, { chapter: 4, count: 2 }, { chapter: 5, count: 1 }] },
+          { qNum: "Q3", title: "Question No. 3", instruction: "Attempt any 6/9 (12 Marks)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 6, count: 1 }, { chapter: 7, count: 2 }, { chapter: 8, count: 2 }, { chapter: 9, count: 2 }, { chapter: 10, count: 2 }] },
+          { qNum: "Q4", title: "Question No. 4", instruction: "Attempt any 6/9 (12 Marks)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 11, count: 1 }, { chapter: 12, count: 1 }, { chapter: 13, count: 1 }, { chapter: 14, count: 1 }, { chapter: 15, count: 1 }, { chapter: 16, count: 1 }, { chapter: 17, count: 3 }] }
+        ],
+        longQuestions: {
+          instruction: "Attempt any 3 questions. Question 9 (Theorems) is COMPULSORY! (24 Marks)",
+          totalOptions: 5,
+          required: 3,
+          marksEach: 8,
+          totalMarks: 24,
+          questions: [
+            { qNum: "Q5", chapter: 1, topic: "(a) Unit 1 (Ex 1.6 Cramer's rule / Matrix inversion) & (b) Unit 2 (Ex 2.4 Laws of Exponents / Ex 2.6)" },
+            { qNum: "Q6", chapter: 3, topic: "(a) Unit 3 (Ex 3.4 Logarithm calculations) & (b) Unit 4 (Ex 4.2 / 4.4 Algebraic formulas)" },
+            { qNum: "Q7", chapter: 5, topic: "(a) Unit 5 (Ex 5.2 Factorization) & (b) Unit 6 (Ex 6.1 / 6.2 HCF and LCM)" },
+            { qNum: "Q8", chapter: 7, topic: "(a) Unit 7 (Ex 7.1 Linear Equations) & (b) Unit 17 (Practical Geometry - Triangles)" },
+            { qNum: "Q9 (COMPULSORY THEOREM)", chapter: 12, topic: "Prove Theorem from Chapter 12 OR Chapter 16 (8 Marks Compulsory)" }
+          ]
+        }
+      }
+    },
+    "tarjuma_tul_quran": {
+      subjectName: "Tarjuma-tul-Quran-ul-Majeed",
+      punjab: {
         totalMarks: 50,
         timeAllowed: "2 Hours",
         objectiveMarks: 10,
         subjectiveMarks: 40,
-        passingMarks: 17,
-        description: "Sindh Board (BSEK Karachi) 9th Computer Science Pattern.",
-        mcqs: {
-          total: 10,
-          distribution: [
-            { chapter: 1, count: 2, name: "Fundamentals of Computer" },
-            { chapter: 2, count: 2, name: "Fundamentals of Operating System" },
-            { chapter: 3, count: 2, name: "Office Automation" },
-            { chapter: 4, count: 2, name: "Data Communication" },
-            { chapter: 5, count: 2, name: "Computer Security & Ethics" }
-          ]
-        },
+        description: "Official Punjab Board 9th Tarjuma-tul-Quran 2025-2026 (Surah Anfal, Yunus, Hud, Yusuf, Ra'd, Ibrahim, Hijr, Nahl).",
+        mcqs: { total: 10, distribution: [{ chapter: 1, count: 3, name: "سورۃ الانفال اور سورۃ یونس" }, { chapter: 2, count: 3, name: "سورۃ ہود اور سورۃ یوسف" }, { chapter: 3, count: 2, name: "سورۃ الرعد اور سورۃ ابراہیم" }, { chapter: 4, count: 2, name: "سورۃ الحجر اور سورۃ النحل" }] },
         shortQuestions: [
-          {
-            qNum: "Section B",
-            title: "Section B: Short Questions (CRQs)",
-            instruction: "Attempt any 6 questions out of 9. (Each carries 4 Marks = 24 Marks)",
-            totalOptions: 9,
-            required: 6,
-            marksEach: 4,
-            totalMarks: 24,
-            breakdown: [
-              { chapter: 1, count: 2, name: "Generations & Types" },
-              { chapter: 2, count: 2, name: "OS Interfaces (CLI vs GUI)" },
-              { chapter: 3, count: 2, name: "Word Processing & Spreadsheets" },
-              { chapter: 4, count: 2, name: "Communication Components" },
-              { chapter: 5, count: 1, name: "Security Threats" }
-            ]
-          }
+          { qNum: "Q2", title: "سوال نمبر 2: قرآنی الفاظ کے معانی", instruction: "8 میں سے 5 الفاظ کے معانی لکھیں۔ (5 نمبر)", totalOptions: 8, required: 5, marksEach: 1, totalMarks: 5, breakdown: [{ chapter: 1, count: 8, name: "قرآنی الفاظ" }] },
+          { qNum: "Q3", title: "سوال نمبر 3: سورتوں کے مضامین پر مختصر سوالات", instruction: "8 میں سے 5 سوالات کے مختصر جوابات لکھیں۔ (10 نمبر)", totalOptions: 8, required: 5, marksEach: 2, totalMarks: 10, breakdown: [{ chapter: 1, count: 8, name: "سورتوں کا تعارف و اسباق" }] },
+          { qNum: "Q4", title: "سوال نمبر 4: آیات کا سلیس ترجمہ", instruction: "5 میں سے 3 آیات کا ترجمہ تحریر کریں۔ (15 نمبر)", totalOptions: 5, required: 3, marksEach: 5, totalMarks: 15, breakdown: [{ chapter: 1, count: 5, name: "قرآنی آیات" }] }
         ],
         longQuestions: {
-          instruction: "Section C: Descriptive Questions (ERQs). Attempt any 2 out of 3. (8 Marks each = 16 Marks)",
-          totalOptions: 3,
-          required: 2,
-          marksEach: 8,
-          totalMarks: 16,
+          instruction: "کسی ایک سورت کا تعارف، مرکزی مضمون اور تفصیلی اہم نکات تحریر کریں۔ (10 نمبر)",
+          totalOptions: 2,
+          required: 1,
+          marksEach: 10,
+          totalMarks: 10,
           questions: [
-            { qNum: "Q1", chapter: 1, topic: "Generations of computers (1st to 5th) with key hardware and software features" },
-            { qNum: "Q2", chapter: 2, topic: "Functions of Operating System: Process, Memory, File and Device management" },
-            { qNum: "Q3", chapter: 4, topic: "Components of data communication system with transmission modes (Simplex, Half, Full)" }
+            { qNum: "Q5", chapter: 1, topic: "الف) سورۃ الانفال یا سورۃ یوسف کا جامع تعارف اور تفصیلی اہم نکات" },
+            { qNum: "Q5 متبادل", chapter: 2, topic: "ب) سورۃ ہود یا سورۃ النحل کا تعارف اور عملی اسباق" }
           ]
         }
-      },
-      kpk: {
-        totalMarks: 50,
-        timeAllowed: "2 Hours",
-        objectiveMarks: 10,
-        subjectiveMarks: 40,
-        passingMarks: 17,
-        description: "KPK Board 9th Computer Science Blueprint.",
-        mcqs: {
-          total: 10,
-          distribution: [
-            { chapter: 1, count: 2, name: "Unit 1: Introduction to Computers" },
-            { chapter: 2, count: 2, name: "Unit 2: Computer Components" },
-            { chapter: 3, count: 2, name: "Unit 3: Storage Devices" },
-            { chapter: 4, count: 2, name: "Unit 4: Number Systems" },
-            { chapter: 5, count: 2, name: "Unit 5: Computer Software" }
-          ]
-        },
+      }
+    }
+  },
+
+  // =========================================================================
+  // 12TH CLASS (INTER PART-II) & 11TH CLASS (INTER PART-I)
+  // =========================================================================
+  "12th": {
+    "physics": {
+      subjectName: "Physics",
+      punjab: {
+        totalMarks: 85,
+        timeAllowed: "3 Hours",
+        objectiveMarks: 17,
+        subjectiveMarks: 68,
+        description: "Official Punjab Board 12th Physics 2025-2026 Pairing Scheme. 17 MCQs, 44 Marks Short Questions (Attempt 22/33), 24 Marks Long Questions (Attempt 3/5 with a+b).",
+        mcqs: { total: 17, distribution: [{ chapter: 12, count: 2 }, { chapter: 13, count: 1 }, { chapter: 14, count: 2 }, { chapter: 15, count: 2 }, { chapter: 16, count: 2 }, { chapter: 17, count: 1 }, { chapter: 18, count: 2 }, { chapter: 19, count: 2 }, { chapter: 20, count: 1 }, { chapter: 21, count: 2 }] },
         shortQuestions: [
-          {
-            qNum: "Section B",
-            title: "Section B: Short Questions",
-            instruction: "Attempt any 8 questions out of 11. (Each carries 3 Marks = 24 Marks)",
-            totalOptions: 11,
-            required: 8,
-            marksEach: 3,
-            totalMarks: 24,
-            breakdown: [
-              { chapter: 1, count: 2, name: "History & Types" },
-              { chapter: 2, count: 3, name: "Input/Output Devices" },
-              { chapter: 3, count: 2, name: "Primary & Secondary Storage" },
-              { chapter: 4, count: 2, name: "Conversions" },
-              { chapter: 5, count: 2, name: "System vs Application" }
-            ]
-          }
+          { qNum: "Q2", title: "Question No. 2", instruction: "Attempt any 8 out of 12 (16 Marks)", totalOptions: 12, required: 8, marksEach: 2, totalMarks: 16, breakdown: [{ chapter: 12, count: 4 }, { chapter: 14, count: 4 }, { chapter: 21, count: 4 }] },
+          { qNum: "Q3", title: "Question No. 3", instruction: "Attempt any 8 out of 12 (16 Marks)", totalOptions: 12, required: 8, marksEach: 2, totalMarks: 16, breakdown: [{ chapter: 13, count: 3 }, { chapter: 16, count: 3 }, { chapter: 17, count: 3 }, { chapter: 18, count: 3 }] },
+          { qNum: "Q4", title: "Question No. 4", instruction: "Attempt any 6 out of 9 (12 Marks)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 15, count: 4 }, { chapter: 19, count: 3 }, { chapter: 20, count: 2 }] }
         ],
         longQuestions: {
-          instruction: "Section C: Long Questions. Attempt any 2 out of 3. (8 Marks each = 16 Marks)",
-          totalOptions: 3,
-          required: 2,
+          instruction: "Attempt any 3 questions out of 5. (Each carries 8 Marks = (a) 5M Theory + (b) 3M Numerical = 24 Marks)",
+          totalOptions: 5,
+          required: 3,
           marksEach: 8,
-          totalMarks: 16,
+          totalMarks: 24,
           questions: [
-            { qNum: "Q3", chapter: 1, topic: "Classification of digital computers according to size, speed and capabilities" },
-            { qNum: "Q4", chapter: 2, topic: "Central Processing Unit (CPU) architecture: ALU, CU and Register organization" },
-            { qNum: "Q5", chapter: 4, topic: "Number systems: Binary, Decimal, Octal, Hexadecimal conversions with working steps" }
+            { qNum: "Q5", chapter: 12, topic: "(a) Chapter 12 Theory & (b) Chapter 13 Numerical" },
+            { qNum: "Q6", chapter: 14, topic: "(a) Chapter 14 Theory & (b) Chapter 15 Numerical" },
+            { qNum: "Q7", chapter: 16, topic: "(a) Chapter 16 Theory & (b) Chapter 18 Numerical" },
+            { qNum: "Q8", chapter: 17, topic: "(a) Chapter 17 Theory & (b) Chapter 19 Numerical" },
+            { qNum: "Q9", chapter: 20, topic: "(a) Chapter 20 Theory & (b) Chapter 21 Numerical" }
+          ]
+        }
+      }
+    },
+    "chemistry": {
+      subjectName: "Chemistry",
+      punjab: {
+        totalMarks: 85,
+        timeAllowed: "3 Hours",
+        objectiveMarks: 17,
+        subjectiveMarks: 68,
+        description: "Official Punjab Board 12th Chemistry 2025-2026 Pairing Scheme.",
+        mcqs: { total: 17, distribution: [{ chapter: 1, count: 1 }, { chapter: 2, count: 1 }, { chapter: 4, count: 1 }, { chapter: 5, count: 1 }, { chapter: 7, count: 2 }, { chapter: 8, count: 2 }, { chapter: 9, count: 2 }, { chapter: 10, count: 2 }, { chapter: 11, count: 1 }, { chapter: 12, count: 2 }, { chapter: 14, count: 1 }, { chapter: 16, count: 1 }] },
+        shortQuestions: [
+          { qNum: "Q2", title: "Question No. 2", instruction: "Attempt any 8/12 (16 Marks)", totalOptions: 12, required: 8, marksEach: 2, totalMarks: 16, breakdown: [{ chapter: 1, count: 2 }, { chapter: 2, count: 3 }, { chapter: 4, count: 3 }, { chapter: 5, count: 4 }] },
+          { qNum: "Q3", title: "Question No. 3", instruction: "Attempt any 8/12 (16 Marks)", totalOptions: 12, required: 8, marksEach: 2, totalMarks: 16, breakdown: [{ chapter: 7, count: 4 }, { chapter: 8, count: 3 }, { chapter: 9, count: 3 }, { chapter: 11, count: 2 }] },
+          { qNum: "Q4", title: "Question No. 4", instruction: "Attempt any 6/9 (12 Marks)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 10, count: 3 }, { chapter: 12, count: 3 }, { chapter: 16, count: 3 }] }
+        ],
+        longQuestions: {
+          instruction: "Attempt any 3 questions out of 5. (Each carries 8 Marks = (a) 4M + (b) 4M = 24 Marks)",
+          totalOptions: 5,
+          required: 3,
+          marksEach: 8,
+          totalMarks: 24,
+          questions: [
+            { qNum: "Q5", chapter: 1, topic: "(a) Chapter 1 & (b) Chapter 2" },
+            { qNum: "Q6", chapter: 4, topic: "(a) Chapter 4 & (b) Chapter 5" },
+            { qNum: "Q7", chapter: 7, topic: "(a) Chapter 7 & (b) Chapter 8" },
+            { qNum: "Q8", chapter: 9, topic: "(a) Chapter 9 & (b) Chapter 11" },
+            { qNum: "Q9", chapter: 10, topic: "(a) Chapter 10 & (b) Chapter 12" }
+          ]
+        }
+      }
+    },
+    "biology": {
+      subjectName: "Biology",
+      punjab: {
+        totalMarks: 85,
+        timeAllowed: "3 Hours",
+        objectiveMarks: 17,
+        subjectiveMarks: 68,
+        description: "Official Punjab Board 12th Biology 2025-2026 Pairing Scheme.",
+        mcqs: { total: 17, distribution: [{ chapter: 15, count: 1 }, { chapter: 16, count: 2 }, { chapter: 17, count: 2 }, { chapter: 18, count: 1 }, { chapter: 19, count: 1 }, { chapter: 20, count: 2 }, { chapter: 21, count: 1 }, { chapter: 22, count: 1 }, { chapter: 23, count: 2 }, { chapter: 24, count: 1 }, { chapter: 25, count: 1 }, { chapter: 26, count: 1 }, { chapter: 27, count: 1 }] },
+        shortQuestions: [
+          { qNum: "Q2", title: "Question No. 2", instruction: "Attempt any 8/12 (16 Marks)", totalOptions: 12, required: 8, marksEach: 2, totalMarks: 16, breakdown: [{ chapter: 15, count: 3 }, { chapter: 16, count: 3 }, { chapter: 18, count: 2 }, { chapter: 26, count: 2 }, { chapter: 27, count: 2 }] },
+          { qNum: "Q3", title: "Question No. 3", instruction: "Attempt any 8/12 (16 Marks)", totalOptions: 12, required: 8, marksEach: 2, totalMarks: 16, breakdown: [{ chapter: 17, count: 3 }, { chapter: 22, count: 3 }, { chapter: 23, count: 3 }, { chapter: 25, count: 3 }] },
+          { qNum: "Q4", title: "Question No. 4", instruction: "Attempt any 6/9 (12 Marks)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 19, count: 2 }, { chapter: 20, count: 3 }, { chapter: 21, count: 2 }, { chapter: 24, count: 2 }] }
+        ],
+        longQuestions: {
+          instruction: "Attempt any 3 questions out of 5. (8 Marks each = 24 Marks)",
+          totalOptions: 5,
+          required: 3,
+          marksEach: 8,
+          totalMarks: 24,
+          questions: [
+            { qNum: "Q5", chapter: 15, topic: "(a) Chapter 15 & (b) Chapter 21" },
+            { qNum: "Q6", chapter: 16, topic: "(a) Chapter 16 & (b) Chapter 25" },
+            { qNum: "Q7", chapter: 17, topic: "(a) Chapter 17 & (b) Chapter 27" },
+            { qNum: "Q8", chapter: 18, topic: "(a) Chapter 18 & (b) Chapter 22" },
+            { qNum: "Q9", chapter: 19, topic: "(a) Chapter 19 & (b) Chapter 24" }
+          ]
+        }
+      }
+    }
+  },
+
+  "11th": {
+    "physics": {
+      subjectName: "Physics",
+      punjab: {
+        totalMarks: 85,
+        timeAllowed: "3 Hours",
+        objectiveMarks: 17,
+        subjectiveMarks: 68,
+        description: "Official Punjab Board 11th Physics 2025-2026 Pairing Scheme.",
+        mcqs: { total: 17, distribution: [{ chapter: 1, count: 2 }, { chapter: 2, count: 2 }, { chapter: 3, count: 2 }, { chapter: 4, count: 1 }, { chapter: 5, count: 2 }, { chapter: 6, count: 1 }, { chapter: 7, count: 1 }, { chapter: 8, count: 2 }, { chapter: 9, count: 1 }, { chapter: 10, count: 1 }, { chapter: 11, count: 2 }] },
+        shortQuestions: [
+          { qNum: "Q2", title: "Question No. 2", instruction: "Attempt any 8/12 (16 Marks)", totalOptions: 12, required: 8, marksEach: 2, totalMarks: 16, breakdown: [{ chapter: 1, count: 4 }, { chapter: 2, count: 3 }, { chapter: 3, count: 3 }, { chapter: 6, count: 2 }] },
+          { qNum: "Q3", title: "Question No. 3", instruction: "Attempt any 8/12 (16 Marks)", totalOptions: 12, required: 8, marksEach: 2, totalMarks: 16, breakdown: [{ chapter: 4, count: 3 }, { chapter: 5, count: 4 }, { chapter: 7, count: 3 }, { chapter: 8, count: 2 }] },
+          { qNum: "Q4", title: "Question No. 4", instruction: "Attempt any 6/9 (12 Marks)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 9, count: 3 }, { chapter: 10, count: 3 }, { chapter: 11, count: 3 }] }
+        ],
+        longQuestions: {
+          instruction: "Attempt any 3 questions out of 5. (8 Marks each = 24 Marks)",
+          totalOptions: 5,
+          required: 3,
+          marksEach: 8,
+          totalMarks: 24,
+          questions: [
+            { qNum: "Q5", chapter: 2, topic: "(a) Chapter 2 Theory & (b) Chapter 3 Numerical" },
+            { qNum: "Q6", chapter: 4, topic: "(a) Chapter 4 Theory & (b) Chapter 5 Numerical" },
+            { qNum: "Q7", chapter: 6, topic: "(a) Chapter 6 Theory & (b) Chapter 7 Numerical" },
+            { qNum: "Q8", chapter: 8, topic: "(a) Chapter 8 Theory & (b) Chapter 9 Numerical" },
+            { qNum: "Q9", chapter: 10, topic: "(a) Chapter 10 Theory & (b) Chapter 11 Numerical" }
+          ]
+        }
+      }
+    },
+    "chemistry": {
+      subjectName: "Chemistry",
+      punjab: {
+        totalMarks: 85,
+        timeAllowed: "3 Hours",
+        objectiveMarks: 17,
+        subjectiveMarks: 68,
+        description: "Official Punjab Board 11th Chemistry 2025-2026 Pairing Scheme.",
+        mcqs: { total: 17, distribution: [{ chapter: 1, count: 2 }, { chapter: 3, count: 2 }, { chapter: 4, count: 2 }, { chapter: 5, count: 2 }, { chapter: 6, count: 2 }, { chapter: 7, count: 1 }, { chapter: 8, count: 2 }, { chapter: 9, count: 1 }, { chapter: 10, count: 2 }, { chapter: 11, count: 1 }] },
+        shortQuestions: [
+          { qNum: "Q2", title: "Question No. 2", instruction: "Attempt any 8/12 (16 Marks)", totalOptions: 12, required: 8, marksEach: 2, totalMarks: 16, breakdown: [{ chapter: 1, count: 3 }, { chapter: 3, count: 4 }, { chapter: 8, count: 3 }, { chapter: 9, count: 2 }] },
+          { qNum: "Q3", title: "Question No. 3", instruction: "Attempt any 8/12 (16 Marks)", totalOptions: 12, required: 8, marksEach: 2, totalMarks: 16, breakdown: [{ chapter: 4, count: 4 }, { chapter: 5, count: 4 }, { chapter: 11, count: 4 }] },
+          { qNum: "Q4", title: "Question No. 4", instruction: "Attempt any 6/9 (12 Marks)", totalOptions: 9, required: 6, marksEach: 2, totalMarks: 12, breakdown: [{ chapter: 6, count: 4 }, { chapter: 7, count: 3 }, { chapter: 10, count: 2 }] }
+        ],
+        longQuestions: {
+          instruction: "Attempt any 3 questions out of 5. (8 Marks each = 24 Marks)",
+          totalOptions: 5,
+          required: 3,
+          marksEach: 8,
+          totalMarks: 24,
+          questions: [
+            { qNum: "Q5", chapter: 1, topic: "(a) Chapter 1 & (b) Chapter 3" },
+            { qNum: "Q6", chapter: 4, topic: "(a) Chapter 4 & (b) Chapter 5" },
+            { qNum: "Q7", chapter: 6, topic: "(a) Chapter 6 & (b) Chapter 7" },
+            { qNum: "Q8", chapter: 8, topic: "(a) Chapter 8 & (b) Chapter 9" },
+            { qNum: "Q9", chapter: 10, topic: "(a) Chapter 10 & (b) Chapter 11" }
           ]
         }
       }
@@ -998,38 +868,43 @@ export const PAIRING_SCHEMES_DATA = {
 };
 
 /**
+ * Normalizes subject ID to match available schemes
+ */
+export function normalizeSubjectKey(rawSubj = '') {
+  const s = rawSubj.toLowerCase().replace(/[\s-_]/g, '');
+  if (s.includes('physic')) return 'physics';
+  if (s.includes('chem')) return 'chemistry';
+  if (s.includes('bio')) return 'biology';
+  if (s.includes('math')) return 'mathematics';
+  if (s.includes('quran') || s.includes('tarjuma')) return 'tarjuma_tul_quran';
+  if (s.includes('islam') || s.includes('islamiat')) return 'islamiat';
+  if (s.includes('pak') || s.includes('mutalia')) return 'pak_studies';
+  if (s.includes('eng')) return 'english';
+  if (s.includes('urdu')) return 'urdu';
+  return 'computer_science';
+}
+
+/**
  * Helper to get the official pairing scheme for a specific class, subject, and board.
  */
-export function getBoardPairingScheme(classKey = '12th', subjectId = 'computer_science', boardId = 'punjab') {
+export function getBoardPairingScheme(classKey = '10th', subjectId = 'physics', boardId = 'punjab') {
   const normClass = classKey.replace(/\s*class/i, '').trim();
-  const classData = PAIRING_SCHEMES_DATA[normClass] || PAIRING_SCHEMES_DATA["12th"];
+  const classData = PAIRING_SCHEMES_DATA[normClass] || PAIRING_SCHEMES_DATA["10th"];
   
-  // Normalize subject
-  let normSubject = 'computer_science';
-  if (subjectId.includes('physics')) normSubject = 'physics';
-  else if (subjectId.includes('chemistry')) normSubject = 'chemistry';
-  else if (subjectId.includes('biology')) normSubject = 'biology';
-  else if (subjectId.includes('math')) normSubject = 'mathematics';
+  const normSubject = normalizeSubjectKey(subjectId);
+  const subjectData = classData[normSubject] || PAIRING_SCHEMES_DATA["10th"]?.[normSubject] || classData['physics'] || Object.values(classData)[0];
   
-  const subjectData = classData[normSubject] || classData['computer_science'];
   const normBoard = (boardId || 'punjab').toLowerCase();
   
-  return subjectData[normBoard] || subjectData.punjab || null;
+  return subjectData?.[normBoard] || subjectData?.punjab || null;
 }
 
 /**
  * Generate a 100% Authentic Board Standard Paper obeying the official Board Pairing Scheme
- * 
- * @param {Object} params
- * @param {string} params.classKey - '9th' | '10th' | '11th' | '12th'
- * @param {string} params.subjectId - 'computer_science' etc.
- * @param {string} params.boardId - 'punjab' | 'federal' | 'sindh' | 'kpk'
- * @param {Object} params.bank - The Question Bank repository
- * @param {Object} params.options - Additional preferences (e.g. customTitle, institute)
  */
 export function generateBoardPairingPaper({
-  classKey = '12th',
-  subjectId = 'computer_science',
+  classKey = '10th',
+  subjectId = 'physics',
   boardId = 'punjab',
   bank = {},
   options = {}
@@ -1045,18 +920,18 @@ export function generateBoardPairingPaper({
   // 1. Locate Subject and Chapters in Bank
   const classObj = bank[normClass] || {};
   const subjects = classObj.subjects || [];
-  const targetSubject = subjects.find(s => 
-    s.id === subjectId || 
-    (s.name || '').toLowerCase().includes(subjectId.toLowerCase()) ||
-    (s.name || '').toLowerCase().includes('computer')
-  ) || subjects[0] || { chapters: [] };
+  const normSubKey = normalizeSubjectKey(subjectId);
+  
+  const targetSubject = subjects.find(s => {
+    const sNorm = normalizeSubjectKey(s.id || s.name || '');
+    return sNorm === normSubKey;
+  }) || subjects[0] || { chapters: [] };
 
   const chapters = targetSubject.chapters || [];
 
-  // Helper to pick random questions from a given chapter number
   const getChapterByNumber = (chNum) => {
     return chapters.find(c => Number(c.chapterNumber) === Number(chNum)) || 
-           chapters[Math.min(chNum - 1, chapters.length - 1)] || null;
+           chapters[Math.min(Math.max(0, chNum - 1), chapters.length - 1)] || null;
   };
 
   const getQuestionsFromChapter = (chNum, type) => {
@@ -1086,15 +961,12 @@ export function generateBoardPairingPaper({
     
     picked.forEach(q => {
       usedMcqIds.add(q.id);
-      finalMcqs.push({
-        ...q,
-        marks: 1
-      });
+      finalMcqs.push({ ...q, marks: 1 });
     });
   });
 
   // Fallback if some chapters had fewer MCQs: fill up to scheme.mcqs.total
-  if (finalMcqs.length < (scheme.mcqs?.total || 15)) {
+  if (finalMcqs.length < (scheme.mcqs?.total || 12)) {
     const allRemaining = [];
     chapters.forEach(ch => {
       (ch.topics || []).forEach(t => {
@@ -1105,7 +977,7 @@ export function generateBoardPairingPaper({
         });
       });
     });
-    const filler = shuffle(allRemaining).slice(0, (scheme.mcqs?.total || 15) - finalMcqs.length);
+    const filler = shuffle(allRemaining).slice(0, (scheme.mcqs?.total || 12) - finalMcqs.length);
     filler.forEach(q => {
       usedMcqIds.add(q.id);
       finalMcqs.push({ ...q, marks: 1 });
@@ -1117,7 +989,6 @@ export function generateBoardPairingPaper({
   const usedShortIds = new Set();
 
   (scheme.shortQuestions || []).forEach(group => {
-    // For each sub-question group (e.g. Q2, Q3, Q4)
     (group.breakdown || []).forEach(bd => {
       const pool = shuffle(getQuestionsFromChapter(bd.chapter, 'shortQuestions')).filter(q => !usedShortIds.has(q.id));
       const picked = pool.slice(0, bd.count || 2);
@@ -1133,8 +1004,8 @@ export function generateBoardPairingPaper({
     });
   });
 
-  // Fallback: If bank has fewer questions, top up from general pool
-  const totalRequiredShorts = (scheme.shortQuestions || []).reduce((sum, g) => sum + (g.totalOptions || 9), 0);
+  // Fallback if fewer questions
+  const totalRequiredShorts = (scheme.shortQuestions || []).reduce((sum, g) => sum + (g.totalOptions || 8), 0);
   if (finalShorts.length < totalRequiredShorts) {
     const allRemaining = [];
     chapters.forEach(ch => {
@@ -1168,7 +1039,6 @@ export function generateBoardPairingPaper({
         question: picked.question || lq.topic
       });
     } else {
-      // Create representative long question from scheme specification if bank lacks long question in that specific chapter
       finalLongs.push({
         id: `scheme-long-${Date.now()}-${Math.floor(Math.random()*1000)}`,
         question: lq.topic,
@@ -1178,18 +1048,17 @@ export function generateBoardPairingPaper({
     }
   });
 
-  // 5. Paper Header Configuration
   const paperConfig = {
     institute: options.institute || "BOARD OF INTERMEDIATE & SECONDARY EDUCATION",
     examTitle: `${boardMeta.name} ANNUAL EXAMINATION 2026`,
     boardName: boardMeta.fullName,
     subHeader: `OFFICIAL BOARD PAIRING SCHEME & BLUEPRINT MOCK (${boardMeta.badge})`,
-    subject: targetSubject.name || "Computer Science",
+    subject: targetSubject.name || scheme.subjectName || "Subject",
     gradeClass: `${normClass} Class`,
-    timeAllowed: scheme.timeAllowed || "2 Hours 30 Minutes",
-    totalMarks: scheme.totalMarks || 75,
+    timeAllowed: scheme.timeAllowed || "2 Hours",
+    totalMarks: scheme.totalMarks || 60,
     date: new Date().toISOString().split('T')[0],
-    syllabus: `Complete Syllabus (Official ${boardMeta.name} 2025-2026 Pairing Scheme)`,
+    syllabus: `Complete Syllabus (Official ${boardMeta.name} 2025-2026 Pairing Scheme - New Books)`,
     language: options.language || "bilingual",
     showWatermark: true,
     watermarkText: `${boardMeta.name} 2026`,
@@ -1204,15 +1073,13 @@ export function generateBoardPairingPaper({
     }
   };
 
-  const paperData = {
-    mcqs: finalMcqs,
-    shortQuestions: finalShorts,
-    longQuestions: finalLongs
-  };
-
   return {
     paperConfig,
-    paperData,
+    paperData: {
+      mcqs: finalMcqs,
+      shortQuestions: finalShorts,
+      longQuestions: finalLongs
+    },
     scheme
   };
 }
