@@ -73,6 +73,7 @@ export default function PaperCanvas({
   });
   const [activeMcqLayout, setActiveMcqLayout] = useState(paperConfig.mcqLayout || '1 Column');
   const [mcqCols, setMcqCols] = useState(Number(paperConfig.mcqOptionsCols) || 2); // 1, 2, or 4
+  const [contentFormat, setContentFormat] = useState(paperConfig.contentFormat || 'standard'); // 'standard' or 'table'
   const [showAnswerLines] = useState(false); // Student answer writing lines
 
   // Scroll to top immediately when PaperCanvas mounts to eliminate blank screen on mobile
@@ -113,6 +114,12 @@ export default function PaperCanvas({
       setMcqCols(Number(paperConfig.mcqOptionsCols) || 2);
     }
   }, [paperConfig.mcqOptionsCols]);
+
+  useEffect(() => {
+    if (paperConfig.contentFormat) {
+      setContentFormat(paperConfig.contentFormat);
+    }
+  }, [paperConfig.contentFormat]);
 
   // Solution QR Code State (Free scan-to-solve PDF download)
   const [showSolutionQr, setShowSolutionQr] = useState(true);
@@ -417,6 +424,160 @@ export default function PaperCanvas({
         >
           {eng || qText}
         </div>
+      </div>
+    );
+  };
+
+  // Convert number to lower-case Roman numeral (1 -> i, 2 -> ii, etc.)
+  const toRoman = (num) => {
+    const romanNumerals = [
+      '', 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x',
+      'xi', 'xii', 'xiii', 'xiv', 'xv', 'xvi', 'xvii', 'xviii', 'xix', 'xx',
+      'xxi', 'xxii', 'xxiii', 'xxiv', 'xxv', 'xxvi', 'xxvii', 'xxviii', 'xxix', 'xxx'
+    ];
+    return romanNumerals[num] || String(num);
+  };
+
+  // Render question prompt without question number prefix (used in Board Table format where Q# is a separate column)
+  const renderQuestionPromptWithoutNum = (qText, qIdx, sectionKey) => {
+    const { eng, urdu } = parseQuestionText(qText);
+    const hasActualUrdu = hasUrdu(urdu);
+    const hasActualEng = Boolean(eng && eng.trim());
+
+    if (isBlend && hasActualEng && hasActualUrdu) {
+      return (
+        <div className="w-full flex flex-col gap-0.5">
+          <div className="text-left font-semibold text-slate-900 leading-snug">
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => updateQuestionText(sectionKey, qIdx, `${e.target.innerText} || ${urdu}`)}
+              className="focus:outline-none rounded"
+            >
+              {eng}
+            </div>
+          </div>
+          <div className="text-right font-bold text-slate-900 font-serif-urdu leading-tight" dir="rtl">
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => updateQuestionText(sectionKey, qIdx, `${eng} || ${e.target.innerText}`)}
+              className="focus:outline-none rounded"
+            >
+              {urdu}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (isUrdu || (hasActualUrdu && !hasActualEng)) {
+      return (
+        <div className="w-full text-right font-bold text-slate-900 font-serif-urdu leading-tight" dir="rtl">
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => updateQuestionText(sectionKey, qIdx, e.target.innerText)}
+            className="focus:outline-none rounded w-full"
+          >
+            {urdu || qText}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-full text-left font-semibold text-slate-900 leading-snug">
+        <div
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => updateQuestionText(sectionKey, qIdx, e.target.innerText)}
+          className="focus:outline-none rounded w-full"
+        >
+          {eng || qText}
+        </div>
+      </div>
+    );
+  };
+
+  // Render option cell content in Board Table format
+  const renderTableOptionContent = (optText, oIdx, qIdx, currentMcq) => {
+    const { eng, urdu } = parseOptionText(optText);
+    const hasActualUrdu = hasUrdu(urdu);
+    const hasActualEng = Boolean(eng && eng.trim());
+    const isCorrect = getMcqCorrectIndex(currentMcq) === oIdx;
+    const isTeacherKeyActive = showTeacherMcqKey;
+
+    const highlightClass = isTeacherKeyActive && isCorrect
+      ? 'bg-emerald-100 font-black text-emerald-950 px-1 py-0.5 rounded border border-emerald-500'
+      : '';
+
+    if (isBlend && hasActualEng && hasActualUrdu) {
+      return (
+        <div className={`flex flex-col gap-0.5 justify-center items-center text-center ${highlightClass}`}>
+          <span
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => updateMcqOption(qIdx, oIdx, `${e.target.innerText} || ${urdu}`)}
+            className="focus:outline-none rounded font-medium text-slate-800 leading-tight w-full"
+          >
+            {eng}
+          </span>
+          <span
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => updateMcqOption(qIdx, oIdx, `${eng} || ${e.target.innerText}`)}
+            className="focus:outline-none rounded font-bold text-slate-900 font-serif-urdu leading-tight w-full"
+            dir="rtl"
+          >
+            {urdu}
+          </span>
+          {isTeacherKeyActive && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSetMcqAnswer(qIdx, oIdx);
+              }}
+              className={`no-print mt-0.5 px-1 py-0.2 rounded text-[9px] font-black cursor-pointer ${
+                isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700 hover:bg-emerald-100'
+              }`}
+            >
+              {isCorrect ? '✓ Key' : 'Mark'}
+            </button>
+          )}
+        </div>
+      );
+    }
+
+    const isUrduOption = isUrdu || (hasActualUrdu && !hasActualEng);
+    const textToDisplay = isUrduOption ? (urdu || optText) : (eng || optText);
+
+    return (
+      <div className={`flex flex-col justify-center items-center text-center ${highlightClass}`}>
+        <span
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => updateMcqOption(qIdx, oIdx, e.target.innerText)}
+          className={`focus:outline-none rounded leading-tight w-full ${isUrduOption ? 'font-serif-urdu font-bold' : 'font-medium text-slate-800'} ${!textToDisplay?.trim() ? 'border-b border-dashed border-amber-400 text-amber-600 italic px-1' : ''}`}
+          dir={isUrduOption ? 'rtl' : 'ltr'}
+        >
+          {textToDisplay?.trim() || "[Edit]"}
+        </span>
+        {isTeacherKeyActive && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSetMcqAnswer(qIdx, oIdx);
+            }}
+            className={`no-print mt-0.5 px-1 py-0.2 rounded text-[9px] font-black cursor-pointer ${
+              isCorrect ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700 hover:bg-emerald-100'
+            }`}
+          >
+            {isCorrect ? '✓ Key' : 'Mark'}
+          </button>
+        )}
       </div>
     );
   };
@@ -803,40 +964,79 @@ export default function PaperCanvas({
         {/* Tier 2: Layout Options & Action Buttons */}
         <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-slate-100">
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Quick MCQs Layout Toggle: 1 Col vs 2 Col */}
+            {/* Paper Content Format Toggle: Standard List vs Board Table */}
             <div className="flex items-center gap-1 bg-slate-50 border border-slate-300/80 px-2 py-1 rounded-xl shadow-2xs">
-              <span className="text-[11px] font-bold text-slate-700">MCQs:</span>
+              <span className="text-[11px] font-bold text-slate-700">Format:</span>
               <button
                 type="button"
                 onClick={() => {
-                  setActiveMcqLayout('1 Column');
-                  setPaperConfig?.(prev => ({ ...prev, mcqLayout: '1 Column' }));
+                  setContentFormat('standard');
+                  setPaperConfig?.(prev => ({ ...prev, contentFormat: 'standard' }));
+                  notify.info("سٹینڈرڈ لسٹ فارمیٹ فعال ہو گیا");
                 }}
                 className={`px-2 py-0.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeMcqLayout === '1 Column'
+                  contentFormat === 'standard'
                     ? 'bg-blue-600 text-white shadow-2xs'
                     : 'text-slate-600 hover:bg-white hover:text-slate-900'
                 }`}
-                title="1 Column Full Width (Standard)"
+                title="Standard List Format (روایتی لسٹ فارمیٹ)"
               >
-                1 Col
+                Standard
               </button>
               <button
                 type="button"
                 onClick={() => {
-                  setActiveMcqLayout('2 Columns');
-                  setPaperConfig?.(prev => ({ ...prev, mcqLayout: '2 Columns' }));
+                  setContentFormat('table');
+                  setPaperConfig?.(prev => ({ ...prev, contentFormat: 'table' }));
+                  notify.info("آفیشل بورڈ ٹیبل فارمیٹ فعال ہو گیا (Board Table View)");
                 }}
                 className={`px-2 py-0.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeMcqLayout === '2 Columns'
-                    ? 'bg-blue-600 text-white shadow-2xs'
+                  contentFormat === 'table'
+                    ? 'bg-emerald-600 text-white shadow-2xs ring-1 ring-emerald-400'
                     : 'text-slate-600 hover:bg-white hover:text-slate-900'
                 }`}
-                title="2 Columns Side-by-Side (پیپر اور پرنٹ میں 2 کالمز)"
+                title="Official Board Tabular Format (بورڈ طرز کا جدول / ٹیبل)"
               >
-                2 Col
+                📋 Board Table
               </button>
             </div>
+
+            {/* Quick MCQs Layout Toggle: 1 Col vs 2 Col */}
+            {contentFormat !== 'table' && (
+              <div className="flex items-center gap-1 bg-slate-50 border border-slate-300/80 px-2 py-1 rounded-xl shadow-2xs">
+                <span className="text-[11px] font-bold text-slate-700">MCQs:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMcqLayout('1 Column');
+                    setPaperConfig?.(prev => ({ ...prev, mcqLayout: '1 Column' }));
+                  }}
+                  className={`px-2 py-0.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeMcqLayout === '1 Column'
+                      ? 'bg-blue-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                  }`}
+                  title="1 Column Full Width (Standard)"
+                >
+                  1 Col
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMcqLayout('2 Columns');
+                    setPaperConfig?.(prev => ({ ...prev, mcqLayout: '2 Columns' }));
+                  }}
+                  className={`px-2 py-0.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeMcqLayout === '2 Columns'
+                      ? 'bg-blue-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:bg-white hover:text-slate-900'
+                  }`}
+                  title="2 Columns Side-by-Side (پیپر اور پرنٹ میں 2 کالمز)"
+                >
+                  2 Col
+                </button>
+              </div>
+            )}
 
             {/* Quick Watermark Toggle */}
             <button
@@ -2062,6 +2262,58 @@ export default function PaperCanvas({
                         </div>
                       );
 
+                      if (contentFormat === 'table') {
+                        return (
+                          <div className="overflow-x-auto w-full my-1">
+                            <table className="board-paper-table text-[0.95em]">
+                              <thead>
+                                <tr>
+                                  <th style={{ width: '48px' }}>Q.#</th>
+                                  <th style={{ textAlign: 'left', paddingLeft: '8px' }}>
+                                    {isBlend ? 'Question Statement / سوال' : isUrdu ? 'سوال' : 'Question Statement'}
+                                  </th>
+                                  <th style={{ width: '15%' }}>(A) الف</th>
+                                  <th style={{ width: '15%' }}>(B) ب</th>
+                                  <th style={{ width: '15%' }}>(C) ج</th>
+                                  <th style={{ width: '15%' }}>(D) د</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {activeMcqs.map((q, idx) => (
+                                  <tr key={q.id || idx} className="relative group hover:bg-slate-50/80 transition-colors">
+                                    <td className="text-center font-bold text-slate-900 bg-slate-50/50 align-middle">
+                                      <span>{idx + 1}</span>
+                                      {/* Action Toolbar on Hover */}
+                                      <div className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white border border-slate-300 rounded shadow-md px-1 py-0.5 z-20 transition-opacity">
+                                        <button onClick={() => openSwapModal('mcqs', idx, q)} title="Sawal Badal Dein (Swap MCQ)" className="p-1 hover:text-amber-600 flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200"><RefreshCw className="w-2.5 h-2.5" /> Swap</button>
+                                        <button onClick={() => moveQuestion('mcqs', idx, -1)} title="Move Up" className="p-1 hover:text-indigo-600"><ArrowUp className="w-3 h-3" /></button>
+                                        <button onClick={() => moveQuestion('mcqs', idx, 1)} title="Move Down" className="p-1 hover:text-indigo-600"><ArrowDown className="w-3 h-3" /></button>
+                                        <button onClick={() => deleteQuestion('mcqs', idx)} title="Delete Question" className="p-1 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
+                                      </div>
+                                    </td>
+                                    <td className="align-middle px-2 py-1">
+                                      {renderQuestionPromptWithoutNum(q.question, idx, 'mcqs')}
+                                    </td>
+                                    <td className="align-middle p-1 text-center">
+                                      {renderTableOptionContent(q.options?.[0] || '', 0, idx, q)}
+                                    </td>
+                                    <td className="align-middle p-1 text-center">
+                                      {renderTableOptionContent(q.options?.[1] || '', 1, idx, q)}
+                                    </td>
+                                    <td className="align-middle p-1 text-center">
+                                      {renderTableOptionContent(q.options?.[2] || '', 2, idx, q)}
+                                    </td>
+                                    <td className="align-middle p-1 text-center">
+                                      {renderTableOptionContent(q.options?.[3] || '', 3, idx, q)}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        );
+                      }
+
                       if (activeMcqLayout === '2 Columns') {
                         return (
                           <div className="questions-list grid grid-cols-2 print:grid-cols-2 gap-x-5 items-start">
@@ -2149,45 +2401,90 @@ export default function PaperCanvas({
                       </span>
                     </div>
 
-                    <div className="questions-list flex flex-col" style={{ gap: `${questionGap}px` }}>
-                      {activeShortQuestions.map((q, idx) => (
-                        <div
-                          key={q.id || idx}
-                          className="question-card relative group hover:bg-slate-50/90 rounded transition-all"
-                          style={{ padding: `${Math.min(questionGap, 2)}px 0` }}
-                        >
-                          
-                          {/* Action Toolbar on Hover */}
-                          <div className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white border border-slate-300 rounded shadow px-1 py-0.5 z-10 transition-opacity">
-                            <button onClick={() => openSwapModal('shortQuestions', idx, q)} title="Sawal Badal Dein (Swap Short Question)" className="p-1 hover:text-amber-600 flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200"><RefreshCw className="w-2.5 h-2.5" /> Swap</button>
-                            <button onClick={() => moveQuestion('shortQuestions', idx, -1)} title="Move Up" className="p-1 hover:text-indigo-600"><ArrowUp className="w-3 h-3" /></button>
-                            <button onClick={() => moveQuestion('shortQuestions', idx, 1)} title="Move Down" className="p-1 hover:text-indigo-600"><ArrowDown className="w-3 h-3" /></button>
-                            <button onClick={() => deleteQuestion('shortQuestions', idx)} title="Delete Question" className="p-1 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
+                    {contentFormat === 'table' ? (
+                      <div className="overflow-x-auto w-full my-1">
+                        <table className="board-paper-table text-[0.95em]">
+                          <thead>
+                            <tr>
+                              <th style={{ width: '48px' }}>Q.#</th>
+                              <th style={{ textAlign: 'left', paddingLeft: '8px' }}>
+                                {isBlend ? 'Short Question Statement / مختصر سوال' : isUrdu ? 'مختصر سوال' : 'Short Question Statement'}
+                              </th>
+                              <th style={{ width: '60px' }}>Marks</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {activeShortQuestions.map((q, idx) => (
+                              <tr key={q.id || idx} className="relative group hover:bg-slate-50/80 transition-colors">
+                                <td className="text-center font-bold text-slate-900 bg-slate-50/50 align-middle">
+                                  <span>({toRoman(idx + 1)})</span>
+                                  {/* Action Toolbar on Hover */}
+                                  <div className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white border border-slate-300 rounded shadow-md px-1 py-0.5 z-20 transition-opacity">
+                                    <button onClick={() => openSwapModal('shortQuestions', idx, q)} title="Sawal Badal Dein (Swap Short Question)" className="p-1 hover:text-amber-600 flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200"><RefreshCw className="w-2.5 h-2.5" /> Swap</button>
+                                    <button onClick={() => moveQuestion('shortQuestions', idx, -1)} title="Move Up" className="p-1 hover:text-indigo-600"><ArrowUp className="w-3 h-3" /></button>
+                                    <button onClick={() => moveQuestion('shortQuestions', idx, 1)} title="Move Down" className="p-1 hover:text-indigo-600"><ArrowDown className="w-3 h-3" /></button>
+                                    <button onClick={() => deleteQuestion('shortQuestions', idx)} title="Delete Question" className="p-1 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
+                                  </div>
+                                </td>
+                                <td className="align-middle px-2.5 py-1.5">
+                                  {renderQuestionPromptWithoutNum(q.question, idx, 'shortQuestions')}
+                                  {/* Teacher Answer Key */}
+                                  {showAnswerKey && q.answerKey && (
+                                    <div className="mt-1 p-1 bg-emerald-50 border border-emerald-300 rounded text-[0.85em] text-emerald-900">
+                                      <span className="font-bold text-emerald-800">Model Answer: </span>
+                                      {q.answerKey}
+                                    </div>
+                                  )}
+                                </td>
+                                <td className="text-center font-bold text-slate-900 align-middle">
+                                  {q.marks || 3}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="questions-list flex flex-col" style={{ gap: `${questionGap}px` }}>
+                        {activeShortQuestions.map((q, idx) => (
+                          <div
+                            key={q.id || idx}
+                            className="question-card relative group hover:bg-slate-50/90 rounded transition-all"
+                            style={{ padding: `${Math.min(questionGap, 2)}px 0` }}
+                          >
+                            
+                            {/* Action Toolbar on Hover */}
+                            <div className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white border border-slate-300 rounded shadow px-1 py-0.5 z-10 transition-opacity">
+                              <button onClick={() => openSwapModal('shortQuestions', idx, q)} title="Sawal Badal Dein (Swap Short Question)" className="p-1 hover:text-amber-600 flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200"><RefreshCw className="w-2.5 h-2.5" /> Swap</button>
+                              <button onClick={() => moveQuestion('shortQuestions', idx, -1)} title="Move Up" className="p-1 hover:text-indigo-600"><ArrowUp className="w-3 h-3" /></button>
+                              <button onClick={() => moveQuestion('shortQuestions', idx, 1)} title="Move Down" className="p-1 hover:text-indigo-600"><ArrowDown className="w-3 h-3" /></button>
+                              <button onClick={() => deleteQuestion('shortQuestions', idx)} title="Delete Question" className="p-1 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
+                            </div>
+
+                            {/* Side-by-Side Question Prompt */}
+                            {renderQuestionPrompt(q.question, idx, 'shortQuestions')}
+
+                            {/* Blank Student Answer Lines */}
+                            {showAnswerLines && (
+                              <div className="answer-ruled-lines">
+                                <div className="answer-ruled-line"></div>
+                                <div className="answer-ruled-line"></div>
+                                <div className="answer-ruled-line"></div>
+                              </div>
+                            )}
+
+                            {/* Teacher Answer Key */}
+                            {showAnswerKey && q.answerKey && (
+                              <div className="mt-1 p-1 bg-emerald-50 border border-emerald-300 rounded text-[0.85em] text-emerald-900">
+                                <span className="font-bold text-emerald-800">Model Answer: </span>
+                                {q.answerKey}
+                              </div>
+                            )}
+
                           </div>
-
-                          {/* Side-by-Side Question Prompt */}
-                          {renderQuestionPrompt(q.question, idx, 'shortQuestions')}
-
-                          {/* Blank Student Answer Lines */}
-                          {showAnswerLines && (
-                            <div className="answer-ruled-lines">
-                              <div className="answer-ruled-line"></div>
-                              <div className="answer-ruled-line"></div>
-                              <div className="answer-ruled-line"></div>
-                            </div>
-                          )}
-
-                          {/* Teacher Answer Key */}
-                          {showAnswerKey && q.answerKey && (
-                            <div className="mt-1 p-1 bg-emerald-50 border border-emerald-300 rounded text-[0.85em] text-emerald-900">
-                              <span className="font-bold text-emerald-800">Model Answer: </span>
-                              {q.answerKey}
-                            </div>
-                          )}
-
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Add Short Question button */}
                     <div className="no-print mt-1 text-center">
@@ -2214,61 +2511,120 @@ export default function PaperCanvas({
                       </span>
                     </div>
 
-                    <div className="questions-list flex flex-col" style={{ gap: `${questionGap}px` }}>
-                      {activeLongQuestions.map((q, idx) => (
-                        <div
-                          key={q.id || idx}
-                          className="question-card relative group hover:bg-slate-50/90 rounded transition-all"
-                          style={{ padding: `${Math.min(questionGap, 2)}px 0` }}
-                        >
-                          
-                          {/* Action Toolbar on Hover */}
-                          <div className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white border border-slate-300 rounded shadow px-1 py-0.5 z-10 transition-opacity">
-                            <button onClick={() => openSwapModal('longQuestions', idx, q)} title="Sawal Badal Dein (Swap Long Question)" className="p-1 hover:text-amber-600 flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200"><RefreshCw className="w-2.5 h-2.5" /> Swap</button>
-                            <button onClick={() => moveQuestion('longQuestions', idx, -1)} title="Move Up" className="p-1 hover:text-indigo-600"><ArrowUp className="w-3 h-3" /></button>
-                            <button onClick={() => moveQuestion('longQuestions', idx, 1)} title="Move Down" className="p-1 hover:text-indigo-600"><ArrowDown className="w-3 h-3" /></button>
-                            <button onClick={() => deleteQuestion('longQuestions', idx)} title="Delete Question" className="p-1 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
-                          </div>
-
-                          {/* Side-by-Side Question Prompt */}
-                          {renderQuestionPrompt(q.question, idx, 'longQuestions')}
-
-                          {/* Sub Parts */}
-                          {q.subParts && q.subParts.length > 0 && (
-                            <div className="space-y-0.5 text-[0.9em] text-slate-800 mt-0.5">
-                              {q.subParts.map((sub, sIdx) => {
-                                const { eng, urdu } = parseQuestionText(sub);
-                                return (
-                                  <div key={sIdx} className="flex justify-between items-center italic">
-                                    <span>{eng}</span>
-                                    {urdu && <span className="font-serif-urdu font-bold text-right" dir="rtl">{urdu}</span>}
+                    {contentFormat === 'table' ? (
+                      <div className="overflow-x-auto w-full my-1">
+                        <table className="board-paper-table text-[0.95em]">
+                          <thead>
+                            <tr>
+                              <th style={{ width: '48px' }}>Q.#</th>
+                              <th style={{ textAlign: 'left', paddingLeft: '8px' }}>
+                                {isBlend ? 'Comprehensive Question Statement / تفصیلی سوال' : isUrdu ? 'تفصیلی سوال' : 'Comprehensive Question Statement'}
+                              </th>
+                              <th style={{ width: '60px' }}>Marks</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {activeLongQuestions.map((q, idx) => (
+                              <tr key={q.id || idx} className="relative group hover:bg-slate-50/80 transition-colors">
+                                <td className="text-center font-bold text-slate-900 bg-slate-50/50 align-middle">
+                                  <span>Q.{activeShortQuestions.length > 0 ? (idx + 3) : (idx + 1)}</span>
+                                  {/* Action Toolbar on Hover */}
+                                  <div className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white border border-slate-300 rounded shadow-md px-1 py-0.5 z-20 transition-opacity">
+                                    <button onClick={() => openSwapModal('longQuestions', idx, q)} title="Sawal Badal Dein (Swap Long Question)" className="p-1 hover:text-amber-600 flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200"><RefreshCw className="w-2.5 h-2.5" /> Swap</button>
+                                    <button onClick={() => moveQuestion('longQuestions', idx, -1)} title="Move Up" className="p-1 hover:text-indigo-600"><ArrowUp className="w-3 h-3" /></button>
+                                    <button onClick={() => moveQuestion('longQuestions', idx, 1)} title="Move Down" className="p-1 hover:text-indigo-600"><ArrowDown className="w-3 h-3" /></button>
+                                    <button onClick={() => deleteQuestion('longQuestions', idx)} title="Delete Question" className="p-1 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
                                   </div>
-                                );
-                              })}
+                                </td>
+                                <td className="align-middle px-2.5 py-1.5">
+                                  {renderQuestionPromptWithoutNum(q.question, idx, 'longQuestions')}
+                                  {/* Sub Parts */}
+                                  {q.subParts && q.subParts.length > 0 && (
+                                    <div className="space-y-0.5 text-[0.9em] text-slate-800 mt-1 pl-2 border-l-2 border-slate-200">
+                                      {q.subParts.map((sub, sIdx) => {
+                                        const { eng, urdu } = parseQuestionText(sub);
+                                        return (
+                                          <div key={sIdx} className="flex justify-between items-center italic">
+                                            <span>{eng}</span>
+                                            {urdu && <span className="font-serif-urdu font-bold text-right" dir="rtl">{urdu}</span>}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                  {/* Teacher Answer Key */}
+                                  {showAnswerKey && q.answerKey && (
+                                    <div className="mt-1 p-1 bg-emerald-50 border border-emerald-300 rounded text-[0.85em] text-emerald-900">
+                                      <span className="font-bold text-emerald-800">Evaluation Rubric: </span>
+                                      {q.answerKey}
+                                    </div>
+                                  )}
+                                </td>
+                                <td className="text-center font-bold text-slate-900 align-middle">
+                                  {q.marks || 5}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="questions-list flex flex-col" style={{ gap: `${questionGap}px` }}>
+                        {activeLongQuestions.map((q, idx) => (
+                          <div
+                            key={q.id || idx}
+                            className="question-card relative group hover:bg-slate-50/90 rounded transition-all"
+                            style={{ padding: `${Math.min(questionGap, 2)}px 0` }}
+                          >
+                            
+                            {/* Action Toolbar on Hover */}
+                            <div className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white border border-slate-300 rounded shadow px-1 py-0.5 z-10 transition-opacity">
+                              <button onClick={() => openSwapModal('longQuestions', idx, q)} title="Sawal Badal Dein (Swap Long Question)" className="p-1 hover:text-amber-600 flex items-center gap-0.5 text-[10px] font-bold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200"><RefreshCw className="w-2.5 h-2.5" /> Swap</button>
+                              <button onClick={() => moveQuestion('longQuestions', idx, -1)} title="Move Up" className="p-1 hover:text-indigo-600"><ArrowUp className="w-3 h-3" /></button>
+                              <button onClick={() => moveQuestion('longQuestions', idx, 1)} title="Move Down" className="p-1 hover:text-indigo-600"><ArrowDown className="w-3 h-3" /></button>
+                              <button onClick={() => deleteQuestion('longQuestions', idx)} title="Delete Question" className="p-1 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
                             </div>
-                          )}
 
-                          {/* Blank Student Answer Lines */}
-                          {showAnswerLines && (
-                            <div className="answer-ruled-lines">
-                              <div className="answer-ruled-line"></div>
-                              <div className="answer-ruled-line"></div>
-                              <div className="answer-ruled-line"></div>
-                              <div className="answer-ruled-line"></div>
-                            </div>
-                          )}
+                            {/* Side-by-Side Question Prompt */}
+                            {renderQuestionPrompt(q.question, idx, 'longQuestions')}
 
-                          {/* Teacher Answer Key */}
-                          {showAnswerKey && q.answerKey && (
-                            <div className="mt-1 p-1 bg-emerald-50 border border-emerald-300 rounded text-[0.85em] text-emerald-900">
-                              <span className="font-bold text-emerald-800">Evaluation Rubric: </span>
-                              {q.answerKey}
-                            </div>
-                          )}
+                            {/* Sub Parts */}
+                            {q.subParts && q.subParts.length > 0 && (
+                              <div className="space-y-0.5 text-[0.9em] text-slate-800 mt-0.5">
+                                {q.subParts.map((sub, sIdx) => {
+                                  const { eng, urdu } = parseQuestionText(sub);
+                                  return (
+                                    <div key={sIdx} className="flex justify-between items-center italic">
+                                      <span>{eng}</span>
+                                      {urdu && <span className="font-serif-urdu font-bold text-right" dir="rtl">{urdu}</span>}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
 
-                        </div>
-                      ))}
-                    </div>
+                            {/* Blank Student Answer Lines */}
+                            {showAnswerLines && (
+                              <div className="answer-ruled-lines">
+                                <div className="answer-ruled-line"></div>
+                                <div className="answer-ruled-line"></div>
+                                <div className="answer-ruled-line"></div>
+                                <div className="answer-ruled-line"></div>
+                              </div>
+                            )}
+
+                            {/* Teacher Answer Key */}
+                            {showAnswerKey && q.answerKey && (
+                              <div className="mt-1 p-1 bg-emerald-50 border border-emerald-300 rounded text-[0.85em] text-emerald-900">
+                                <span className="font-bold text-emerald-800">Evaluation Rubric: </span>
+                                {q.answerKey}
+                              </div>
+                            )}
+
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Add Long Question button */}
                     <div className="no-print mt-1 text-center">

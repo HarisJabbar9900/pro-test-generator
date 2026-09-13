@@ -473,3 +473,68 @@
   background-color: #fefce8;
   border-radius: 3px;
 }
+
+/* ========================================================= */
+/* OFFICIAL BOARD TABULAR LAYOUT STYLING (بورڈ ٹیبل فارمیٹ) */
+/* ========================================================= */
+.board-paper-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1.5px solid #0f172a;
+  margin-top: 4px;
+  margin-bottom: 6px;
+  font-size: inherit;
+  background-color: #ffffff;
+}
+
+.board-paper-table th {
+  background-color: #f1f5f9;
+  border: 1px solid #0f172a;
+  padding: 3.5px 5px;
+  font-weight: 800;
+  text-align: center;
+  font-size: 0.88em;
+  color: #0f172a;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.board-paper-table td {
+  border: 1px solid #475569;
+  padding: 3.5px 6px;
+  vertical-align: middle;
+  line-height: 1.35;
+  color: inherit;
+}
+
+.board-paper-table tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.board-paper-table tr:hover {
+  background-color: rgba(248, 250, 252, 0.9);
+}
+
+@media print {
+  .board-paper-table {
+    border: 1.5px solid #000000 !important;
+    border-collapse: collapse !important;
+    margin-bottom: 3mm !important;
+  }
+  .board-paper-table th {
+    background-color: #e2e8f0 !important;
+    border: 1px solid #000000 !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .board-paper-table td {
+    border: 1px solid #000000 !important;
+    color: #000000 !important;
+  }
+  .board-paper-table tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
