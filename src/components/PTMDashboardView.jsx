@@ -2,7 +2,7 @@ import {
   Send, Save, Newspaper, Users, Settings, Trash2, 
   Copy, Clock, PenTool, BookOpen, FileSignature, ArrowRight, 
   Cloud, Layers, ShieldCheck, ChevronRight, ListChecks, FileText,
-  Sparkles, Database, Award, Landmark
+  Sparkles, Database, Award, Landmark, Languages
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 import { getUserStats } from '../utils/userActivityTracker';
