@@ -18,6 +18,7 @@ import PTMSecondaryViews from './components/PTMSecondaryViews';
 import PricingPlansView from './components/PricingPlansView';
 import ContactTeamView from './components/ContactTeamView';
 import DateSheetPlannerView from './components/DateSheetPlannerView';
+import AppLoadingScreen from './components/AppLoadingScreen';
 
 // Auto-retrying lazy loader for heavy administrative modules and modals
 function lazyWithRetry(componentImport) {
@@ -237,6 +238,9 @@ export default function App() {
       return 'ur';
     }
   });
+
+  // State to manage cinematic initial boot experience
+  const [isAppBooting, setIsAppBooting] = useState(true);
 
   const handleToggleLanguage = () => {
     setAppLanguage(prev => {
@@ -1026,6 +1030,7 @@ export default function App() {
   if (!currentUser) {
     return (
       <>
+        {isAppBooting && <AppLoadingScreen onComplete={() => setIsAppBooting(false)} />}
         <Toaster 
           position="top-right" 
           richColors 
@@ -1047,6 +1052,7 @@ export default function App() {
 
   return (
     <div className="h-screen bg-[#f4f7f9] text-slate-800 flex font-sans selection:bg-blue-600 selection:text-white relative overflow-hidden">
+      {isAppBooting && <AppLoadingScreen onComplete={() => setIsAppBooting(false)} />}
       
       {/* LEFT SIDEBAR (EXPANDED W-64 OR COLLAPSED MINI-ICON RAIL W-16 ON DESKTOP, SLIDE-OVER DRAWER ON MOBILE) */}
       <PTMSidebar
