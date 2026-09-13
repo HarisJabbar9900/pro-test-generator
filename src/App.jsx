@@ -724,7 +724,15 @@ export default function App() {
     chapterIds = [],
     language = 'bilingual',
     customTitle,
-    syllabus
+    syllabus,
+    mcqCount: overrideMcqCount,
+    mcqMarks: overrideMcqMarks,
+    shortCount: overrideShortCount,
+    shortMarks: overrideShortMarks,
+    longCount: overrideLongCount,
+    longMarks: overrideLongMarks,
+    timeAllowed: overrideTimeAllowed,
+    totalMarks: overrideTotalMarks
   }) => {
     const targetClass = classKey || selectedClass || '10th';
     const targetClassData = bank[targetClass] || {};
@@ -740,47 +748,14 @@ export default function App() {
       (ch.topics || []).forEach(t => collectedTopicIds.push(t.id));
     });
 
-    let mcqCount = 5;
-    let mcqMarks = 1;
-    let shortCount = 5;
-    let shortMarks = 2;
-    let longCount = 2;
-    let longMarks = 5;
-    let timeAllowed = '35 Mins';
-
-    if (preset.id === 'chapter_test') {
-      mcqCount = 5;
-      mcqMarks = 1;
-      shortCount = 5;
-      shortMarks = 2;
-      longCount = 2;
-      longMarks = 5;
-      timeAllowed = '35 Mins';
-    } else if (preset.id === 'half_book') {
-      mcqCount = 10;
-      mcqMarks = 1;
-      shortCount = 10;
-      shortMarks = 2;
-      longCount = 4;
-      longMarks = 5;
-      timeAllowed = '75 Mins';
-    } else if (preset.id === 'grand_mock') {
-      mcqCount = 15;
-      mcqMarks = 1;
-      shortCount = 15;
-      shortMarks = 2;
-      longCount = 6;
-      longMarks = 5;
-      timeAllowed = '2.5 Hours';
-    } else if (preset.id === 'mcqs_quiz') {
-      mcqCount = 20;
-      mcqMarks = 1;
-      shortCount = 0;
-      shortMarks = 0;
-      longCount = 0;
-      longMarks = 0;
-      timeAllowed = '20 Mins';
-    }
+    let mcqCount = overrideMcqCount !== undefined ? Number(overrideMcqCount) : (preset.mcqCount ?? 5);
+    let mcqMarks = overrideMcqMarks !== undefined ? Number(overrideMcqMarks) : (preset.mcqMarks ?? 1);
+    let shortCount = overrideShortCount !== undefined ? Number(overrideShortCount) : (preset.shortCount ?? 5);
+    let shortMarks = overrideShortMarks !== undefined ? Number(overrideShortMarks) : (preset.shortMarks ?? 2);
+    let longCount = overrideLongCount !== undefined ? Number(overrideLongCount) : (preset.longCount ?? 2);
+    let longMarks = overrideLongMarks !== undefined ? Number(overrideLongMarks) : (preset.longMarks ?? 5);
+    let timeAllowed = overrideTimeAllowed || preset.time || '35 Mins';
+    let totalMarks = overrideTotalMarks || ((mcqCount * mcqMarks) + (shortCount * shortMarks) + (longCount * longMarks));
 
     let computedSyllabus = syllabus;
     if (!computedSyllabus) {

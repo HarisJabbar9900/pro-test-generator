@@ -5,24 +5,30 @@ import {
   Cloud, Layers, ShieldCheck, ChevronRight, ListChecks, FileText,
   Sparkles, Database, Award, Landmark, Languages, Calendar,
   Printer, Download, Zap, Flame, CheckCircle2, Check, ExternalLink,
-  GraduationCap, Timer, X, Sliders, CheckSquare, Square
+  GraduationCap, Timer, X, Sliders, CheckSquare, Square, Edit3, RotateCcw
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 import { getUserStats } from '../utils/userActivityTracker';
 import { isSuperAdmin } from '../utils/pricingPlansService';
 
-const TEST_PRESETS = [
+const DEFAULT_TEST_PRESETS = [
   {
     id: 'chapter_test',
     title: 'Chapter Test',
     titleUrdu: 'باب وار امتحانی ٹیسٹ',
     marks: 25,
     time: '35 Mins',
-    desc: '5 MCQs + 5 Shorts + 1 Long',
-    descUrdu: '5 معروضی + 5 مختصر + 1 تفصیلی',
+    mcqCount: 5,
+    mcqMarks: 1,
+    shortCount: 5,
+    shortMarks: 2,
+    longCount: 2,
+    longMarks: 5,
+    desc: '5 MCQs + 5 Shorts + 2 Longs',
+    descUrdu: '5 معروضی + 5 مختصر + 2 تفصیلی',
     badge: 'Weekly / Class Test',
     gradient: 'from-blue-600 via-indigo-600 to-indigo-700',
-    icon: Zap
+    iconName: 'Zap'
   },
   {
     id: 'half_book',
@@ -30,11 +36,17 @@ const TEST_PRESETS = [
     titleUrdu: 'ہاف بک مڈٹرم امتحان',
     marks: 50,
     time: '75 Mins',
-    desc: '10 MCQs + 10 Shorts + 2 Longs',
-    descUrdu: '10 معروضی + 10 مختصر + 2 تفصیلی',
+    mcqCount: 10,
+    mcqMarks: 1,
+    shortCount: 10,
+    shortMarks: 2,
+    longCount: 4,
+    longMarks: 5,
+    desc: '10 MCQs + 10 Shorts + 4 Longs',
+    descUrdu: '10 معروضی + 10 مختصر + 4 تفصیلی',
     badge: 'Midterm Standard',
     gradient: 'from-teal-600 via-emerald-600 to-green-700',
-    icon: Flame
+    iconName: 'Flame'
   },
   {
     id: 'grand_mock',
@@ -42,11 +54,17 @@ const TEST_PRESETS = [
     titleUrdu: 'گرینڈ بورڈ ماک پیپر',
     marks: 75,
     time: '2.5 Hours',
-    desc: 'Full BISE Annual Pattern',
-    descUrdu: 'مکمل بورڈ پیٹرن و تقسیم',
+    mcqCount: 15,
+    mcqMarks: 1,
+    shortCount: 15,
+    shortMarks: 2,
+    longCount: 6,
+    longMarks: 5,
+    desc: '15 MCQs + 15 Shorts + 6 Longs',
+    descUrdu: '15 معروضی + 15 مختصر + 6 تفصیلی',
     badge: 'Pre-Board Grand Exam',
     gradient: 'from-purple-600 via-violet-600 to-indigo-700',
-    icon: Award
+    iconName: 'Award'
   },
   {
     id: 'mcqs_quiz',
@@ -54,13 +72,29 @@ const TEST_PRESETS = [
     titleUrdu: 'معروضی کوئز و ببل شیٹ',
     marks: 20,
     time: '20 Mins',
+    mcqCount: 20,
+    mcqMarks: 1,
+    shortCount: 0,
+    shortMarks: 0,
+    longCount: 0,
+    longMarks: 0,
     desc: '20 MCQs with OMR Sheet',
     descUrdu: '20 معروضی + او ایم آر شیٹ',
     badge: 'OMR Bubble Sheet',
     gradient: 'from-amber-500 via-orange-500 to-amber-600',
-    icon: ListChecks
+    iconName: 'ListChecks'
   }
 ];
+
+const getPresetIcon = (iconName) => {
+  switch (iconName) {
+    case 'Flame': return Flame;
+    case 'Award': return Award;
+    case 'ListChecks': return ListChecks;
+    case 'Zap':
+    default: return Zap;
+  }
+};
 
 export default function PTMDashboardView({
   onGoToGenerate,
@@ -86,7 +120,34 @@ export default function PTMDashboardView({
   const isUrdu = appLanguage === 'ur';
   const userStats = getUserStats(currentUser?.email);
 
-  // Modal State for 1-Click Interactive Test Generator
+  // Persistent Custom Presets (Admin Customizable)
+  const [presets, setPresets] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ptm_custom_test_presets');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return DEFAULT_TEST_PRESETS;
+  });
+
+  // Admin Preset Editor Modal State
+  const [editingPreset, setEditingPreset] = useState(null);
+  const [editForm, setEditForm] = useState({
+    title: '',
+    titleUrdu: '',
+    badge: '',
+    time: '',
+    mcqCount: 5,
+    mcqMarks: 1,
+    shortCount: 5,
+    shortMarks: 2,
+    longCount: 2,
+    longMarks: 5
+  });
+
+  // Test Generator Modal State
   const [activePresetModal, setActivePresetModal] = useState(null);
   const [modalClass, setModalClass] = useState(selectedClass || '10th');
   const [modalSubjectId, setModalSubjectId] = useState('');
@@ -95,6 +156,12 @@ export default function PTMDashboardView({
   const [modalCustomChapterIds, setModalCustomChapterIds] = useState([]);
   const [modalLanguage, setModalLanguage] = useState('bilingual'); // 'bilingual' | 'en' | 'ur'
   const [modalExamTitle, setModalExamTitle] = useState('');
+
+  // On-the-fly customizable question counts inside Generator Modal
+  const [modalMcqCount, setModalMcqCount] = useState(5);
+  const [modalShortCount, setModalShortCount] = useState(5);
+  const [modalLongCount, setModalLongCount] = useState(2);
+  const [modalTime, setModalTime] = useState('35 Mins');
 
   // Compute specific user metrics
   const userTotalCreated = Math.max(userStats.createdCount || 0, savedPapers?.length || 0);
@@ -149,6 +216,81 @@ export default function PTMDashboardView({
     }
   };
 
+  // Open Admin Edit Preset Modal
+  const handleStartEditPreset = (preset, e) => {
+    e?.stopPropagation();
+    setEditingPreset(preset);
+    setEditForm({
+      title: preset.title || '',
+      titleUrdu: preset.titleUrdu || '',
+      badge: preset.badge || '',
+      time: preset.time || '',
+      mcqCount: preset.mcqCount ?? 5,
+      mcqMarks: preset.mcqMarks ?? 1,
+      shortCount: preset.shortCount ?? 5,
+      shortMarks: preset.shortMarks ?? 2,
+      longCount: preset.longCount ?? 2,
+      longMarks: preset.longMarks ?? 5
+    });
+  };
+
+  // Save Admin Custom Preset Changes
+  const handleSaveCustomPreset = (e) => {
+    e?.preventDefault();
+    if (!editingPreset) return;
+
+    const mcqCount = Math.max(0, parseInt(editForm.mcqCount) || 0);
+    const mcqMarks = Math.max(1, parseInt(editForm.mcqMarks) || 1);
+    const shortCount = Math.max(0, parseInt(editForm.shortCount) || 0);
+    const shortMarks = Math.max(1, parseInt(editForm.shortMarks) || 2);
+    const longCount = Math.max(0, parseInt(editForm.longCount) || 0);
+    const longMarks = Math.max(1, parseInt(editForm.longMarks) || 5);
+    const totalMarks = (mcqCount * mcqMarks) + (shortCount * shortMarks) + (longCount * longMarks);
+
+    const updatedList = presets.map(p => {
+      if (p.id === editingPreset.id) {
+        return {
+          ...p,
+          title: editForm.title.trim() || p.title,
+          titleUrdu: editForm.titleUrdu.trim() || p.titleUrdu,
+          badge: editForm.badge.trim() || p.badge,
+          time: editForm.time.trim() || p.time,
+          marks: totalMarks,
+          mcqCount: mcqCount,
+          mcqMarks: mcqMarks,
+          shortCount: shortCount,
+          shortMarks: shortMarks,
+          longCount: longCount,
+          longMarks: longMarks,
+          desc: `${mcqCount} MCQs + ${shortCount} Shorts + ${longCount} Longs`,
+          descUrdu: `${mcqCount} معروضی + ${shortCount} مختصر + ${longCount} تفصیلی`
+        };
+      }
+      return p;
+    });
+
+    setPresets(updatedList);
+    try {
+      localStorage.setItem('ptm_custom_test_presets', JSON.stringify(updatedList));
+    } catch (err) {}
+
+    notify.success(`امتحانی سانچہ "${editForm.title || editingPreset.title}" کامیابی سے محفوظ ہو گیا!`, {
+      description: `کل نمبر: ${totalMarks} Marks • معروضی: ${mcqCount} • مختصر: ${shortCount} • لانگ: ${longCount}`
+    });
+
+    setEditingPreset(null);
+  };
+
+  // Reset Presets to Official Defaults
+  const handleResetPresetsToDefault = () => {
+    setPresets(DEFAULT_TEST_PRESETS);
+    try {
+      localStorage.removeItem('ptm_custom_test_presets');
+    } catch (err) {}
+    notify.info("تمام امتحانی سانچے سرکاری بورڈ اسٹینڈرڈ پر بحال کر دیے گئے۔ (Presets Reset)");
+    setEditingPreset(null);
+  };
+
   // Open the interactive configuration modal for any preset
   const handleOpenPresetModal = (preset) => {
     setActivePresetModal(preset);
@@ -174,6 +316,12 @@ export default function PTMDashboardView({
     setModalCustomChapterIds([]);
     setModalLanguage('bilingual');
     setModalExamTitle(`${preset.title} (${preset.marks} Marks)`);
+
+    // Load question counts from preset
+    setModalMcqCount(preset.mcqCount ?? 5);
+    setModalShortCount(preset.shortCount ?? 5);
+    setModalLongCount(preset.longCount ?? 2);
+    setModalTime(preset.time || '35 Mins');
   };
 
   // Contextual data for current modal selection
@@ -183,6 +331,11 @@ export default function PTMDashboardView({
   const halfPoint = Math.ceil((currentModalChapters.length || 1) / 2);
   const firstHalfChapters = currentModalChapters.slice(0, halfPoint);
   const secondHalfChapters = currentModalChapters.slice(halfPoint);
+
+  // Live total marks inside generator modal
+  const liveModalMarks = (modalMcqCount * (activePresetModal?.mcqMarks || 1)) + 
+                         (modalShortCount * (activePresetModal?.shortMarks || 2)) + 
+                         (modalLongCount * (activePresetModal?.longMarks || 5));
 
   const handleExecuteGenerate = () => {
     if (!activePresetModal) return;
@@ -218,8 +371,16 @@ export default function PTMDashboardView({
         subjectId: currentModalSubject?.id || modalSubjectId,
         chapterIds: targetChapterIds,
         language: modalLanguage,
-        customTitle: modalExamTitle || `${activePresetModal.title} (${activePresetModal.marks} Marks)`,
-        syllabus: syllabusDesc
+        customTitle: modalExamTitle || `${activePresetModal.title} (${liveModalMarks} Marks)`,
+        syllabus: syllabusDesc,
+        mcqCount: modalMcqCount,
+        mcqMarks: activePresetModal.mcqMarks || 1,
+        shortCount: modalShortCount,
+        shortMarks: activePresetModal.shortMarks || 2,
+        longCount: modalLongCount,
+        longMarks: activePresetModal.longMarks || 5,
+        timeAllowed: modalTime,
+        totalMarks: liveModalMarks
       });
       setActivePresetModal(null);
     } else {
@@ -511,9 +672,9 @@ export default function PTMDashboardView({
         </div>
       )}
 
-      {/* 2. ⚡ INSTANT 1-CLICK EXAM PRESETS (ELITE FEATURE) */}
+      {/* 2. ⚡ 1-CLICK INSTANT EXAM PRESETS WITH ADMIN CUSTOMIZATION */}
       <div className="space-y-3 pt-1">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="text-sm sm:text-base font-black text-slate-800 tracking-tight flex items-center gap-2">
               <Zap className="w-4 h-4 text-amber-500 fill-amber-400" />
@@ -522,18 +683,27 @@ export default function PTMDashboardView({
             </h2>
             <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
               {isUrdu 
-                ? 'وقت کی بچت کریں! کسی بھی سانچے پر کلک کریں اور کلاس و اسباق منتخب کر کے ایک کلک میں پرچہ تیار کریں۔' 
-                : 'Save time! Click any template below to customize scope and generate a complete exam paper in seconds.'}
+                ? 'وقت کی بچت کریں! کسی بھی سانچے پر کلک کر کے پرچہ بنائیں، یا بطور ایڈمن سوالات و نمبرز اپنی مرضی کے مطابق سیٹ کریں۔' 
+                : 'Click any template to generate a complete exam paper, or customize marks & question ratios as Admin.'}
             </p>
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 self-start sm:self-auto bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-            {isUrdu ? 'تیز ترین پرچہ سازی • Fast Track' : '⚡ 1-Click Setup'}
-          </span>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            {isSuper && (
+              <span className="text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-200 flex items-center gap-1 shadow-2xs">
+                <ShieldCheck className="w-3 h-3 text-purple-600" />
+                Admin Customizable
+              </span>
+            )}
+            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+              {isUrdu ? 'تیز ترین پرچہ سازی • Fast Track' : '⚡ 1-Click Setup'}
+            </span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-          {TEST_PRESETS.map((preset) => {
-            const IconComponent = preset.icon;
+          {presets.map((preset) => {
+            const IconComponent = getPresetIcon(preset.iconName);
             return (
               <div
                 key={preset.id}
@@ -545,13 +715,28 @@ export default function PTMDashboardView({
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${preset.gradient} text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform`}>
                       <IconComponent className="w-5 h-5" />
                     </div>
-                    <div className="flex flex-col items-end">
-                      <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-black border border-slate-200">
-                        {preset.marks} Marks
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-bold mt-0.5">
-                        ⏱️ {preset.time}
-                      </span>
+
+                    <div className="flex items-center gap-1.5">
+                      {/* Admin Quick Edit Button */}
+                      {isSuper && (
+                        <button
+                          type="button"
+                          onClick={(e) => handleStartEditPreset(preset, e)}
+                          className="p-1.5 rounded-lg bg-slate-100 hover:bg-purple-100 text-slate-500 hover:text-purple-700 transition-colors border border-slate-200/80 cursor-pointer shadow-2xs"
+                          title="Edit this Preset (سانچے کے نمبرز اور سوالات تبدیل کریں)"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+
+                      <div className="flex flex-col items-end">
+                        <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 text-[10px] font-black border border-slate-200">
+                          {preset.marks} Marks
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-bold mt-0.5">
+                          ⏱️ {preset.time}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -808,7 +993,7 @@ export default function PTMDashboardView({
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-rose-700 transition-colors">
               <span>{isUrdu ? '0 Items • ری سائیکل بن خالی ہے' : '0 Items in Bin'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-rose-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
-                <ChevronRight className="w-3 h-3" />
+                <ChevronRight className="w-3.5 h-3.5" />
               </div>
             </div>
           </div>
@@ -844,7 +1029,7 @@ export default function PTMDashboardView({
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-emerald-700 transition-colors">
               <span>{isUrdu ? 'View Archives • سابقہ ریکارڈ دیکھیں' : 'View Archives'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-emerald-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
-                <ChevronRight className="w-3 h-3" />
+                <ChevronRight className="w-3.5 h-3.5" />
               </div>
             </div>
           </div>
@@ -880,7 +1065,7 @@ export default function PTMDashboardView({
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-amber-700 transition-colors">
               <span>{isUrdu ? 'Browse Past Papers • بورڈ پرچے کھولیں' : 'Browse Past Papers'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-amber-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
-                <ChevronRight className="w-3 h-3" />
+                <ChevronRight className="w-3.5 h-3.5" />
               </div>
             </div>
           </div>
@@ -1272,7 +1457,7 @@ export default function PTMDashboardView({
             <div className={`p-4 sm:p-5 bg-gradient-to-r ${activePresetModal.gradient} text-white relative flex items-start justify-between`}>
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 shadow-inner">
-                  {React.createElement(activePresetModal.icon, { className: "w-6 h-6 text-white" })}
+                  {React.createElement(getPresetIcon(activePresetModal.iconName), { className: "w-6 h-6 text-white" })}
                 </div>
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -1280,7 +1465,7 @@ export default function PTMDashboardView({
                       {activePresetModal.badge}
                     </span>
                     <span className="px-2 py-0.5 rounded-md bg-black/20 text-amber-200 text-xs font-black">
-                      {activePresetModal.marks} Marks • ⏱️ {activePresetModal.time}
+                      {liveModalMarks} Marks • ⏱️ {modalTime}
                     </span>
                   </div>
                   <h3 className="text-base sm:text-lg font-black tracking-tight mt-1 text-white">
@@ -1304,23 +1489,69 @@ export default function PTMDashboardView({
             {/* Modal Scrollable Body */}
             <div className="p-4 sm:p-6 overflow-y-auto space-y-4 text-slate-800 font-sans">
               
-              {/* Question Ratio Specification Banner */}
-              <div className="p-3 bg-blue-50/70 border border-blue-200/80 rounded-2xl flex items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="text-base">📋</span>
-                  <div>
-                    <span className="font-extrabold text-blue-900 block">Exam Distribution Specification:</span>
-                    <span className="text-blue-700 font-semibold text-[11px]">
-                      {activePresetModal.id === 'chapter_test' && '5 MCQs (5 Marks) + 5 Shorts (10 Marks) + 1 Long (10 Marks)'}
-                      {activePresetModal.id === 'half_book' && '10 MCQs (10 Marks) + 10 Shorts (20 Marks) + 2 Longs (20 Marks)'}
-                      {activePresetModal.id === 'grand_mock' && '15 MCQs (15 Marks) + 15 Shorts (30 Marks) + 3 Longs (30 Marks)'}
-                      {activePresetModal.id === 'mcqs_quiz' && '20 MCQs (20 Marks) with Automatic OMR Bubble Sheet & Key'}
-                    </span>
+              {/* Question Ratio Specification & Live Adjuster Bar */}
+              <div className="p-3.5 bg-gradient-to-br from-blue-50 to-indigo-50/60 border border-blue-200 rounded-2xl space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-extrabold text-blue-900 flex items-center gap-1.5">
+                    <span>⚡ Marks & Questions Breakdown (نمبرز اور سوالات کی تقسیم):</span>
+                  </span>
+                  <span className="font-black text-blue-700 text-xs bg-white px-2.5 py-0.5 rounded-lg border border-blue-200 shadow-2xs">
+                    Total: {liveModalMarks} Marks
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="bg-white p-2 rounded-xl border border-blue-100 shadow-2xs">
+                    <span className="text-[10px] text-slate-500 font-bold block">MCQs (1 M)</span>
+                    <div className="flex items-center justify-center gap-1 mt-1">
+                      <button
+                        type="button"
+                        onClick={() => setModalMcqCount(prev => Math.max(0, prev - 1))}
+                        className="w-5 h-5 rounded-md bg-slate-100 hover:bg-blue-100 text-blue-700 font-black text-xs flex items-center justify-center cursor-pointer"
+                      >-</button>
+                      <span className="font-black text-xs text-slate-800 w-5">{modalMcqCount}</span>
+                      <button
+                        type="button"
+                        onClick={() => setModalMcqCount(prev => prev + 1)}
+                        className="w-5 h-5 rounded-md bg-slate-100 hover:bg-blue-100 text-blue-700 font-black text-xs flex items-center justify-center cursor-pointer"
+                      >+</button>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-2 rounded-xl border border-blue-100 shadow-2xs">
+                    <span className="text-[10px] text-slate-500 font-bold block">Shorts (2 M)</span>
+                    <div className="flex items-center justify-center gap-1 mt-1">
+                      <button
+                        type="button"
+                        onClick={() => setModalShortCount(prev => Math.max(0, prev - 1))}
+                        className="w-5 h-5 rounded-md bg-slate-100 hover:bg-blue-100 text-blue-700 font-black text-xs flex items-center justify-center cursor-pointer"
+                      >-</button>
+                      <span className="font-black text-xs text-slate-800 w-5">{modalShortCount}</span>
+                      <button
+                        type="button"
+                        onClick={() => setModalShortCount(prev => prev + 1)}
+                        className="w-5 h-5 rounded-md bg-slate-100 hover:bg-blue-100 text-blue-700 font-black text-xs flex items-center justify-center cursor-pointer"
+                      >+</button>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-2 rounded-xl border border-blue-100 shadow-2xs">
+                    <span className="text-[10px] text-slate-500 font-bold block">Longs (5 M)</span>
+                    <div className="flex items-center justify-center gap-1 mt-1">
+                      <button
+                        type="button"
+                        onClick={() => setModalLongCount(prev => Math.max(0, prev - 1))}
+                        className="w-5 h-5 rounded-md bg-slate-100 hover:bg-blue-100 text-blue-700 font-black text-xs flex items-center justify-center cursor-pointer"
+                      >-</button>
+                      <span className="font-black text-xs text-slate-800 w-5">{modalLongCount}</span>
+                      <button
+                        type="button"
+                        onClick={() => setModalLongCount(prev => prev + 1)}
+                        className="w-5 h-5 rounded-md bg-slate-100 hover:bg-blue-100 text-blue-700 font-black text-xs flex items-center justify-center cursor-pointer"
+                      >+</button>
+                    </div>
                   </div>
                 </div>
-                <span className="font-black text-blue-800 text-sm bg-blue-100/80 px-2.5 py-1 rounded-xl shrink-0">
-                  {activePresetModal.marks} Marks
-                </span>
               </div>
 
               {/* Step 1: Select Class */}
@@ -1393,7 +1624,7 @@ export default function PTMDashboardView({
                 {/* Scope selector for Chapter Test */}
                 {activePresetModal.id === 'chapter_test' && (
                   <div className="space-y-1.5">
-                    <span className="text-[11px] text-slate-500 font-medium">Select single chapter for this 25 Marks test:</span>
+                    <span className="text-[11px] text-slate-500 font-medium">Select single chapter for this test:</span>
                     <div className="max-h-36 overflow-y-auto space-y-1 pr-1">
                       {currentModalChapters.map((ch, idx) => (
                         <div
@@ -1599,6 +1830,233 @@ export default function PTMDashboardView({
               </div>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* 9. ADMIN DEDICATED PRESET CUSTOMIZATION MODAL */}
+      {isSuper && editingPreset && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/65 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl shadow-2xl border border-purple-200 w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 font-sans">
+            
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shadow-inner">
+                  <Edit3 className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black uppercase">
+                      Admin Configurator
+                    </span>
+                  </div>
+                  <h3 className="text-base font-black tracking-tight text-white mt-0.5">
+                    Customize Preset: {editingPreset.title}
+                  </h3>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setEditingPreset(null)}
+                className="w-8 h-8 rounded-full bg-black/20 hover:bg-black/30 text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body Form */}
+            <form onSubmit={handleSaveCustomPreset} className="p-4 sm:p-6 overflow-y-auto space-y-4 text-slate-800">
+              
+              {/* Dynamic Live Calculated Total Marks Preview */}
+              <div className="p-3.5 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-purple-700 block">Live Total Marks Formula:</span>
+                  <span className="text-slate-700 font-bold">
+                    ({editForm.mcqCount} × {editForm.mcqMarks}) + ({editForm.shortCount} × {editForm.shortMarks}) + ({editForm.longCount} × {editForm.longMarks})
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-2xl font-black text-purple-700 leading-none">
+                    {(editForm.mcqCount * editForm.mcqMarks) + (editForm.shortCount * editForm.shortMarks) + (editForm.longCount * editForm.longMarks)}
+                  </span>
+                  <span className="text-[10px] font-bold text-purple-500 block">Total Marks</span>
+                </div>
+              </div>
+
+              {/* Title & Badge Fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-black text-slate-700">Preset Title (English):</label>
+                  <input
+                    type="text"
+                    required
+                    value={editForm.title}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-black text-slate-700">Preset Title (Urdu):</label>
+                  <input
+                    type="text"
+                    value={editForm.titleUrdu}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, titleUrdu: e.target.value }))}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-black text-slate-700">Badge Label:</label>
+                  <input
+                    type="text"
+                    value={editForm.badge}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, badge: e.target.value }))}
+                    placeholder="e.g. Weekly / Class Test"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-black text-slate-700">Time Allowed (وقت):</label>
+                  <input
+                    type="text"
+                    value={editForm.time}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, time: e.target.value }))}
+                    placeholder="e.g. 35 Mins or 1 Hour"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                  />
+                </div>
+              </div>
+
+              {/* MCQs Setting */}
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between text-xs font-black text-slate-800">
+                  <span>1. Multiple Choice Questions (MCQs):</span>
+                  <span className="text-purple-600">{editForm.mcqCount * editForm.mcqMarks} Marks</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] text-slate-500 font-bold block mb-1">Total MCQs Count:</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={editForm.mcqCount}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, mcqCount: parseInt(e.target.value) || 0 }))}
+                      className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-black text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-slate-500 font-bold block mb-1">Marks per MCQ:</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={editForm.mcqMarks}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, mcqMarks: parseInt(e.target.value) || 1 }))}
+                      className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-black text-slate-800"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Shorts Setting */}
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between text-xs font-black text-slate-800">
+                  <span>2. Short Questions (مختصر سوالات):</span>
+                  <span className="text-purple-600">{editForm.shortCount * editForm.shortMarks} Marks</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] text-slate-500 font-bold block mb-1">Total Shorts Count:</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="50"
+                      value={editForm.shortCount}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, shortCount: parseInt(e.target.value) || 0 }))}
+                      className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-black text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-slate-500 font-bold block mb-1">Marks per Short:</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={editForm.shortMarks}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, shortMarks: parseInt(e.target.value) || 2 }))}
+                      className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-black text-slate-800"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Longs Setting */}
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between text-xs font-black text-slate-800">
+                  <span>3. Long Questions (تفصیلی سوالات):</span>
+                  <span className="text-purple-600">{editForm.longCount * editForm.longMarks} Marks</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] text-slate-500 font-bold block mb-1">Total Longs Count:</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="20"
+                      value={editForm.longCount}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, longCount: parseInt(e.target.value) || 0 }))}
+                      className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-black text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-slate-500 font-bold block mb-1">Marks per Long:</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={editForm.longMarks}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, longMarks: parseInt(e.target.value) || 5 }))}
+                      className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-black text-slate-800"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-3 border-t border-slate-200 flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={handleResetPresetsToDefault}
+                  className="px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Reset to Board Defaults</span>
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingPreset(null)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black shadow-md shadow-purple-600/25 transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>Save Custom Preset</span>
+                  </button>
+                </div>
+              </div>
+
+            </form>
           </div>
         </div>
       )}
