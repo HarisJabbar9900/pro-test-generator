@@ -55,7 +55,7 @@ import {
   generatePaperFromTopics,
   mergeChapter1NewTopics
 } from './utils/questionBankService';
-import { computeSyllabusText } from './utils/syllabusHelper';
+import { computeSyllabusText, formatPaperFileName } from './utils/syllabusHelper';
 import { recordPaperCreated, recordPaperDeleted } from './utils/userActivityTracker';
 import { 
   fetchBankFromFirebase, 
@@ -1061,7 +1061,29 @@ export default function App() {
       setActiveNav('pricing');
       return;
     }
+
+    let syllabus = (paperConfig?.syllabus || '').trim();
+    if (!syllabus || syllabus === 'Complete Syllabus' || syllabus.includes('Full Book')) {
+      syllabus = computeSyllabusText(currentChapters, selectedTopicIds, {
+        mcqCount: paperData.mcqs?.length || 0,
+        shortCount: paperData.shortQuestions?.length || 0,
+        longCount: paperData.longQuestions?.length || 0
+      });
+    }
+
+    const paperTitle = formatPaperFileName({
+      ...paperConfig,
+      syllabus,
+      gradeClass: paperConfig.gradeClass || selectedClass,
+      subject: paperConfig.subject || currentSubject?.name
+    });
+
+    const oldTitle = document.title;
+    document.title = paperTitle;
     window.print();
+    setTimeout(() => {
+      document.title = oldTitle;
+    }, 1000);
   };
 
   const handleExportDocx = () => {
@@ -1098,7 +1120,7 @@ export default function App() {
       type: 'application/msword'
     });
 
-    // Compute descriptive download filename with chapter name and topic names
+    // Compute descriptive download filename with class, subject, chapter, and topic
     let syllabus = (paperConfig?.syllabus || '').trim();
     if (!syllabus || syllabus === 'Complete Syllabus' || syllabus.includes('Full Book')) {
       syllabus = computeSyllabusText(currentChapters, selectedTopicIds, {
@@ -1108,22 +1130,12 @@ export default function App() {
       });
     }
 
-    // Clean for filename (remove illegal filesystem chars: \ / : * ? " < > |)
-    const cleanSyllabus = syllabus
-      .replace(/[:*?"<>|\\\/]/g, '-')
-      .replace(/\s+/g, ' ')
-      .replace(/[()]/g, '')
-      .trim();
-
-    const subjectStr = (paperConfig?.subject || currentSubject?.name || 'Paper').replace(/[\s]+/g, '_');
-    const gradeStr = (paperConfig?.gradeClass || selectedClass || '').replace(/[\s]+/g, '_');
-    const syllabusStr = cleanSyllabus.replace(/[\s]+/g, '_');
-
-    let filename = `${subjectStr}_${gradeStr}`;
-    if (syllabusStr) {
-      filename += `_${syllabusStr}`;
-    }
-    filename = filename.replace(/_+/g, '_').replace(/^_|_$/g, '') + '.doc';
+    const filename = formatPaperFileName({
+      ...paperConfig,
+      syllabus,
+      gradeClass: paperConfig.gradeClass || selectedClass,
+      subject: paperConfig.subject || currentSubject?.name
+    }, 'doc');
 
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

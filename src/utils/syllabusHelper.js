@@ -164,3 +164,49 @@ export function computeSyllabusText(chapters = [], selectedTopicIds = [], option
   const joined = formattedEntries.join(', ');
   return typeSuffix ? `${joined} - ${typeSuffix}` : joined;
 }
+
+/**
+ * Formats a clean, descriptive, filesystem-safe filename for a test paper:
+ * Format: [Class]_[Subject]_[Chapter_and_Topic_or_Syllabus]_Test_Paper.[extension]
+ * Example: "12th_Class_Computer_Science_Chapter_1_Full_Chapter_Test_Paper.pdf"
+ */
+export function formatPaperFileName(paperConfig = {}, extension = '') {
+  // 1. Resolve Class / Grade
+  const rawClass = paperConfig?.gradeClass || paperConfig?.selectedClass || '';
+  let classPart = '';
+  if (rawClass) {
+    const cleanClass = rawClass.replace(/Class/i, '').trim();
+    classPart = cleanClass ? `${cleanClass}_Class` : 'Class';
+  }
+
+  // 2. Resolve Subject
+  const rawSubject = paperConfig?.subject || 'Paper';
+  const subjectPart = rawSubject
+    .replace(/[:*?"<>|\\/]/g, '')
+    .replace(/\s+/g, '_')
+    .trim();
+
+  // 3. Resolve Chapter & Topic / Syllabus
+  let rawSyllabus = (paperConfig?.syllabus || '').trim();
+  if (!rawSyllabus || rawSyllabus.toLowerCase().includes('complete syllabus') || rawSyllabus.toLowerCase().includes('full book')) {
+    rawSyllabus = 'Full_Book';
+  }
+
+  // Clean filesystem illegal characters (: * ? " < > | / \) and normalize
+  const cleanSyllabus = rawSyllabus
+    .replace(/[:*?"<>|\\/]/g, '-')
+    .replace(/[()]/g, '')
+    .replace(/[\s-]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
+  // 4. Combine parts: Class_Subject_Chapter_Topic_Test_Paper
+  const parts = [classPart, subjectPart, cleanSyllabus, 'Test_Paper'].filter(Boolean);
+  let baseName = parts.join('_').replace(/_+/g, '_');
+
+  if (extension) {
+    const ext = extension.startsWith('.') ? extension : `.${extension}`;
+    return `${baseName}${ext}`;
+  }
+  return baseName;
+}
+

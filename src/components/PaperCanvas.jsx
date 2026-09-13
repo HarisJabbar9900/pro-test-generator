@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Plus, Trash2, ArrowUp, ArrowDown, RefreshCw, 
   Eye, ZoomIn, ZoomOut, Printer, Key, RotateCcw, Columns,
-  MessageCircle, ShieldCheck, Layers, Share2, QrCode
+  MessageCircle, ShieldCheck, Layers, Share2, QrCode,
+  FileText, Download
 } from 'lucide-react';
 import SwapQuestionModal from './SwapQuestionModal';
 import TeacherAnswerKeyModal from './TeacherAnswerKeyModal';
@@ -11,6 +12,7 @@ import { generateMultiSets } from '../utils/multiSetHelper';
 import { notify } from '../utils/notify';
 import { isSuperAdmin } from '../utils/pricingPlansService';
 import { getOrCreatePaperId, syncPaperForQrAccess, generateQrCodeDataUrl } from '../utils/qrCodeService';
+import { formatPaperFileName } from '../utils/syllabusHelper';
 
 const EMPTY_PAPER_DATA = Object.freeze({ mcqs: [], shortQuestions: [], longQuestions: [] });
 const EMPTY_CONFIG = Object.freeze({});
@@ -783,14 +785,13 @@ export default function PaperCanvas({
       return;
     }
 
-    const cleanSyllabus = (paperConfig?.syllabus || '')
-      .replace(/[:*?"<>|\\/]/g, '-')
-      .replace(/\s+/g, ' ')
-      .trim();
+    const paperTitle = formatPaperFileName({
+      ...paperConfig,
+      gradeClass: paperConfig.gradeClass || selectedClass,
+      subject: paperConfig.subject || selectedSubject
+    });
     const oldTitle = document.title;
-    if (cleanSyllabus) {
-      document.title = `${paperConfig.subject || 'Paper'} - ${cleanSyllabus}`;
-    }
+    document.title = paperTitle;
 
     const currentZ = zoomLevel;
     setZoomLevel(100);
@@ -1102,25 +1103,26 @@ export default function PaperCanvas({
               <span className="truncate">WhatsApp</span>
             </button>
 
-            {/* Print Paper */}
+            {/* Download PDF / Print Paper */}
             <button
               type="button"
               onClick={handlePrintPaper}
-              className="flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-2 sm:py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
-              title="Print Paper / Save as PDF (Ctrl+P)"
+              className="flex items-center justify-center gap-1 sm:gap-1.5 px-3 sm:px-3.5 py-2 sm:py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
+              title="Download PDF / Print Paper (Ctrl+P) - Saves with Class, Chapter & Topic in filename"
             >
               <Printer className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">Print Paper</span>
+              <span className="truncate">Download PDF / Print</span>
             </button>
 
-            {/* Save Paper (.doc download) */}
+            {/* Download Word (.doc) */}
             <button
               type="button"
               onClick={onExportDocx}
-              className="flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
-              title="Download editable Microsoft Word (.doc) paper"
+              className="flex items-center justify-center gap-1 sm:gap-1.5 px-3 sm:px-3.5 py-2 sm:py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
+              title="Download editable Microsoft Word (.doc) paper - Saves with Class, Chapter & Topic in filename"
             >
-              <span className="truncate">Save .DOC</span>
+              <FileText className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Download Word (.doc)</span>
             </button>
           </div>
         </div>
@@ -2770,7 +2772,7 @@ export default function PaperCanvas({
     </div>
 
       {/* BOTTOM PAPER ACTION CONTROLS (CONVENIENT FOR SCROLLED VIEW) */}
-      <div className="no-print w-full flex items-center justify-center gap-3 pt-2 pb-4">
+      <div className="no-print w-full flex items-center justify-center gap-3 pt-2 pb-4 flex-wrap">
         <button
           type="button"
           onClick={() => setShowWhatsAppModal(true)}
@@ -2784,18 +2786,19 @@ export default function PaperCanvas({
           type="button"
           onClick={handlePrintPaper}
           className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-95"
-          title="Print Paper / Save as PDF (Ctrl+P)"
+          title="Download PDF / Print Paper (Ctrl+P) - Saves with Class, Chapter & Topic in filename"
         >
           <Printer className="w-4 h-4" />
-          <span>Print Paper</span>
+          <span>Download PDF / Print</span>
         </button>
         <button
           type="button"
           onClick={onExportDocx}
           className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-95"
-          title="Download editable Microsoft Word (.doc) paper"
+          title="Download editable Microsoft Word (.doc) paper - Saves with Class, Chapter & Topic in filename"
         >
-          <span>Save .DOC</span>
+          <FileText className="w-4 h-4" />
+          <span>Download Word (.doc)</span>
         </button>
       </div>
 
