@@ -1020,7 +1020,7 @@ export default function App() {
             }
           }}
         />
-        <AuthPortal onLoginSuccess={handleLoginSuccess} />
+        <AuthPortal key="ptm-auth-portal-v2" onLoginSuccess={handleLoginSuccess} />
       </>
     );
   }

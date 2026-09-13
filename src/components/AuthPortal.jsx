@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   BookOpen, Lock, Mail, User, School, Eye, EyeOff, 
   ArrowRight, Sparkles, CheckCircle2, AlertCircle, ShieldCheck, 
-  Globe, Database, KeyRound, Award
+  Globe, KeyRound, Award, Phone, Check
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import libraryBg from '../assets/library_books_bg.jpg';
@@ -12,7 +12,7 @@ import {
   createUserWithEmailAndPassword, 
   updateProfile 
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { recordUserLoginEvent } from '../utils/userActivityTracker';
 
 export default function AuthPortal({ onLoginSuccess }) {
@@ -20,12 +20,13 @@ export default function AuthPortal({ onLoginSuccess }) {
   const [lang, setLang] = useState('en'); 
   const [activeTab, setActiveTab] = useState('login'); // 'login' | 'register'
   const [showPassword, setShowPassword] = useState(false);
+  const [showRegPassword, setShowRegPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Login form state (prefill remembered email for standard teachers only, never admin)
+  // Login form state (Email or Mobile Number input)
   const [loginEmail, setLoginEmail] = useState(() => {
     try {
       const saved = localStorage.getItem('ptm_remembered_email') || '';
@@ -39,11 +40,39 @@ export default function AuthPortal({ onLoginSuccess }) {
 
   // Register form state
   const [regName, setRegName] = useState('');
+  const [regPhone, setRegPhone] = useState('');
   const [regInstitute, setRegInstitute] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regRole, setRegRole] = useState('Senior Subject Teacher');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirmPassword, setRegConfirmPassword] = useState('');
+
+  // Helper: Normalize Pakistani & International Phone Numbers into standardized formats
+  const getPhoneVariations = (input) => {
+    const raw = (input || '').trim();
+    const digitsOnly = raw.replace(/\D/g, '');
+    let stdPhone = digitsOnly;
+    if (digitsOnly.startsWith('923') && digitsOnly.length === 12) {
+      stdPhone = '0' + digitsOnly.slice(2);
+    } else if (digitsOnly.startsWith('3') && digitsOnly.length === 10) {
+      stdPhone = '0' + digitsOnly;
+    }
+
+    const variations = [
+      raw,
+      digitsOnly,
+      stdPhone,
+      stdPhone ? `+92${stdPhone.startsWith('0') ? stdPhone.slice(1) : stdPhone}` : null,
+      stdPhone ? `92${stdPhone.startsWith('0') ? stdPhone.slice(1) : stdPhone}` : null
+    ].filter(Boolean);
+
+    return {
+      raw,
+      digitsOnly,
+      stdPhone,
+      variations: Array.from(new Set(variations))
+    };
+  };
 
   // Record Login activity log into Firestore & localStorage
   const recordLoginLog = async (user) => {
@@ -78,6 +107,7 @@ export default function AuthPortal({ onLoginSuccess }) {
       id: `log-${Date.now()}`,
       userName: user.name || 'User',
       userEmail: user.email || 'unknown',
+      phone: user.phone || '',
       institute: user.institute || 'Educators Academy',
       role: user.role || 'Teacher',
       timestamp: nowFormatted,
@@ -104,30 +134,30 @@ export default function AuthPortal({ onLoginSuccess }) {
   };
 
   // -------------------------------------------------------------
-  // ACTION: Login Handler
+  // ACTION: Login Handler (Email OR Phone Number)
   // -------------------------------------------------------------
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
 
-    const cleanEmail = loginEmail.trim().toLowerCase();
+    const rawInput = loginEmail.trim();
     const cleanPass = loginPassword.trim();
 
-    if (!cleanEmail || !cleanPass) {
+    if (!rawInput || !cleanPass) {
       setErrorMessage(
         lang === 'ur'
-          ? 'برائے مہربانی ای میل اور پاسورڈ دونوں درج کریں۔'
-          : 'Please enter both Email/Username and Password.'
+          ? 'برائے مہربانی ای میل یا فون نمبر اور پاسورڈ دونوں درج کریں۔'
+          : 'Please enter both Email or Phone Number and Password.'
       );
       return;
     }
 
     // 1. ADMIN CREDENTIALS VERIFICATION (testgenerator76@gmail.com / 9900)
     const isAdminAccount = (
-      cleanEmail === 'testgenerator76@gmail.com' ||
-      cleanEmail === 'testgenerator76' ||
-      cleanEmail === 'admin'
+      rawInput.toLowerCase() === 'testgenerator76@gmail.com' ||
+      rawInput.toLowerCase() === 'testgenerator76' ||
+      rawInput.toLowerCase() === 'admin'
     );
 
     if (isAdminAccount) {
@@ -145,8 +175,7 @@ export default function AuthPortal({ onLoginSuccess }) {
 
         recordLoginLog(adminUser).catch(() => {});
 
-        // SECURITY: Admin session is strictly saved ONLY in sessionStorage for the active tab/window.
-        // Admin credentials and sessions must NEVER be stored in persistent localStorage.
+        // SECURITY: Admin session is strictly saved ONLY in sessionStorage for active tab
         sessionStorage.setItem('ptm_active_user', JSON.stringify(adminUser));
         try {
           localStorage.removeItem('ptm_active_user');
@@ -156,46 +185,89 @@ export default function AuthPortal({ onLoginSuccess }) {
         try { confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } }); } catch (err) {}
         setSuccessMessage(
           lang === 'ur'
-            ? 'ایڈمن لاگ ان کامیاب! تمام اپلوڈ اور ایڈمن ٹولز انلاک ہو گئے۔'
-            : 'Admin Login Successful! All upload and management tools unlocked.'
+            ? 'ایڈمن لاگ ان کامیاب! تمام پورٹل ٹولز فعال ہو گئے۔'
+            : 'Admin Login Successful! All management tools unlocked.'
         );
-        setTimeout(() => onLoginSuccess(adminUser), 350);
+        setTimeout(() => onLoginSuccess(adminUser), 300);
         return;
       } else {
         setErrorMessage(
           lang === 'ur'
             ? 'ایڈمن پاسورڈ درست نہیں ہے۔ برائے مہربانی درست پاسورڈ درج کریں۔'
-            : 'Incorrect Admin password! Please enter the valid password for this admin account.'
+            : 'Incorrect Admin password! Please enter the valid password.'
         );
         return;
       }
     }
 
-    // 2. STANDARD REGISTERED USER LOGIN VERIFICATION
+    // 2. STANDARD REGISTERED USER LOGIN VERIFICATION (By Email OR Phone Number)
     setIsLoading(true);
 
     try {
       let loggedUser = null;
       let fbUser = null;
+      const isEmail = rawInput.includes('@');
+      const cleanEmail = isEmail ? rawInput.toLowerCase() : '';
+      const phoneData = !isEmail ? getPhoneVariations(rawInput) : null;
+      let resolvedEmail = cleanEmail;
 
-      // A. Try Firebase Auth (if available)
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, cleanPass);
-        fbUser = userCredential.user;
-      } catch (fbErr) {
-        console.warn("Firebase Auth sign-in attempt:", fbErr.message);
+      // A. Fetch authoritative user document from Firestore 'users'
+      let firestoreData = null;
+
+      if (isEmail) {
+        try {
+          const userDocRef = doc(db, "users", cleanEmail);
+          const userSnap = await getDoc(userDocRef);
+          if (userSnap.exists()) {
+            firestoreData = userSnap.data();
+            resolvedEmail = cleanEmail;
+          }
+        } catch (dbErr) {
+          console.warn("Firestore lookup note:", dbErr.message);
+        }
+      } else if (phoneData) {
+        // Query users by phone number variations
+        try {
+          for (const cand of phoneData.variations) {
+            if (firestoreData) break;
+            // 1. Direct phone query
+            const q1 = query(collection(db, "users"), where("phone", "==", cand));
+            const snap1 = await getDocs(q1);
+            if (!snap1.empty) {
+              firestoreData = snap1.docs[0].data();
+              resolvedEmail = firestoreData.email || snap1.docs[0].id;
+              break;
+            }
+            // 2. Clean digits query
+            const q2 = query(collection(db, "users"), where("phoneClean", "==", cand));
+            const snap2 = await getDocs(q2);
+            if (!snap2.empty) {
+              firestoreData = snap2.docs[0].data();
+              resolvedEmail = firestoreData.email || snap2.docs[0].id;
+              break;
+            }
+            // 3. Standardized phone query
+            const q3 = query(collection(db, "users"), where("phoneStd", "==", cand));
+            const snap3 = await getDocs(q3);
+            if (!snap3.empty) {
+              firestoreData = snap3.docs[0].data();
+              resolvedEmail = firestoreData.email || snap3.docs[0].id;
+              break;
+            }
+          }
+        } catch (dbErr) {
+          console.warn("Firestore phone lookup note:", dbErr.message);
+        }
       }
 
-      // B. Fetch authoritative user document from Firestore 'users'
-      let firestoreData = null;
-      try {
-        const userDocRef = doc(db, "users", cleanEmail);
-        const userSnap = await getDoc(userDocRef);
-        if (userSnap.exists()) {
-          firestoreData = userSnap.data();
+      // B. Try Firebase Auth (if resolved email is available)
+      if (resolvedEmail) {
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, resolvedEmail, cleanPass);
+          fbUser = userCredential.user;
+        } catch (fbErr) {
+          console.warn("Firebase Auth sign-in attempt:", fbErr.message);
         }
-      } catch (dbErr) {
-        console.warn("Firestore lookup note:", dbErr.message);
       }
 
       // C. If Firestore user exists, verify credentials and load exact subscription state
@@ -219,7 +291,7 @@ export default function AuthPortal({ onLoginSuccess }) {
         }
 
         // 2. Check Admin status
-        const isAdmin = Boolean(firestoreData.isAdmin || cleanEmail === 'testgenerator76@gmail.com');
+        const isAdmin = Boolean(firestoreData.isAdmin || resolvedEmail === 'testgenerator76@gmail.com');
 
         // 3. Strict Subscription Validation: Non-admins MUST have active subscription status and future expiry
         let isSubscribed = false;
@@ -252,8 +324,9 @@ export default function AuthPortal({ onLoginSuccess }) {
         }
 
         loggedUser = {
-          name: firestoreData.name || (fbUser?.displayName) || cleanEmail.split('@')[0],
-          email: cleanEmail,
+          name: firestoreData.name || (fbUser?.displayName) || resolvedEmail.split('@')[0],
+          email: resolvedEmail,
+          phone: firestoreData.phone || (phoneData ? phoneData.raw : ''),
           institute: firestoreData.institute || 'Educators Academy',
           role: firestoreData.role || 'Teacher',
           package: finalPackage,
@@ -270,7 +343,23 @@ export default function AuthPortal({ onLoginSuccess }) {
       // D. Check Local Registered Users Cache (if Firestore doc was not found)
       if (!loggedUser) {
         const localUsers = JSON.parse(localStorage.getItem('ptm_registered_users') || '[]');
-        const matched = localUsers.find(u => u.email?.toLowerCase() === cleanEmail);
+        const matched = localUsers.find(u => {
+          if (isEmail && u.email?.toLowerCase() === cleanEmail) return true;
+          if (!isEmail && phoneData) {
+            const uDigits = (u.phone || '').replace(/\D/g, '');
+            const uCleanDigits = (u.phoneClean || '').replace(/\D/g, '');
+            const uStdDigits = (u.phoneStd || '').replace(/\D/g, '');
+            return (
+              phoneData.variations.includes(u.phone) ||
+              phoneData.variations.includes(u.phoneClean) ||
+              phoneData.variations.includes(u.phoneStd) ||
+              (uDigits && (uDigits === phoneData.digitsOnly || uDigits === phoneData.stdPhone)) ||
+              (uCleanDigits && (uCleanDigits === phoneData.digitsOnly || uCleanDigits === phoneData.stdPhone)) ||
+              (uStdDigits && (uStdDigits === phoneData.stdPhone))
+            );
+          }
+          return false;
+        });
 
         if (matched) {
           const passwordMatches = (matched.password === cleanPass) || Boolean(fbUser);
@@ -290,7 +379,7 @@ export default function AuthPortal({ onLoginSuccess }) {
             );
           }
 
-          const isAdmin = Boolean(matched.isAdmin || cleanEmail === 'testgenerator76@gmail.com');
+          const isAdmin = Boolean(matched.isAdmin || matched.email?.toLowerCase() === 'testgenerator76@gmail.com');
           let finalPackage = 'None';
           let finalStatus = 'unpaid';
           let finalExpiry = matched.expiryDate || null;
@@ -332,10 +421,11 @@ export default function AuthPortal({ onLoginSuccess }) {
       }
 
       // E. Fallback to Firebase Auth user if registered only via FB Auth
-      if (!loggedUser && fbUser) {
+      if (!loggedUser && fbUser && resolvedEmail) {
         loggedUser = {
-          name: fbUser.displayName || cleanEmail.split('@')[0],
-          email: cleanEmail,
+          name: fbUser.displayName || resolvedEmail.split('@')[0],
+          email: resolvedEmail,
+          phone: phoneData ? phoneData.raw : '',
           role: 'Senior Teacher / Examiner',
           institute: 'Educators Academy',
           package: 'None',
@@ -348,16 +438,16 @@ export default function AuthPortal({ onLoginSuccess }) {
         };
       }
 
-      // F. If not found anywhere -> strictly throw error!
+      // F. If not found anywhere -> strictly throw error
       if (!loggedUser) {
         throw new Error(
           lang === 'ur'
-            ? 'یہ اکاؤنٹ موجود نہیں ہے۔ برائے مہربانی پہلے "نیا اکاؤنٹ بنائیں" پر رجسٹر کریں۔'
-            : 'No account found with these credentials! Please verify or click "Create Account" to register.'
+            ? 'اس ای میل یا موبائل نمبر سے کوئی اکاؤنٹ نہیں ملا۔ برائے مہربانی "نیا اکاؤنٹ بنائیں" پر کلک کریں۔'
+            : 'No account found with this Email or Phone Number! Please click "Register" to create one.'
         );
       }
 
-      // Login Successful: Save session strictly in sessionStorage & record log
+      // Login Successful: Save session in sessionStorage & record log
       const nowFormatted = new Date().toLocaleString('en-PK', { dateStyle: 'medium', timeStyle: 'short' });
       loggedUser.lastLogin = nowFormatted;
       recordLoginLog(loggedUser).catch(() => {});
@@ -366,8 +456,8 @@ export default function AuthPortal({ onLoginSuccess }) {
       sessionStorage.setItem('ptm_active_user', JSON.stringify(loggedUser));
       try {
         localStorage.removeItem('ptm_active_user');
-        if (rememberMe && !loggedUser.isAdmin && cleanEmail !== 'testgenerator76@gmail.com') {
-          localStorage.setItem('ptm_remembered_email', cleanEmail);
+        if (rememberMe && !loggedUser.isAdmin && loggedUser.email !== 'testgenerator76@gmail.com') {
+          localStorage.setItem('ptm_remembered_email', rawInput);
         } else {
           localStorage.removeItem('ptm_remembered_email');
         }
@@ -375,7 +465,7 @@ export default function AuthPortal({ onLoginSuccess }) {
 
       // Check if user just registered to route them directly to pricing
       const justRegistered = sessionStorage.getItem('ptm_just_registered') === 'true' || 
-                             sessionStorage.getItem('ptm_just_registered') === cleanEmail;
+                             sessionStorage.getItem('ptm_just_registered') === loggedUser.email;
       if (justRegistered) {
         try { sessionStorage.removeItem('ptm_just_registered'); } catch (e) {}
       }
@@ -385,9 +475,9 @@ export default function AuthPortal({ onLoginSuccess }) {
       setSuccessMessage(
         lang === 'ur'
           ? 'خوش آمدید! آپ کا لاگ ان کامیاب رہا۔'
-          : `Welcome, ${loggedUser.name}! Login successful.`
+          : `Welcome back, ${loggedUser.name}! Login successful.`
       );
-      setTimeout(() => onLoginSuccess(loggedUser, isNewRegistration), 300);
+      setTimeout(() => onLoginSuccess(loggedUser, isNewRegistration), 280);
 
     } catch (err) {
       console.warn("Login Failure:", err);
@@ -405,16 +495,33 @@ export default function AuthPortal({ onLoginSuccess }) {
     setErrorMessage('');
     setSuccessMessage('');
 
-    if (!regName.trim()) {
+    const cleanName = regName.trim();
+    const cleanPhone = regPhone.trim();
+    const phoneInfo = getPhoneVariations(cleanPhone);
+    const cleanEmail = regEmail.trim().toLowerCase();
+
+    if (!cleanName) {
       setErrorMessage(lang === 'ur' ? 'برائے مہربانی اپنا مکمل نام درج کریں۔' : 'Please enter your Full Name.');
       return;
     }
-    if (!regEmail.trim()) {
-      setErrorMessage(lang === 'ur' ? 'برائے مہربانی اپنا ای میل درج کریں۔' : 'Please enter your Email Address.');
+    if (!phoneInfo.digitsOnly || phoneInfo.digitsOnly.length < 10) {
+      setErrorMessage(
+        lang === 'ur' 
+          ? 'برائے مہربانی درست 11 ہندسوں کا موبائل / واٹس ایپ نمبر درج کریں (مثلاً: 03001234567)۔' 
+          : 'Please enter a valid Phone / WhatsApp number (e.g. 03001234567).'
+      );
       return;
     }
-    if (regPassword.length < 4) {
-      setErrorMessage(lang === 'ur' ? 'پاسورڈ کم از کم 4 حروف کا ہونا چاہیے۔' : 'Password must be at least 4 characters long.');
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setErrorMessage(lang === 'ur' ? 'برائے مہربانی درست ای میل ایڈریس درج کریں۔' : 'Please enter a valid Email Address.');
+      return;
+    }
+    if (regPassword.length < 6) {
+      setErrorMessage(
+        lang === 'ur' 
+          ? 'پاسورڈ کم از کم 6 ہندسوں یا حروف کا ہونا چاہیے۔' 
+          : 'Password must be at least 6 digits or characters long.'
+      );
       return;
     }
     if (regPassword !== regConfirmPassword) {
@@ -427,10 +534,12 @@ export default function AuthPortal({ onLoginSuccess }) {
     try {
       const nowFormatted = new Date().toLocaleString('en-PK', { dateStyle: 'medium', timeStyle: 'short' });
       const nowIso = new Date().toISOString();
-      const emailKey = regEmail.trim().toLowerCase();
       const newUser = {
-        name: regName.trim(),
-        email: emailKey,
+        name: cleanName,
+        phone: cleanPhone,
+        phoneClean: phoneInfo.digitsOnly,
+        phoneStd: phoneInfo.stdPhone,
+        email: cleanEmail,
         institute: regInstitute.trim() || 'Educators Academy',
         role: regRole,
         isAdmin: false,
@@ -446,7 +555,7 @@ export default function AuthPortal({ onLoginSuccess }) {
 
       // 1. Save to Firebase Firestore Collection 'users'
       try {
-        await setDoc(doc(db, "users", emailKey), {
+        await setDoc(doc(db, "users", cleanEmail), {
           ...newUser,
           password: regPassword
         }, { merge: true });
@@ -456,15 +565,15 @@ export default function AuthPortal({ onLoginSuccess }) {
 
       // 2. Try Firebase Auth Account Creation
       try {
-        const userCredential = await createUserWithEmailAndPassword(auth, emailKey, regPassword);
-        await updateProfile(userCredential.user, { displayName: regName.trim() });
+        const userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, regPassword);
+        await updateProfile(userCredential.user, { displayName: cleanName });
       } catch (fbErr) {
         console.warn("Firebase Auth create notice:", fbErr.message);
       }
 
       // 3. Save to Local Registered Users Backup
       const localUsers = JSON.parse(localStorage.getItem('ptm_registered_users') || '[]');
-      const filtered = localUsers.filter(u => u.email?.toLowerCase() !== emailKey);
+      const filtered = localUsers.filter(u => u.email?.toLowerCase() !== cleanEmail);
       filtered.push({
         ...newUser,
         password: regPassword
@@ -473,11 +582,11 @@ export default function AuthPortal({ onLoginSuccess }) {
 
       // 4. Mark that this user just registered so login automatically sends them to pricing
       try {
-        sessionStorage.setItem('ptm_just_registered', emailKey);
+        sessionStorage.setItem('ptm_just_registered', cleanEmail);
       } catch (e) {}
 
-      // 5. PREPARE LOGIN VIEW FOR THE USER (As requested: redirect to login tab)
-      setLoginEmail(emailKey);
+      // 5. PREPARE LOGIN VIEW FOR THE USER (prefills phone or email)
+      setLoginEmail(cleanPhone || cleanEmail);
       setLoginPassword('');
       setActiveTab('login');
 
@@ -485,8 +594,8 @@ export default function AuthPortal({ onLoginSuccess }) {
 
       setSuccessMessage(
         lang === 'ur'
-          ? 'اکاؤنٹ کامیابی سے بن گیا! اب پاسورڈ درج کر کے لاگ ان کریں اور اپنا پیکیج منتخب کریں۔'
-          : 'Account created successfully! Please sign in to choose your subscription package.'
+          ? 'اکاؤنٹ کامیابی سے بن گیا! اب پاسورڈ درج کر کے لاگ ان کریں۔'
+          : 'Account created successfully! Please sign in with your password.'
       );
 
     } catch (err) {
@@ -500,373 +609,438 @@ export default function AuthPortal({ onLoginSuccess }) {
   return (
     <div className="min-h-screen w-full relative flex items-center justify-center p-3 sm:p-6 select-none overflow-x-hidden font-sans">
       
-      {/* 1. CINEMATIC LIBRARY WITH BOOKS BACKGROUND */}
+      {/* 1. CRISP, SHARP CINEMATIC LIBRARY WITH BOOKS BACKGROUND (NO BLURRING OF IMAGE) */}
       <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat scale-105 transition-transform duration-1000"
-        style={{ backgroundImage: `url(${libraryBg})` }}
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-100"
+        style={{ 
+          backgroundImage: `url(${libraryBg})`,
+          filter: 'contrast(1.08) brightness(0.85) saturate(1.12)'
+        }}
       />
 
-      {/* 2. OPTICAL BLUR & DARK ATMOSPHERIC VIGNETTE OVERLAY */}
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-950/85 via-slate-900/80 to-indigo-950/90 backdrop-blur-[7px]" />
+      {/* 2. RICH OPTICAL VIGNETTE & POLISHED GRADIENT (KEEPS BOOKSHELVES CRISP & READABLE) */}
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-950/75 via-slate-900/55 to-indigo-950/75 pointer-events-none" />
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,rgba(15,23,42,0.2)_0%,rgba(2,6,23,0.82)_100%)] pointer-events-none" />
 
-      {/* 3. CENTRAL EXECUTIVE AUTH CONTAINER - FOCUSED & CLEAN */}
-      <div className="relative z-10 w-full max-w-md bg-white/95 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-3xl overflow-hidden animate-fadeIn my-auto p-6 sm:p-8 flex flex-col justify-between">
+      {/* 3. CENTRAL EXECUTIVE AUTH CONTAINER - SLEEK, BEAUTIFUL & PROFESSIONAL */}
+      <div className="relative z-10 w-full max-w-[480px] sm:max-w-[520px] bg-white/95 backdrop-blur-xl border border-white/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.45),0_0_1px_1px_rgba(255,255,255,0.3)] rounded-[26px] overflow-hidden animate-fadeIn my-auto p-6 sm:p-8 flex flex-col justify-between">
         
         <div>
-          {/* BRAND HEADER INSIDE CARD */}
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 p-0.5 flex items-center justify-center shadow-lg shadow-blue-500/25 shrink-0">
+          {/* BRAND HEADER */}
+          <div className="flex items-center justify-center gap-3.5 mb-5 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 p-0.5 flex items-center justify-center shadow-lg shadow-blue-500/25 shrink-0 ring-4 ring-blue-500/10">
               <BookOpen className="w-6 h-6 text-white stroke-[2.2]" />
             </div>
             <div className="text-left">
-              <h2 className="text-xl font-black text-slate-900 tracking-tight leading-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
                 PRO TEST MAKER
-              </h2>
-              <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider block">
-                {lang === 'ur' ? 'امتحانی پورٹل و سمارٹ جنریٹر' : 'Exam & Assessment Portal'}
-              </span>
+              </h1>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest block">
+                  {lang === 'ur' ? 'امتحانی پورٹل و سمارٹ جنریٹر' : 'Exam & Assessment Portal'}
+                </span>
+                <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                  SNC 2026
+                </span>
+              </div>
             </div>
           </div>
             
-            {/* TOP BAR: LANGUAGE SWITCHER & TABS */}
-            <div className="flex items-center justify-between gap-3 mb-5">
-              
-              {/* Tab Switcher: Sign In | Register */}
-              <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-2xl border border-slate-200 flex-1 max-w-xs">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveTab('login');
-                    setErrorMessage('');
-                    setSuccessMessage('');
-                  }}
-                  className={`py-2 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    activeTab === 'login'
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Lock className="w-3.5 h-3.5" />
-                  <span>{lang === 'ur' ? 'لاگ ان' : 'Sign In'}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveTab('register');
-                    setErrorMessage('');
-                    setSuccessMessage('');
-                  }}
-                  className={`py-2 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    activeTab === 'register'
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <User className="w-3.5 h-3.5" />
-                  <span>{lang === 'ur' ? 'رجسٹر' : 'Register'}</span>
-                </button>
-              </div>
-
-              {/* Language Switcher Toggle */}
+          {/* TOP BAR: TABS (SIGN IN / REGISTER) + LANGUAGE SWITCHER */}
+          <div className="flex items-center justify-between gap-3 mb-5">
+            
+            {/* Tab Switcher: Sign In | Register */}
+            <div className="grid grid-cols-2 p-1 bg-slate-100/90 rounded-2xl border border-slate-200/90 flex-1 shadow-inner">
               <button
                 type="button"
-                onClick={() => setLang(lang === 'en' ? 'ur' : 'en')}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center gap-1.5 transition-all border border-slate-300 shrink-0 cursor-pointer shadow-2xs"
-                title={lang === 'en' ? 'Switch to Urdu' : 'Switch to English'}
+                id="btn-tab-signin"
+                onClick={() => {
+                  setActiveTab('login');
+                  setErrorMessage('');
+                  setSuccessMessage('');
+                }}
+                className={`py-2 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  activeTab === 'login'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25 scale-[1.01]'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
               >
-                <Globe className="w-3.5 h-3.5 text-blue-600" />
-                <span>{lang === 'en' ? 'اردو' : 'English'}</span>
+                <Lock className="w-3.5 h-3.5" />
+                <span>{lang === 'ur' ? 'لاگ ان' : 'Sign In'}</span>
               </button>
 
+              <button
+                type="button"
+                id="btn-tab-register"
+                onClick={() => {
+                  setActiveTab('register');
+                  setErrorMessage('');
+                  setSuccessMessage('');
+                }}
+                className={`py-2 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  activeTab === 'register'
+                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/25 scale-[1.01]'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>{lang === 'ur' ? 'نیا اکاؤنٹ بنائیں' : 'Register'}</span>
+              </button>
             </div>
 
-            {/* ERROR NOTIFICATION ALERT */}
-            {errorMessage && (
-              <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2 animate-shake">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span className="leading-snug">{errorMessage}</span>
-              </div>
-            )}
+            {/* Language Switcher Toggle */}
+            <button
+              type="button"
+              id="btn-lang-toggle"
+              onClick={() => setLang(lang === 'en' ? 'ur' : 'en')}
+              className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all border border-slate-200/80 shrink-0 cursor-pointer shadow-xs"
+              title={lang === 'en' ? 'Switch to Urdu' : 'Switch to English'}
+            >
+              <Globe className="w-3.5 h-3.5 text-blue-600" />
+              <span>{lang === 'en' ? 'اردو' : 'English'}</span>
+            </button>
 
-            {/* SUCCESS NOTIFICATION ALERT */}
-            {successMessage && (
-              <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 animate-fadeIn">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-                <span className="leading-snug">{successMessage}</span>
-              </div>
-            )}
+          </div>
 
-            {/* ------------------------------------------------------------- */}
-            {/* VIEW 1: SIGN IN FORM (HANDLES ADMIN & REGISTERED USERS)      */}
-            {/* ------------------------------------------------------------- */}
-            {activeTab === 'login' && (
-              <form onSubmit={handleLogin} className="space-y-4 animate-fadeIn">
-                
-                {/* Email / Username Field */}
+          {/* ERROR NOTIFICATION ALERT */}
+          {errorMessage && (
+            <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2 animate-shake">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span className="leading-snug">{errorMessage}</span>
+            </div>
+          )}
+
+          {/* SUCCESS NOTIFICATION ALERT */}
+          {successMessage && (
+            <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 animate-fadeIn">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+              <span className="leading-snug">{successMessage}</span>
+            </div>
+          )}
+
+          {/* ------------------------------------------------------------- */}
+          {/* VIEW 1: SIGN IN FORM (SUPPORTS EMAIL OR PHONE NUMBER)         */}
+          {/* ------------------------------------------------------------- */}
+          {activeTab === 'login' && (
+            <form onSubmit={handleLogin} className="space-y-4 animate-fadeIn">
+              
+              {/* Email / Mobile Number Field */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700 block">
+                    {lang === 'ur' ? 'ای میل ایڈریس یا موبائل نمبر *' : 'Email Address or Mobile Number *'}
+                  </label>
+                  <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                    {lang === 'ur' ? 'موبائل یا ای میل' : 'Email / Phone'}
+                  </span>
+                </div>
+                <div className="relative flex items-center">
+                  <div className="absolute left-3.5 flex items-center gap-1 text-slate-400 pointer-events-none">
+                    <Phone className="w-3.5 h-3.5 text-blue-600" />
+                    <span className="text-[10px] text-slate-300">/</span>
+                    <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    id="login-identifier-input"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    placeholder={lang === 'ur' ? 'موبائل نمبر یا ای میل (مثلاً: 03001234567)' : 'e.g. 03001234567 or teacher@school.com'}
+                    className="w-full pl-14 pr-3 py-2.5 bg-slate-50/90 focus:bg-white border border-slate-200 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all shadow-xs"
+                  />
+                </div>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  {lang === 'ur' 
+                    ? 'آپ اپنی رجسٹرڈ ای میل یا موبائل نمبر کے ذریعے لاگ ان کر سکتے ہیں' 
+                    : 'You can sign in using your registered Mobile Number OR Email'}
+                </p>
+              </div>
+
+              {/* Password Field */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700 block">
+                    {lang === 'ur' ? 'اکاؤنٹ پاسورڈ *' : 'Password *'}
+                  </label>
+                  <span className="text-[11px] font-semibold text-emerald-700 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{lang === 'ur' ? 'محفوظ سیشن' : '256-bit Encrypted'}</span>
+                  </span>
+                </div>
+                <div className="relative flex items-center">
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    id="login-password-input"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-10 pr-10 py-2.5 bg-slate-50/90 focus:bg-white border border-slate-200 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all shadow-xs"
+                  />
+                  <button
+                    type="button"
+                    id="toggle-login-password"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+                    aria-label="Toggle password visibility"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember credentials */}
+              <div className="flex items-center justify-between pt-0.5">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-600 select-none">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 rounded text-blue-600 cursor-pointer accent-blue-600"
+                  />
+                  <span>{lang === 'ur' ? 'لاگ ان معلومات یاد رکھیں' : 'Remember my login info'}</span>
+                </label>
+              </div>
+
+              {/* Submit Sign In Button */}
+              <button
+                type="submit"
+                id="submit-login-btn"
+                disabled={isLoading}
+                className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-xl text-xs font-black shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50 mt-1"
+              >
+                <span>
+                  {isLoading 
+                    ? (lang === 'ur' ? 'تصدیق ہو رہی ہے...' : 'Verifying credentials...') 
+                    : (lang === 'ur' ? 'پورٹل میں داخل ہوں' : 'Sign In to Dashboard')}
+                </span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              {/* Switch to Register link */}
+              <div className="text-center pt-2">
+                <p className="text-xs text-slate-500 font-medium">
+                  {lang === 'ur' ? 'نیا اکاؤنٹ بنانا چاہتے ہیں؟ ' : "Don't have an account? "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveTab('register');
+                      setErrorMessage('');
+                      setSuccessMessage('');
+                    }}
+                    className="text-blue-600 font-bold hover:underline cursor-pointer ml-1"
+                  >
+                    {lang === 'ur' ? 'یہاں رجسٹر کریں' : 'Register here'}
+                  </button>
+                </p>
+              </div>
+
+            </form>
+          )}
+
+          {/* ------------------------------------------------------------- */}
+          {/* VIEW 2: TEACHER REGISTRATION FORM (MODERN, CLEAN & COMPACT)  */}
+          {/* ------------------------------------------------------------- */}
+          {activeTab === 'register' && (
+            <form onSubmit={handleRegister} className="space-y-3.5 animate-fadeIn">
+              
+              {/* Full Name */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">
+                  {lang === 'ur' ? 'مکمل نام *' : 'Full Name *'}
+                </label>
+                <div className="relative flex items-center">
+                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
+                  <input
+                    type="text"
+                    required
+                    id="register-fullname-input"
+                    value={regName}
+                    onChange={(e) => setRegName(e.target.value)}
+                    placeholder={lang === 'ur' ? 'مثلاً: پروفیسر محمد اسلم' : 'e.g. Prof. Muhammad Aslam'}
+                    className="w-full pl-10 pr-3 py-2.5 bg-slate-50/90 focus:bg-white border border-slate-200 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-500/10 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all shadow-xs"
+                  />
+                </div>
+              </div>
+
+              {/* 2-Column Row: Mobile / WhatsApp Number & Email Address */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* Mobile / WhatsApp Number */}
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 block">
-                    {lang === 'ur' ? 'ای میل ایڈریس یا یوزر نیم *' : 'Email Address or Username *'}
+                    {lang === 'ur' ? 'موبائل / واٹس ایپ نمبر *' : 'Mobile / WhatsApp *'}
+                  </label>
+                  <div className="relative flex items-center">
+                    <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
+                    <input
+                      type="tel"
+                      required
+                      id="register-phone-input"
+                      value={regPhone}
+                      onChange={(e) => setRegPhone(e.target.value)}
+                      placeholder="0300 1234567"
+                      className="w-full pl-10 pr-3 py-2.5 bg-slate-50/90 focus:bg-white border border-slate-200 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-500/10 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all shadow-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Email Address */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">
+                    {lang === 'ur' ? 'ای میل ایڈریس *' : 'Email Address *'}
                   </label>
                   <div className="relative flex items-center">
                     <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
                     <input
-                      type="text"
+                      type="email"
                       required
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      placeholder={lang === 'ur' ? 'ای میل درج کریں' : 'Enter email or username'}
-                      className="w-full pl-10 pr-3 py-2.5 bg-slate-50 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all"
+                      id="register-email-input"
+                      value={regEmail}
+                      onChange={(e) => setRegEmail(e.target.value)}
+                      placeholder="teacher@school.com"
+                      className="w-full pl-10 pr-3 py-2.5 bg-slate-50/90 focus:bg-white border border-slate-200 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-500/10 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all shadow-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2-Column Row: Institute Name & Designation */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* School / College / Academy Name */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">
+                    {lang === 'ur' ? 'ادارہ / اسکول کا نام' : 'School / College / Academy'}
+                  </label>
+                  <div className="relative flex items-center">
+                    <School className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
+                    <input
+                      type="text"
+                      id="register-institute-input"
+                      value={regInstitute}
+                      onChange={(e) => setRegInstitute(e.target.value)}
+                      placeholder={lang === 'ur' ? 'مثلاً: پنجاب کالج' : 'e.g. Punjab College'}
+                      className="w-full pl-10 pr-3 py-2.5 bg-slate-50/90 focus:bg-white border border-slate-200 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-500/10 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all shadow-xs"
                     />
                   </div>
                 </div>
 
-                {/* Password Field */}
+                {/* Designation / Role */}
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-slate-700 block">
-                      {lang === 'ur' ? 'پاسورڈ *' : 'Password *'}
-                    </label>
-                    <span className="text-[11px] text-slate-400">
-                      {lang === 'ur' ? 'محفوظ لاگ ان' : 'Secure Session'}
-                    </span>
-                  </div>
+                  <label className="text-xs font-bold text-slate-700 block">
+                    {lang === 'ur' ? 'عہدہ / ڈیزگنیشن' : 'Designation / Role'}
+                  </label>
+                  <select
+                    id="register-role-select"
+                    value={regRole}
+                    onChange={(e) => setRegRole(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-slate-50/90 focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none cursor-pointer shadow-xs"
+                  >
+                    <option value="Senior Subject Teacher">{lang === 'ur' ? 'سبجیکٹ ٹیچر' : 'Subject Teacher'}</option>
+                    <option value="Head of Department">{lang === 'ur' ? 'ہیڈ آف ڈیپارٹمنٹ' : 'Head of Department'}</option>
+                    <option value="School Principal">{lang === 'ur' ? 'پرنسپل' : 'Principal'}</option>
+                    <option value="Academy Director">{lang === 'ur' ? 'اکیڈمی ڈائریکٹر' : 'Academy Director'}</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* 2-Column Row: Password (min 6 digits) & Confirm Password */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">
+                    {lang === 'ur' ? 'پاسورڈ (کم از کم 6 ہندسے) *' : 'Password (min 6 digits) *'}
+                  </label>
                   <div className="relative flex items-center">
                     <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
                     <input
-                      type={showPassword ? 'text' : 'password'}
+                      type={showRegPassword ? 'text' : 'password'}
                       required
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full pl-10 pr-10 py-2.5 bg-slate-50 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 text-slate-400 hover:text-slate-600 cursor-pointer"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Remember Email & Security Notice */}
-                <div className="flex items-center justify-between pt-1">
-                  <label className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-600">
-                    <input
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="w-3.5 h-3.5 rounded text-blue-600 cursor-pointer"
-                    />
-                    <span>{lang === 'ur' ? 'ای میل یاد رکھیں' : 'Remember email'}</span>
-                  </label>
-                  
-                  <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>{lang === 'ur' ? 'محفوظ سیشن' : 'Encrypted Login'}</span>
-                  </span>
-                </div>
-
-                {/* Submit Sign In Button */}
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-black shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 disabled:opacity-50 mt-1"
-                >
-                  <span>
-                    {isLoading 
-                      ? (lang === 'ur' ? 'تصدیق ہو رہی ہے...' : 'Verifying credentials...') 
-                      : (lang === 'ur' ? 'پورٹل میں داخل ہوں' : 'Sign In to Dashboard')}
-                  </span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                {/* Switch to Register link */}
-                <div className="text-center pt-2">
-                  <p className="text-xs text-slate-500 font-medium">
-                    {lang === 'ur' ? 'نیا اکاؤنٹ بنانا چاہتے ہیں؟ ' : "Don't have an account? "}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveTab('register');
-                        setErrorMessage('');
-                        setSuccessMessage('');
-                      }}
-                      className="text-blue-600 font-bold hover:underline cursor-pointer"
-                    >
-                      {lang === 'ur' ? 'یہاں رجسٹر کریں' : 'Register now'}
-                    </button>
-                  </p>
-                </div>
-
-              </form>
-            )}
-
-            {/* ------------------------------------------------------------- */}
-            {/* VIEW 2: TEACHER REGISTRATION FORM                            */}
-            {/* ------------------------------------------------------------- */}
-            {activeTab === 'register' && (
-              <form onSubmit={handleRegister} className="space-y-3 animate-fadeIn">
-                
-                {/* Full Name */}
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">
-                    {lang === 'ur' ? 'مکمل نام *' : 'Full Name *'}
-                  </label>
-                  <div className="relative flex items-center">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
-                    <input
-                      type="text"
-                      required
-                      value={regName}
-                      onChange={(e) => setRegName(e.target.value)}
-                      placeholder={lang === 'ur' ? 'مثلاً: پروفیسر محمد اسلم' : 'e.g. Prof. Muhammad Aslam'}
-                      className="w-full pl-9 pr-3 py-2 bg-slate-50 focus:bg-white border border-slate-200 focus:border-emerald-500 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                {/* Institute Name */}
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">
-                    {lang === 'ur' ? 'ادارے یا اسکول کا نام' : 'School / College / Academy Name'}
-                  </label>
-                  <div className="relative flex items-center">
-                    <School className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
-                    <input
-                      type="text"
-                      value={regInstitute}
-                      onChange={(e) => setRegInstitute(e.target.value)}
-                      placeholder={lang === 'ur' ? 'مثلاً: پنجاب کالج' : 'e.g. Punjab College / High School'}
-                      className="w-full pl-9 pr-3 py-2 bg-slate-50 focus:bg-white border border-slate-200 focus:border-emerald-500 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                {/* Email & Role Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 block">
-                      {lang === 'ur' ? 'ای میل ایڈریس *' : 'Email Address *'}
-                    </label>
-                    <div className="relative flex items-center">
-                      <Mail className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
-                      <input
-                        type="email"
-                        required
-                        value={regEmail}
-                        onChange={(e) => setRegEmail(e.target.value)}
-                        placeholder="teacher@school.com"
-                        className="w-full pl-9 pr-2 py-2 bg-slate-50 focus:bg-white border border-slate-200 focus:border-emerald-500 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 block">
-                      {lang === 'ur' ? 'عہدہ' : 'Designation / Role'}
-                    </label>
-                    <select
-                      value={regRole}
-                      onChange={(e) => setRegRole(e.target.value)}
-                      className="w-full px-2 py-2 bg-slate-50 focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none cursor-pointer"
-                    >
-                      <option value="Senior Subject Teacher">{lang === 'ur' ? 'سبجیکٹ ٹیچر' : 'Subject Teacher'}</option>
-                      <option value="Head of Department">{lang === 'ur' ? 'ہیڈ آف ڈیپارٹمنٹ' : 'Head of Department'}</option>
-                      <option value="School Principal">{lang === 'ur' ? 'پرنسپل' : 'Principal'}</option>
-                      <option value="Academy Director">{lang === 'ur' ? 'اکیڈمی ڈائریکٹر' : 'Academy Director'}</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Password & Confirm Password */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 block">
-                      {lang === 'ur' ? 'پاسورڈ (کم از کم 4) *' : 'Password (min 4) *'}
-                    </label>
-                    <input
-                      type="password"
-                      required
+                      minLength={6}
+                      id="register-password-input"
                       value={regPassword}
                       onChange={(e) => setRegPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full px-3 py-2 bg-slate-50 focus:bg-white border border-slate-200 focus:border-emerald-500 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none"
+                      className="w-full pl-10 pr-9 py-2.5 bg-slate-50/90 focus:bg-white border border-slate-200 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-500/10 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none shadow-xs"
                     />
+                    <button
+                      type="button"
+                      id="toggle-register-password"
+                      onClick={() => setShowRegPassword(!showRegPassword)}
+                      className="absolute right-2.5 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+                      aria-label="Toggle password"
+                    >
+                      {showRegPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
                   </div>
+                </div>
 
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 block">
-                      {lang === 'ur' ? 'تصدیق پاسورڈ *' : 'Confirm Password *'}
-                    </label>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">
+                    {lang === 'ur' ? 'تصدیق پاسورڈ *' : 'Confirm Password *'}
+                  </label>
+                  <div className="relative flex items-center">
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
                     <input
-                      type="password"
+                      type={showRegPassword ? 'text' : 'password'}
                       required
+                      minLength={6}
+                      id="register-confirmpassword-input"
                       value={regConfirmPassword}
                       onChange={(e) => setRegConfirmPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full px-3 py-2 bg-slate-50 focus:bg-white border border-slate-200 focus:border-emerald-500 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none"
+                      className="w-full pl-10 pr-3 py-2.5 bg-slate-50/90 focus:bg-white border border-slate-200 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-500/10 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none shadow-xs"
                     />
                   </div>
                 </div>
+              </div>
 
-                {/* Database notice */}
-                <div className="flex items-center gap-1.5 text-[11px] text-emerald-800 bg-emerald-50 p-2 rounded-xl border border-emerald-200 font-medium">
-                  <Database className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span>
-                    {lang === 'ur'
-                      ? 'اکاؤنٹ کلاؤڈ ڈیٹا بیس میں محفوظ کیا جائے گا۔ رجسٹریشن کے بعد لاگ ان پیج کھلے گا۔'
-                      : 'Account will be saved to cloud database. You will then be redirected to Sign In.'}
-                  </span>
-                </div>
+              {/* Submit Register Button */}
+              <button
+                type="submit"
+                id="submit-register-btn"
+                disabled={isLoading}
+                className="w-full py-3 px-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98] disabled:opacity-50 mt-2"
+              >
+                <span>
+                  {isLoading 
+                    ? (lang === 'ur' ? 'محفوظ ہو رہا ہے...' : 'Creating Account...') 
+                    : (lang === 'ur' ? 'اکاؤنٹ بنائیں اور لاگ ان کریں' : 'Register & Proceed to Sign In')}
+                </span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
 
-                {/* Submit Register Button */}
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 disabled:opacity-50 mt-1"
-                >
-                  <span>
-                    {isLoading 
-                      ? (lang === 'ur' ? 'محفوظ ہو رہا ہے...' : 'Creating Account...') 
-                      : (lang === 'ur' ? 'رجسٹر کریں اور لاگ ان پر جائیں' : 'Register & Proceed to Sign In')}
-                  </span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+              {/* Back to login */}
+              <div className="text-center pt-1">
+                <p className="text-xs text-slate-500 font-medium">
+                  {lang === 'ur' ? 'پہلے سے اکاؤنٹ موجود ہے؟ ' : 'Already have an account? '}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveTab('login');
+                      setErrorMessage('');
+                      setSuccessMessage('');
+                    }}
+                    className="text-blue-600 font-bold hover:underline cursor-pointer ml-1"
+                  >
+                    {lang === 'ur' ? 'یہاں لاگ ان کریں' : 'Sign in here'}
+                  </button>
+                </p>
+              </div>
 
-                {/* Back to login */}
-                <div className="text-center pt-1">
-                  <p className="text-xs text-slate-500 font-medium">
-                    {lang === 'ur' ? 'پہلے سے اکاؤنٹ موجود ہے؟ ' : 'Already have an account? '}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveTab('login');
-                        setErrorMessage('');
-                        setSuccessMessage('');
-                      }}
-                      className="text-blue-600 font-bold hover:underline cursor-pointer"
-                    >
-                      {lang === 'ur' ? 'لاگ ان کریں' : 'Sign in here'}
-                    </button>
-                  </p>
-                </div>
+            </form>
+          )}
 
-              </form>
-            )}
+        </div>
 
-          </div>
-
-          {/* FOOTER GUARANTEE BADGE */}
-          <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-medium">
-            <span className="flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>{lang === 'ur' ? 'ایس این سی نصاب سے ہم آہنگ' : 'SNC Curriculum Aligned'}</span>
-            </span>
-            <span>PRO TEST MAKER © 2026</span>
-          </div>
+        {/* FOOTER GUARANTEE BADGE */}
+        <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-medium">
+          <span className="flex items-center gap-1.5 text-slate-500 font-semibold">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>{lang === 'ur' ? 'ایس این سی نصاب سے ہم آہنگ' : 'SNC Curriculum Aligned'}</span>
+          </span>
+          <span className="text-slate-400 font-medium">PRO TEST MAKER © 2026</span>
+        </div>
 
       </div>
 

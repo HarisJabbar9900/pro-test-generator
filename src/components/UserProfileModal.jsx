@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   X, User, School, Lock, KeyRound, ShieldCheck, 
-  CheckCircle2, AlertCircle, Save, ArrowRight, Eye, EyeOff
+  CheckCircle2, AlertCircle, Save, ArrowRight, Eye, EyeOff, Phone
 } from 'lucide-react';
 import { db } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
@@ -23,6 +23,7 @@ export default function UserProfileModal({
 
   // 1. Profile form state
   const [name, setName] = useState(currentUser?.name || '');
+  const [phone, setPhone] = useState(currentUser?.phone || '');
   const [institute, setInstitute] = useState(currentUser?.institute || '');
   const [role, setRole] = useState(currentUser?.role || 'Senior Subject Teacher');
 
@@ -49,9 +50,21 @@ export default function UserProfileModal({
     setIsLoading(true);
 
     try {
+      const cleanPhone = (phone || '').trim();
+      const phoneDigits = cleanPhone.replace(/\D/g, '');
+      let stdPhone = phoneDigits;
+      if (phoneDigits.startsWith('923') && phoneDigits.length === 12) {
+        stdPhone = '0' + phoneDigits.slice(2);
+      } else if (phoneDigits.startsWith('3') && phoneDigits.length === 10) {
+        stdPhone = '0' + phoneDigits;
+      }
+
       const updatedUser = {
         ...currentUser,
         name: name.trim(),
+        phone: cleanPhone,
+        phoneClean: phoneDigits,
+        phoneStd: stdPhone,
         institute: institute.trim() || 'Educators Academy',
         role: role
       };
@@ -62,6 +75,9 @@ export default function UserProfileModal({
           const userDocRef = doc(db, "users", currentUser.email.toLowerCase().trim());
           await setDoc(userDocRef, {
             name: name.trim(),
+            phone: cleanPhone,
+            phoneClean: phoneDigits,
+            phoneStd: stdPhone,
             institute: institute.trim() || 'Educators Academy',
             role: role
           }, { merge: true });
@@ -75,7 +91,15 @@ export default function UserProfileModal({
         const localUsers = JSON.parse(localStorage.getItem('ptm_registered_users') || '[]');
         const updatedList = localUsers.map(u => {
           if (u.email?.toLowerCase() === currentUser?.email?.toLowerCase()) {
-            return { ...u, name: name.trim(), institute: institute.trim(), role };
+            return { 
+              ...u, 
+              name: name.trim(), 
+              phone: cleanPhone, 
+              phoneClean: phoneDigits, 
+              phoneStd: stdPhone, 
+              institute: institute.trim(), 
+              role 
+            };
           }
           return u;
         });
@@ -283,6 +307,23 @@ export default function UserProfileModal({
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter your full name"
                     className="w-full pl-9 pr-3 py-2 bg-slate-50 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Mobile / Phone Number */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">
+                  Mobile / WhatsApp (موبائل یا واٹس ایپ نمبر)
+                </label>
+                <div className="relative flex items-center">
+                  <Phone className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="e.g. 0300 1234567"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none transition-all font-mono"
                   />
                 </div>
               </div>

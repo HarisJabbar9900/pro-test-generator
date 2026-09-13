@@ -143,6 +143,7 @@ export function recordUserLoginEvent(email, userName = 'User') {
 export async function createTeacherAccount({
   name,
   email,
+  phone = '',
   password,
   institute = 'Educators Academy',
   role = 'Senior Subject Teacher',
@@ -155,10 +156,22 @@ export async function createTeacherAccount({
     throw new Error('Email and Password are required');
   }
 
+  const cleanPhone = (phone || '').trim();
+  const cleanPhoneDigits = cleanPhone.replace(/\D/g, '');
+  let stdPhone = cleanPhoneDigits;
+  if (cleanPhoneDigits.startsWith('923') && cleanPhoneDigits.length === 12) {
+    stdPhone = '0' + cleanPhoneDigits.slice(2);
+  } else if (cleanPhoneDigits.startsWith('3') && cleanPhoneDigits.length === 10) {
+    stdPhone = '0' + cleanPhoneDigits;
+  }
+
   const nowFormatted = new Date().toLocaleString('en-PK', { dateStyle: 'medium', timeStyle: 'short' });
   const newUser = {
     name: name.trim(),
     email: cleanEmail,
+    phone: cleanPhone,
+    phoneClean: cleanPhoneDigits,
+    phoneStd: stdPhone,
     password: password.trim(),
     institute: institute.trim(),
     role: role.trim(),

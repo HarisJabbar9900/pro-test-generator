@@ -103,6 +103,7 @@ export default function PTMSecondaryViews({
   const [createForm, setCreateForm] = useState({
     name: '',
     email: '',
+    phone: '',
     password: '',
     institute: 'Educators Academy',
     role: 'Senior Subject Teacher',
@@ -135,6 +136,7 @@ export default function PTMSecondaryViews({
       setCreateForm({
         name: '',
         email: '',
+        phone: '',
         password: '',
         institute: 'Educators Academy',
         role: 'Senior Subject Teacher',
@@ -2596,6 +2598,18 @@ export default function PTMSecondaryViews({
                     value={createForm.email}
                     onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
                     placeholder="teacher@school.edu.pk"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-semibold font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                  />
+                </div>
+
+                {/* Mobile / Phone Number */}
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Phone / WhatsApp Number</label>
+                  <input
+                    type="tel"
+                    value={createForm.phone || ''}
+                    onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
+                    placeholder="e.g. 0300 1234567"
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-semibold font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                   />
                 </div>
