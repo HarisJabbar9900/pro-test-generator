@@ -1089,42 +1089,6 @@ export default function PaperCanvas({
               <span>QR Code: {showSolutionQr ? 'ON' : 'OFF'}</span>
             </button>
           </div>
-
-          {/* Primary Action Buttons (WhatsApp, Print, DOC) */}
-          <div className="grid grid-cols-3 sm:flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
-            {/* 1-Click WhatsApp Share */}
-            <button
-              type="button"
-              onClick={() => setShowWhatsAppModal(true)}
-              className="flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 sm:py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
-              title="1-Click WhatsApp Share (پیپر اور سلیبس واٹس ایپ پر شیئر کریں)"
-            >
-              <MessageCircle className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">WhatsApp</span>
-            </button>
-
-            {/* Download PDF / Print Paper */}
-            <button
-              type="button"
-              onClick={handlePrintPaper}
-              className="flex items-center justify-center gap-1 sm:gap-1.5 px-3 sm:px-3.5 py-2 sm:py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
-              title="Download PDF / Print Paper (Ctrl+P) - Saves with Class, Chapter & Topic in filename"
-            >
-              <Printer className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">Download PDF / Print</span>
-            </button>
-
-            {/* Download Word (.doc) */}
-            <button
-              type="button"
-              onClick={onExportDocx}
-              className="flex items-center justify-center gap-1 sm:gap-1.5 px-3 sm:px-3.5 py-2 sm:py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-95"
-              title="Download editable Microsoft Word (.doc) paper - Saves with Class, Chapter & Topic in filename"
-            >
-              <FileText className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">Download Word (.doc)</span>
-            </button>
-          </div>
         </div>
       </div>
 
