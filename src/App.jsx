@@ -182,15 +182,14 @@ export default function App() {
         localStorage.removeItem('ptm_active_paper_data');
         localStorage.removeItem('ptm_active_paper_step');
       } catch (e) {}
+      try { toast.dismiss(); } catch (e) {}
       setPaperData({ mcqs: [], shortQuestions: [], longQuestions: [] });
       setSelectedTopicIds([]);
       setPaperStep('course');
       setActiveNav('pricing');
       setSavedPapers([]);
       setCurrentUser(null);
-      notify.warning("Session Expired (سیشن ختم ہو گیا)", {
-        description: "غیر حاضری کی وجہ سے آپ کا سیشن ختم کر دیا گیا ہے۔ برائے مہربانی دوبارہ لاگ ان کریں۔"
-      });
+      // Silent logout: no session expiration toast notification shown to the user
     };
 
     const resetTimer = () => {
