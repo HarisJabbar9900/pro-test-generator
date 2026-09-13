@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Plus, Trash2, ArrowUp, ArrowDown, RefreshCw, 
   Eye, ZoomIn, ZoomOut, Printer, Key, RotateCcw, Columns,
-  MessageCircle, ShieldCheck, Layers, Share2
+  MessageCircle, ShieldCheck, Layers, Share2, QrCode
 } from 'lucide-react';
 import SwapQuestionModal from './SwapQuestionModal';
 import TeacherAnswerKeyModal from './TeacherAnswerKeyModal';
@@ -10,6 +10,7 @@ import WhatsAppShareModal from './WhatsAppShareModal';
 import { generateMultiSets } from '../utils/multiSetHelper';
 import { notify } from '../utils/notify';
 import { isSuperAdmin } from '../utils/pricingPlansService';
+import { getOrCreatePaperId, syncPaperForQrAccess, generateQrCodeDataUrl } from '../utils/qrCodeService';
 
 const EMPTY_PAPER_DATA = Object.freeze({ mcqs: [], shortQuestions: [], longQuestions: [] });
 const EMPTY_CONFIG = Object.freeze({});
@@ -86,6 +87,34 @@ export default function PaperCanvas({
       setMcqCols(Number(paperConfig.mcqOptionsCols) || 2);
     }
   }, [paperConfig.mcqOptionsCols]);
+
+  // Solution QR Code State (Free scan-to-solve PDF download)
+  const [showSolutionQr, setShowSolutionQr] = useState(true);
+  const [qrDataUrl, setQrDataUrl] = useState('');
+  const [paperSolutionId, setPaperSolutionId] = useState('');
+
+  // Auto-generate QR code and sync paper solution to cloud
+  useEffect(() => {
+    let isMounted = true;
+    const pid = getOrCreatePaperId(paperData);
+    setPaperSolutionId(pid);
+
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const solutionUrl = `${baseUrl}/?paper_solution=${pid}`;
+
+    generateQrCodeDataUrl(solutionUrl).then(dataUrl => {
+      if (isMounted && dataUrl) {
+        setQrDataUrl(dataUrl);
+      }
+    });
+
+    // Background sync to Firestore for instant mobile scanner access
+    syncPaperForQrAccess(pid, paperData, paperConfig).catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, [paperData, paperConfig]);
 
   // Teacher Answer Key States
   const [showTeacherMcqKey, setShowTeacherMcqKey] = useState(false);
@@ -777,6 +806,7 @@ export default function PaperCanvas({
               type="button"
               onClick={() => {
                 const next = !isWatermarkEnabled;
+                setIsWatermarkEnabled(next);
                 setPaperConfig?.(prev => ({ 
                   ...prev, 
                   showWatermark: next, 
@@ -792,6 +822,27 @@ export default function PaperCanvas({
               title="Toggle Watermark (AL-ZIA SCIENCE ACADEMY)"
             >
               <span>🏷️ Watermark: {isWatermarkEnabled ? 'ON' : 'OFF'}</span>
+            </button>
+
+            {/* Solution QR Code Toggle Button */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowSolutionQr(prev => {
+                  const next = !prev;
+                  notify.info(next ? "پیپر پر کیو آر کوڈ فعال ہو گیا (Solution QR Code Enabled)" : "کیو آر کوڈ بند کر دیا گیا (QR Code Disabled)");
+                  return next;
+                });
+              }}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs border ${
+                showSolutionQr
+                  ? 'bg-indigo-50 text-indigo-700 border-indigo-300 hover:bg-indigo-100'
+                  : 'bg-slate-100 text-slate-500 border-slate-300 hover:bg-slate-200'
+              }`}
+              title="Toggle Solution & Answer Key QR Code on Paper Header"
+            >
+              <QrCode className="w-3.5 h-3.5 shrink-0 text-indigo-600" />
+              <span>QR Code: {showSolutionQr ? 'ON' : 'OFF'}</span>
             </button>
           </div>
 
@@ -896,7 +947,24 @@ export default function PaperCanvas({
           )}
 
           {/* DYNAMIC PAPER HEADER SUPPORTING 8+ LAYOUTS, FONT SIZES, AND COLORS */}
-          <header className="paper-header-root">
+          <header className="paper-header-root relative">
+            {/* Top Right Official Solution QR Code Badge (Free Scan-to-Solve PDF) */}
+            {showSolutionQr && qrDataUrl && (
+              <div 
+                className="solution-qr-badge absolute top-1 right-1 z-20 flex flex-col items-center justify-center p-1 bg-white border border-current rounded shadow-2xs select-none pointer-events-auto"
+                style={{ width: '60px' }}
+                title="Scan with phone camera to view Answer Key & Solved Paper PDF"
+              >
+                <img 
+                  src={qrDataUrl} 
+                  alt="Solution QR Code" 
+                  className="w-11 h-11 object-contain block"
+                />
+                <span className="text-[5.5px] font-black uppercase tracking-tighter text-center leading-none mt-0.5" style={{ color: activeColor }}>
+                  Scan For Key & PDF
+                </span>
+              </div>
+            )}
           {(() => {
             const commonStyle = { color: activeColor };
 

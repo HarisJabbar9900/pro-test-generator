@@ -17,6 +17,7 @@
     "lucide-react": "^1.33.0",
     "mammoth": "^1.12.1",
     "pdfjs-dist": "^6.2.108",
+    "qrcode": "^1.5.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "sonner": "^2.0.8",

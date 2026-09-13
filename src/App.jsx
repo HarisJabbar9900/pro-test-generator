@@ -19,6 +19,7 @@ import PricingPlansView from './components/PricingPlansView';
 import ContactTeamView from './components/ContactTeamView';
 import DateSheetPlannerView from './components/DateSheetPlannerView';
 import AppLoadingScreen from './components/AppLoadingScreen';
+import PublicPaperSolutionView from './components/PublicPaperSolutionView';
 
 // Auto-retrying lazy loader for heavy administrative modules and modals
 function lazyWithRetry(componentImport) {
@@ -241,6 +242,15 @@ export default function App() {
 
   // State to manage cinematic initial boot experience
   const [isAppBooting, setIsAppBooting] = useState(true);
+
+  // Detect if user scanned a QR code or opened a shared solution link (?paper_solution=...)
+  const [scannedPaperId, setScannedPaperId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('paper_solution') || null;
+    }
+    return null;
+  });
 
   const handleToggleLanguage = () => {
     setAppLanguage(prev => {
@@ -1328,6 +1338,21 @@ export default function App() {
       }
     });
   };
+
+  // Public Solution & Answer Key Viewer (Opens when QR Code is scanned on mobile)
+  if (scannedPaperId) {
+    return (
+      <PublicPaperSolutionView 
+        paperId={scannedPaperId} 
+        onGoHome={() => {
+          const url = new URL(window.location.href);
+          url.searchParams.delete('paper_solution');
+          window.history.replaceState({}, '', url.pathname);
+          setScannedPaperId(null);
+        }} 
+      />
+    );
+  }
 
   // Require Authentication before opening application
   if (!currentUser) {
