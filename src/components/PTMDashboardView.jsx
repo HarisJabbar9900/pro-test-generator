@@ -1,9 +1,8 @@
-import React from 'react';
 import { 
   Send, Save, Newspaper, Users, Settings, Trash2, 
   Copy, Clock, PenTool, BookOpen, FileSignature, ArrowRight, 
   Cloud, Layers, ShieldCheck, ChevronRight, ListChecks, FileText,
-  Sparkles, Database, Award
+  Sparkles, Database, Award, Landmark
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 import { getUserStats } from '../utils/userActivityTracker';
@@ -55,11 +54,12 @@ export default function PTMDashboardView({
   const totalQuestions = totalBankMcqs + totalBankShorts + totalBankLongs;
 
   const handleNav = (target) => {
+    const cleanTarget = target === 'pricing_plans' ? 'pricing' : target;
     if (typeof onNavigate === 'function') {
-      onNavigate(target);
-    } else if (target === 'generate_paper') {
+      onNavigate(cleanTarget);
+    } else if (cleanTarget === 'generate_paper') {
       onGoToGenerate();
-    } else if (target === 'default_paper_settings') {
+    } else if (cleanTarget === 'default_paper_settings') {
       onGoToSettings?.();
     }
   };
@@ -167,7 +167,7 @@ export default function PTMDashboardView({
 
           {/* User Card 5: My Plan & Profile Status (Deep Purple / Indigo Gradient) */}
           <div 
-            onClick={() => handleNav('login_history')}
+            onClick={() => handleNav('pricing')}
             className="rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-800 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
           >
             <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
@@ -183,7 +183,7 @@ export default function PTMDashboardView({
               <ShieldCheck className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>My Activity & Log</span>
+              <span>View Plan Details</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -303,31 +303,31 @@ export default function PTMDashboardView({
             </div>
           </div>
 
-          {/* Tool 4: Login History / User Management */}
+          {/* Tool 4: Past Papers (5-Year Board Solved Archive) */}
           <div 
-            onClick={() => handleNav('login_history')}
+            onClick={() => handleNav('past_papers')}
             className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-amber-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
           >
             <div className="flex items-start justify-between gap-2.5">
               <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/25 group-hover:scale-110 transition-transform duration-300">
-                {currentUser?.isAdmin ? <Users className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
+                <Landmark className="w-5 h-5" />
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
-                {currentUser?.isAdmin ? 'Live Cloud' : `${userStats.loginCount} Logins`}
+                5 Years
               </span>
             </div>
 
             <div className="mt-3">
               <h3 className="text-sm font-black text-slate-800 group-hover:text-amber-600 transition-colors tracking-tight leading-snug">
-                {currentUser?.isAdmin ? 'User Management' : 'My Activity & Stats'}
+                Past Papers
               </h3>
               <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
-                {currentUser?.isAdmin ? 'Account Quotas & Audit' : `${userTotalCreated} Created Papers`}
+                FBISE & Punjab Boards 5-Year Solved
               </p>
             </div>
 
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-amber-700 transition-colors">
-              <span>{currentUser?.isAdmin ? 'Manage Users' : 'View Activity'}</span>
+              <span>Browse Past Papers</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-amber-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
                 <ChevronRight className="w-3 h-3" />
               </div>
