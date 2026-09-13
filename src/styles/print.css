@@ -478,33 +478,42 @@
 /* OFFICIAL BOARD TABULAR LAYOUT STYLING (بورڈ ٹیبل فارمیٹ) */
 /* ========================================================= */
 .board-paper-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1.5px solid #0f172a;
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+  border: 1.5px solid #0f172a !important;
   margin-top: 4px;
   margin-bottom: 6px;
   font-size: inherit;
   background-color: #ffffff;
+  box-sizing: border-box !important;
 }
 
 .board-paper-table th {
   background-color: #f1f5f9;
   border: 1px solid #0f172a;
-  padding: 3.5px 5px;
+  padding: 3px 4px;
   font-weight: 800;
   text-align: center;
   font-size: 0.88em;
   color: #0f172a;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+  box-sizing: border-box !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .board-paper-table td {
   border: 1px solid #475569;
-  padding: 3.5px 6px;
+  padding: 3px 4px;
   vertical-align: middle;
   line-height: 1.35;
   color: inherit;
+  box-sizing: border-box !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .board-paper-table tr {
@@ -518,9 +527,13 @@
 
 @media print {
   .board-paper-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
     border: 1.5px solid #000000 !important;
     border-collapse: collapse !important;
     margin-bottom: 3mm !important;
+    box-sizing: border-box !important;
   }
   .board-paper-table th {
     background-color: #e2e8f0 !important;
@@ -528,10 +541,18 @@
     color: #000000 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    padding: 2.5px 3.5px !important;
+    box-sizing: border-box !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
   }
   .board-paper-table td {
     border: 1px solid #000000 !important;
     color: #000000 !important;
+    padding: 2.5px 3.5px !important;
+    box-sizing: border-box !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
   }
   .board-paper-table tr {
     page-break-inside: avoid !important;

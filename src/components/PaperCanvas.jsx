@@ -447,22 +447,22 @@ export default function PaperCanvas({
     if (isBlend && hasActualEng && hasActualUrdu) {
       return (
         <div className="w-full flex flex-col gap-0.5">
-          <div className="text-left font-semibold text-slate-900 leading-snug">
+          <div className="text-left font-semibold text-slate-900 leading-snug break-words">
             <div
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => updateQuestionText(sectionKey, qIdx, `${e.target.innerText} || ${urdu}`)}
-              className="focus:outline-none rounded"
+              className="focus:outline-none rounded break-words"
             >
               {eng}
             </div>
           </div>
-          <div className="text-right font-bold text-slate-900 font-serif-urdu leading-tight" dir="rtl">
+          <div className="text-right font-bold text-slate-900 font-serif-urdu leading-tight break-words" dir="rtl">
             <div
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => updateQuestionText(sectionKey, qIdx, `${eng} || ${e.target.innerText}`)}
-              className="focus:outline-none rounded"
+              className="focus:outline-none rounded break-words"
             >
               {urdu}
             </div>
@@ -473,12 +473,12 @@ export default function PaperCanvas({
 
     if (isUrdu || (hasActualUrdu && !hasActualEng)) {
       return (
-        <div className="w-full text-right font-bold text-slate-900 font-serif-urdu leading-tight" dir="rtl">
+        <div className="w-full text-right font-bold text-slate-900 font-serif-urdu leading-tight break-words" dir="rtl">
           <div
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) => updateQuestionText(sectionKey, qIdx, e.target.innerText)}
-            className="focus:outline-none rounded w-full"
+            className="focus:outline-none rounded w-full break-words"
           >
             {urdu || qText}
           </div>
@@ -487,12 +487,12 @@ export default function PaperCanvas({
     }
 
     return (
-      <div className="w-full text-left font-semibold text-slate-900 leading-snug">
+      <div className="w-full text-left font-semibold text-slate-900 leading-snug break-words">
         <div
           contentEditable
           suppressContentEditableWarning
           onBlur={(e) => updateQuestionText(sectionKey, qIdx, e.target.innerText)}
-          className="focus:outline-none rounded w-full"
+          className="focus:outline-none rounded w-full break-words"
         >
           {eng || qText}
         </div>
@@ -519,7 +519,7 @@ export default function PaperCanvas({
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) => updateMcqOption(qIdx, oIdx, `${e.target.innerText} || ${urdu}`)}
-            className="focus:outline-none rounded font-medium text-slate-800 leading-tight w-full"
+            className="focus:outline-none rounded font-medium text-slate-800 leading-tight w-full break-words"
           >
             {eng}
           </span>
@@ -527,7 +527,7 @@ export default function PaperCanvas({
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) => updateMcqOption(qIdx, oIdx, `${eng} || ${e.target.innerText}`)}
-            className="focus:outline-none rounded font-bold text-slate-900 font-serif-urdu leading-tight w-full"
+            className="focus:outline-none rounded font-bold text-slate-900 font-serif-urdu leading-tight w-full break-words"
             dir="rtl"
           >
             {urdu}
@@ -559,7 +559,7 @@ export default function PaperCanvas({
           contentEditable
           suppressContentEditableWarning
           onBlur={(e) => updateMcqOption(qIdx, oIdx, e.target.innerText)}
-          className={`focus:outline-none rounded leading-tight w-full ${isUrduOption ? 'font-serif-urdu font-bold' : 'font-medium text-slate-800'} ${!textToDisplay?.trim() ? 'border-b border-dashed border-amber-400 text-amber-600 italic px-1' : ''}`}
+          className={`focus:outline-none rounded leading-tight w-full break-words ${isUrduOption ? 'font-serif-urdu font-bold' : 'font-medium text-slate-800'} ${!textToDisplay?.trim() ? 'border-b border-dashed border-amber-400 text-amber-600 italic px-1' : ''}`}
           dir={isUrduOption ? 'rtl' : 'ltr'}
         >
           {textToDisplay?.trim() || "[Edit]"}
@@ -2264,24 +2264,35 @@ export default function PaperCanvas({
 
                       if (contentFormat === 'table') {
                         return (
-                          <div className="overflow-x-auto w-full my-1">
-                            <table className="board-paper-table text-[0.95em]">
+                          <div className="w-full max-w-full my-1 overflow-hidden print:overflow-visible">
+                            <table 
+                              className="board-paper-table text-[0.95em]"
+                              style={{ width: '100%', maxWidth: '100%', tableLayout: 'fixed' }}
+                            >
+                              <colgroup>
+                                <col style={{ width: '6.5%' }} />
+                                <col style={{ width: '45.5%' }} />
+                                <col style={{ width: '12%' }} />
+                                <col style={{ width: '12%' }} />
+                                <col style={{ width: '12%' }} />
+                                <col style={{ width: '12%' }} />
+                              </colgroup>
                               <thead>
                                 <tr>
-                                  <th style={{ width: '48px' }}>Q.#</th>
-                                  <th style={{ textAlign: 'left', paddingLeft: '8px' }}>
+                                  <th style={{ width: '6.5%' }}>Q.#</th>
+                                  <th style={{ width: '45.5%', textAlign: 'left', paddingLeft: '6px' }}>
                                     {isBlend ? 'Question Statement / سوال' : isUrdu ? 'سوال' : 'Question Statement'}
                                   </th>
-                                  <th style={{ width: '15%' }}>(A) الف</th>
-                                  <th style={{ width: '15%' }}>(B) ب</th>
-                                  <th style={{ width: '15%' }}>(C) ج</th>
-                                  <th style={{ width: '15%' }}>(D) د</th>
+                                  <th style={{ width: '12%' }}>(A) الف</th>
+                                  <th style={{ width: '12%' }}>(B) ب</th>
+                                  <th style={{ width: '12%' }}>(C) ج</th>
+                                  <th style={{ width: '12%' }}>(D) د</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {activeMcqs.map((q, idx) => (
                                   <tr key={q.id || idx} className="relative group hover:bg-slate-50/80 transition-colors">
-                                    <td className="text-center font-bold text-slate-900 bg-slate-50/50 align-middle">
+                                    <td className="text-center font-bold text-slate-900 bg-slate-50/50 align-middle break-words">
                                       <span>{idx + 1}</span>
                                       {/* Action Toolbar on Hover */}
                                       <div className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white border border-slate-300 rounded shadow-md px-1 py-0.5 z-20 transition-opacity">
@@ -2291,19 +2302,19 @@ export default function PaperCanvas({
                                         <button onClick={() => deleteQuestion('mcqs', idx)} title="Delete Question" className="p-1 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
                                       </div>
                                     </td>
-                                    <td className="align-middle px-2 py-1">
+                                    <td className="align-middle px-2 py-1 break-words overflow-hidden">
                                       {renderQuestionPromptWithoutNum(q.question, idx, 'mcqs')}
                                     </td>
-                                    <td className="align-middle p-1 text-center">
+                                    <td className="align-middle p-1 text-center break-words overflow-hidden">
                                       {renderTableOptionContent(q.options?.[0] || '', 0, idx, q)}
                                     </td>
-                                    <td className="align-middle p-1 text-center">
+                                    <td className="align-middle p-1 text-center break-words overflow-hidden">
                                       {renderTableOptionContent(q.options?.[1] || '', 1, idx, q)}
                                     </td>
-                                    <td className="align-middle p-1 text-center">
+                                    <td className="align-middle p-1 text-center break-words overflow-hidden">
                                       {renderTableOptionContent(q.options?.[2] || '', 2, idx, q)}
                                     </td>
-                                    <td className="align-middle p-1 text-center">
+                                    <td className="align-middle p-1 text-center break-words overflow-hidden">
                                       {renderTableOptionContent(q.options?.[3] || '', 3, idx, q)}
                                     </td>
                                   </tr>
@@ -2402,21 +2413,29 @@ export default function PaperCanvas({
                     </div>
 
                     {contentFormat === 'table' ? (
-                      <div className="overflow-x-auto w-full my-1">
-                        <table className="board-paper-table text-[0.95em]">
+                      <div className="w-full max-w-full my-1 overflow-hidden print:overflow-visible">
+                        <table 
+                          className="board-paper-table text-[0.95em]"
+                          style={{ width: '100%', maxWidth: '100%', tableLayout: 'fixed' }}
+                        >
+                          <colgroup>
+                            <col style={{ width: '7%' }} />
+                            <col style={{ width: '83%' }} />
+                            <col style={{ width: '10%' }} />
+                          </colgroup>
                           <thead>
                             <tr>
-                              <th style={{ width: '48px' }}>Q.#</th>
-                              <th style={{ textAlign: 'left', paddingLeft: '8px' }}>
+                              <th style={{ width: '7%' }}>Q.#</th>
+                              <th style={{ width: '83%', textAlign: 'left', paddingLeft: '8px' }}>
                                 {isBlend ? 'Short Question Statement / مختصر سوال' : isUrdu ? 'مختصر سوال' : 'Short Question Statement'}
                               </th>
-                              <th style={{ width: '60px' }}>Marks</th>
+                              <th style={{ width: '10%' }}>Marks</th>
                             </tr>
                           </thead>
                           <tbody>
                             {activeShortQuestions.map((q, idx) => (
                               <tr key={q.id || idx} className="relative group hover:bg-slate-50/80 transition-colors">
-                                <td className="text-center font-bold text-slate-900 bg-slate-50/50 align-middle">
+                                <td className="text-center font-bold text-slate-900 bg-slate-50/50 align-middle break-words">
                                   <span>({toRoman(idx + 1)})</span>
                                   {/* Action Toolbar on Hover */}
                                   <div className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white border border-slate-300 rounded shadow-md px-1 py-0.5 z-20 transition-opacity">
@@ -2426,7 +2445,7 @@ export default function PaperCanvas({
                                     <button onClick={() => deleteQuestion('shortQuestions', idx)} title="Delete Question" className="p-1 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
                                   </div>
                                 </td>
-                                <td className="align-middle px-2.5 py-1.5">
+                                <td className="align-middle px-2.5 py-1.5 break-words overflow-hidden">
                                   {renderQuestionPromptWithoutNum(q.question, idx, 'shortQuestions')}
                                   {/* Teacher Answer Key */}
                                   {showAnswerKey && q.answerKey && (
@@ -2436,7 +2455,7 @@ export default function PaperCanvas({
                                     </div>
                                   )}
                                 </td>
-                                <td className="text-center font-bold text-slate-900 align-middle">
+                                <td className="text-center font-bold text-slate-900 align-middle break-words">
                                   {q.marks || 3}
                                 </td>
                               </tr>
@@ -2512,21 +2531,29 @@ export default function PaperCanvas({
                     </div>
 
                     {contentFormat === 'table' ? (
-                      <div className="overflow-x-auto w-full my-1">
-                        <table className="board-paper-table text-[0.95em]">
+                      <div className="w-full max-w-full my-1 overflow-hidden print:overflow-visible">
+                        <table 
+                          className="board-paper-table text-[0.95em]"
+                          style={{ width: '100%', maxWidth: '100%', tableLayout: 'fixed' }}
+                        >
+                          <colgroup>
+                            <col style={{ width: '7%' }} />
+                            <col style={{ width: '83%' }} />
+                            <col style={{ width: '10%' }} />
+                          </colgroup>
                           <thead>
                             <tr>
-                              <th style={{ width: '48px' }}>Q.#</th>
-                              <th style={{ textAlign: 'left', paddingLeft: '8px' }}>
+                              <th style={{ width: '7%' }}>Q.#</th>
+                              <th style={{ width: '83%', textAlign: 'left', paddingLeft: '8px' }}>
                                 {isBlend ? 'Comprehensive Question Statement / تفصیلی سوال' : isUrdu ? 'تفصیلی سوال' : 'Comprehensive Question Statement'}
                               </th>
-                              <th style={{ width: '60px' }}>Marks</th>
+                              <th style={{ width: '10%' }}>Marks</th>
                             </tr>
                           </thead>
                           <tbody>
                             {activeLongQuestions.map((q, idx) => (
                               <tr key={q.id || idx} className="relative group hover:bg-slate-50/80 transition-colors">
-                                <td className="text-center font-bold text-slate-900 bg-slate-50/50 align-middle">
+                                <td className="text-center font-bold text-slate-900 bg-slate-50/50 align-middle break-words">
                                   <span>Q.{activeShortQuestions.length > 0 ? (idx + 3) : (idx + 1)}</span>
                                   {/* Action Toolbar on Hover */}
                                   <div className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white border border-slate-300 rounded shadow-md px-1 py-0.5 z-20 transition-opacity">
@@ -2536,7 +2563,7 @@ export default function PaperCanvas({
                                     <button onClick={() => deleteQuestion('longQuestions', idx)} title="Delete Question" className="p-1 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
                                   </div>
                                 </td>
-                                <td className="align-middle px-2.5 py-1.5">
+                                <td className="align-middle px-2.5 py-1.5 break-words overflow-hidden">
                                   {renderQuestionPromptWithoutNum(q.question, idx, 'longQuestions')}
                                   {/* Sub Parts */}
                                   {q.subParts && q.subParts.length > 0 && (
@@ -2560,7 +2587,7 @@ export default function PaperCanvas({
                                     </div>
                                   )}
                                 </td>
-                                <td className="text-center font-bold text-slate-900 align-middle">
+                                <td className="text-center font-bold text-slate-900 align-middle break-words">
                                   {q.marks || 5}
                                 </td>
                               </tr>
