@@ -17,9 +17,12 @@ export default function PTMDashboardView({
   bank,
   selectedClass,
   savedPapers = [],
-  currentUser = null
+  currentUser = null,
+  appLanguage = 'en',
+  onToggleLanguage
 }) {
   const isSuper = isSuperAdmin(currentUser);
+  const isUrdu = appLanguage === 'ur';
   const userStats = getUserStats(currentUser?.email);
 
   // Compute specific user metrics
@@ -69,14 +72,39 @@ export default function PTMDashboardView({
       <div className="space-y-5 sm:space-y-7">
       
       {/* 1. TOP 5 SPECIFIC USER METRIC CARDS (DEDICATED TO THIS USER) */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-            {currentUser?.name ? `${currentUser.name} • Faculty Dashboard` : 'Teacher Overview'}
-          </span>
-          <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-            {isSuper ? 'Super Admin' : (currentUser?.package || 'Verified Faculty')}
-          </span>
+      <div className="space-y-2.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-200/80">
+          <div className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-wider">
+              {currentUser?.name ? `${currentUser.name} • Faculty Dashboard` : 'Teacher Overview'}
+            </span>
+            {isUrdu && (
+              <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                اساتذہ ڈیش بورڈ
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            {/* Quick in-page Urdu toggle */}
+            <button
+              type="button"
+              onClick={onToggleLanguage}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
+                isUrdu 
+                  ? 'bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700 ring-2 ring-emerald-200'
+                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+              }`}
+              title={isUrdu ? "اردو فعال ہے (Switch to English)" : "اردو زبان فعال کریں (Switch to Urdu)"}
+            >
+              <Languages className="w-3.5 h-3.5" />
+              <span>{isUrdu ? 'اردو فعال (Urdu)' : 'اردو میں دیکھیں'}</span>
+            </button>
+
+            <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+              {isSuper ? (isUrdu ? 'سپر ایڈمن (Super Admin)' : 'Super Admin') : (currentUser?.package || (isUrdu ? 'تصدیق شدہ استاد' : 'Verified Faculty'))}
+            </span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4">
@@ -88,14 +116,22 @@ export default function PTMDashboardView({
           >
             <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
               <div>
-                <div className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-xs">Instant</div>
-                <div className="text-sm font-bold mt-1 text-white/95">Generate Paper</div>
-                <p className="text-[11px] text-white/75 font-medium mt-0.5">Custom Exam Builder</p>
+                <div className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-xs">
+                  Instant
+                </div>
+                <div className="text-sm font-bold mt-1 text-white/95 leading-snug">
+                  Generate Paper
+                  {isUrdu && <span className="block text-xs font-bold text-cyan-100">امتحانی پرچہ تیار کریں</span>}
+                </div>
+                <p className="text-[11px] text-white/75 font-medium mt-0.5 leading-tight">
+                  Custom Exam Builder
+                  {isUrdu && <span className="block text-[10px] text-white/80">فوری ٹیسٹ بنانے کا نظام</span>}
+                </p>
               </div>
               <Send className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>Generate Now</span>
+              <span>{isUrdu ? 'Generate Now • ابھی بنائیں' : 'Generate Now'}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -108,13 +144,19 @@ export default function PTMDashboardView({
             <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
               <div>
                 <div className="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">{savedPapers?.length || 0}</div>
-                <div className="text-sm font-bold mt-1 text-white/95">My Saved Papers</div>
-                <p className="text-[11px] text-white/75 font-medium mt-0.5">Ready to Print & PDF</p>
+                <div className="text-sm font-bold mt-1 text-white/95 leading-snug">
+                  My Saved Papers
+                  {isUrdu && <span className="block text-xs font-bold text-emerald-100">محفوظ شدہ پرچے</span>}
+                </div>
+                <p className="text-[11px] text-white/75 font-medium mt-0.5 leading-tight">
+                  Ready to Print & PDF
+                  {isUrdu && <span className="block text-[10px] text-white/80">پرنٹ اور پی ڈی ایف کے لیے تیار</span>}
+                </p>
               </div>
               <Save className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>Open Saved Papers</span>
+              <span>{isUrdu ? 'Open Saved Papers • پرچے دیکھیں' : 'Open Saved Papers'}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -129,13 +171,19 @@ export default function PTMDashboardView({
                 <div className="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">
                   {userTotalCreated}
                 </div>
-                <div className="text-sm font-bold mt-1 text-white">Created Papers</div>
-                <p className="text-[11px] text-white/80 font-medium mt-0.5">My Generated Archives</p>
+                <div className="text-sm font-bold mt-1 text-white leading-snug">
+                  Created Papers
+                  {isUrdu && <span className="block text-xs font-bold text-amber-100">کل تیار کردہ پیپرز</span>}
+                </div>
+                <p className="text-[11px] text-white/80 font-medium mt-0.5 leading-tight">
+                  My Generated Archives
+                  {isUrdu && <span className="block text-[10px] text-white/80">بنائے گئے ٹیسٹوں کی تاریخ</span>}
+                </p>
               </div>
               <Copy className="w-14 h-14 sm:w-16 sm:h-16 text-white/20 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>View Paper History</span>
+              <span>{isUrdu ? 'View Paper History • تاریخچہ کھولیں' : 'View Paper History'}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -150,17 +198,25 @@ export default function PTMDashboardView({
                 <div className="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">
                   {isUnlimited ? '∞' : remainingQuota}
                 </div>
-                <div className="text-sm font-bold mt-1 text-white/95">Remaining Quota</div>
-                <p className="text-[11px] text-white/75 font-medium mt-0.5">
+                <div className="text-sm font-bold mt-1 text-white/95 leading-snug">
+                  Remaining Quota
+                  {isUrdu && <span className="block text-xs font-bold text-rose-100">پیپرز کی باقی گنجائش</span>}
+                </div>
+                <p className="text-[11px] text-white/75 font-medium mt-0.5 leading-tight">
                   {isUnlimited 
                     ? (isSuper ? 'Unlimited Generations (Admin)' : 'Unlimited Paper Generations') 
                     : `Of ${userMaxLimit} Papers Limit`}
+                  {isUrdu && (
+                    <span className="block text-[10px] text-white/80">
+                      {isUnlimited ? 'لامحدود پیپرز بنانے کی سہولت' : `کل ${userMaxLimit} پیپرز میں سے باقی`}
+                    </span>
+                  )}
                 </p>
               </div>
               <Layers className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>{isSuper ? 'Admin Quota' : (isUnlimited ? 'Active Plan' : 'Manage Subscription')}</span>
+              <span>{isSuper ? 'Admin Quota' : (isUnlimited ? (isUrdu ? 'Active Plan • فعال پلان' : 'Active Plan') : (isUrdu ? 'Manage Plan • پلان اپگریڈ' : 'Manage Subscription'))}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -172,18 +228,22 @@ export default function PTMDashboardView({
           >
             <div className="p-4 sm:p-5 flex items-start justify-between relative z-10">
               <div>
-                <div className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-xs">
+                <div className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-xs truncate max-w-[170px]">
                   {isSuper ? 'Super Admin' : (currentUser?.package && currentUser?.package !== 'None' ? currentUser.package.split(' ')[0] : 'Faculty')}
                 </div>
-                <div className="text-sm font-bold mt-1 text-white/95">{isSuper ? 'Admin Console' : 'My Faculty Plan'}</div>
-                <p className="text-[11px] text-white/75 font-medium mt-0.5 truncate max-w-[150px]">
+                <div className="text-sm font-bold mt-1 text-white/95 leading-snug">
+                  {isSuper ? 'Admin Console' : 'My Faculty Plan'}
+                  {isUrdu && <span className="block text-xs font-bold text-purple-100">میرا اسکول و پیکیج پلان</span>}
+                </div>
+                <p className="text-[11px] text-white/75 font-medium mt-0.5 truncate max-w-[150px] leading-tight">
                   {currentUser?.institute || 'Educators Academy'}
+                  {isUrdu && <span className="block text-[10px] text-white/80">منسلک ادارہ</span>}
                 </p>
               </div>
               <ShieldCheck className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>View Plan Details</span>
+              <span>{isUrdu ? 'View Plan Details • تفصیلات' : 'View Plan Details'}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -197,14 +257,17 @@ export default function PTMDashboardView({
           <div>
             <h2 className="text-sm sm:text-base font-black text-slate-800 tracking-tight flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-orange-500" />
-              Quick Academic & Management Hub
+              <span>Quick Academic & Management Hub</span>
+              {isUrdu && <span className="text-xs font-bold text-orange-600 font-sans">• فوری تعلیمی اور انتظامی سہولیات</span>}
             </h2>
             <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
-              Instant access to default configurations, archives, syllabus, and model paper suites.
+              {isUrdu 
+                ? 'امتحانی ترتیبات، پرانوں پرچوں کا ریکارڈ، بورڈ کا نصاب اور ماڈل پیپرز ایک کلک پر دستیاب ہیں۔' 
+                : 'Instant access to default configurations, archives, syllabus, and model paper suites.'}
             </p>
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 self-start sm:self-auto bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/80">
-            8 Quick Modules
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 self-start sm:self-auto bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/80">
+            {isUrdu ? '8 اہم سہولیات • 8 Quick Modules' : '8 Quick Modules'}
           </span>
         </div>
 
@@ -220,7 +283,7 @@ export default function PTMDashboardView({
                 <Settings className="w-5 h-5" />
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
-                27 Configs
+                {isUrdu ? '27 ترتیبات' : '27 Configs'}
               </span>
             </div>
 
@@ -231,10 +294,15 @@ export default function PTMDashboardView({
               <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
                 Header Layout, Watermarks & Styling
               </p>
+              {isUrdu && (
+                <p className="text-[11px] text-cyan-700 font-semibold mt-1 leading-tight">
+                  امتحانی ہیڈر، مونوگرام اور واٹر مارک کا ڈیزائن
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-cyan-700 transition-colors">
-              <span>Configure System</span>
+              <span>{isUrdu ? 'Configure System • ترتیبات بدلیں' : 'Configure System'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-cyan-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
                 <ChevronRight className="w-3 h-3" />
               </div>
@@ -243,7 +311,7 @@ export default function PTMDashboardView({
 
           {/* Tool 2: Deleted Papers */}
           <div 
-            onClick={() => notify.info("Deleted Papers Archive is empty.")}
+            onClick={() => notify.info(isUrdu ? "ری سائیکل بن خالی ہے (Deleted Papers Archive is empty)." : "Deleted Papers Archive is empty.")}
             className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-rose-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
           >
             <div className="flex items-start justify-between gap-2.5">
@@ -251,7 +319,7 @@ export default function PTMDashboardView({
                 <Trash2 className="w-5 h-5" />
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
-                Recycle Bin
+                {isUrdu ? 'ری سائیکل بن' : 'Recycle Bin'}
               </span>
             </div>
 
@@ -262,10 +330,15 @@ export default function PTMDashboardView({
               <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
                 Paper Recovery & Trash Archive
               </p>
+              {isUrdu && (
+                <p className="text-[11px] text-rose-700 font-semibold mt-1 leading-tight">
+                  ڈیلیٹ شدہ پرچوں کی بحالی اور محفوظ ریکارڈ
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-rose-700 transition-colors">
-              <span>0 Items in Bin</span>
+              <span>{isUrdu ? '0 Items • ری سائیکل بن خالی ہے' : '0 Items in Bin'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-rose-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
                 <ChevronRight className="w-3 h-3" />
               </div>
@@ -282,7 +355,7 @@ export default function PTMDashboardView({
                 <Copy className="w-5 h-5" />
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
-                {userTotalCreated} Records
+                {isUrdu ? `${userTotalCreated} پرچے` : `${userTotalCreated} Records`}
               </span>
             </div>
 
@@ -293,10 +366,15 @@ export default function PTMDashboardView({
               <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
                 Generated Archives & Print Logs
               </p>
+              {isUrdu && (
+                <p className="text-[11px] text-emerald-700 font-semibold mt-1 leading-tight">
+                  تاریخ کے مطابق تیار کردہ تمام پرچوں کی فہرست
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-emerald-700 transition-colors">
-              <span>View Archives</span>
+              <span>{isUrdu ? 'View Archives • سابقہ ریکارڈ دیکھیں' : 'View Archives'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-emerald-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
                 <ChevronRight className="w-3 h-3" />
               </div>
@@ -313,7 +391,7 @@ export default function PTMDashboardView({
                 <Landmark className="w-5 h-5" />
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
-                5 Years
+                {isUrdu ? '5 سالہ ریکارڈ' : '5 Years'}
               </span>
             </div>
 
@@ -324,10 +402,15 @@ export default function PTMDashboardView({
               <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
                 FBISE & Punjab Boards 5-Year Solved
               </p>
+              {isUrdu && (
+                <p className="text-[11px] text-amber-800 font-semibold mt-1 leading-tight">
+                  فیڈرل اور تمام پنجاب بورڈز کے حل شدہ پرچے
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-amber-700 transition-colors">
-              <span>Browse Past Papers</span>
+              <span>{isUrdu ? 'Browse Past Papers • بورڈ پرچے کھولیں' : 'Browse Past Papers'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-amber-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
                 <ChevronRight className="w-3 h-3" />
               </div>
@@ -344,7 +427,7 @@ export default function PTMDashboardView({
                 <PenTool className="w-5 h-5" />
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
-                {savedPapers.length || 0} Saved
+                {isUrdu ? `${savedPapers.length || 0} ڈرافٹ محفوظ` : `${savedPapers.length || 0} Saved`}
               </span>
             </div>
 
@@ -355,10 +438,15 @@ export default function PTMDashboardView({
               <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
                 Continue In-Progress Test Sheets
               </p>
+              {isUrdu && (
+                <p className="text-[11px] text-purple-700 font-semibold mt-1 leading-tight">
+                  جہاں کام چھوڑا تھا، وہیں سے آگے جاری رکھیں
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-purple-700 transition-colors">
-              <span>Open Drafts</span>
+              <span>{isUrdu ? 'Open Drafts • ڈرافٹ مکمل کریں' : 'Open Drafts'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-purple-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
                 <ChevronRight className="w-3.5 h-3.5" />
               </div>
@@ -367,7 +455,7 @@ export default function PTMDashboardView({
 
           {/* Tool 6: Study Scheme */}
           <div 
-            onClick={() => notify.info("Study Scheme: Punjab Boards 2024-2025")}
+            onClick={() => notify.info(isUrdu ? "اسٹڈی و پیئرنگ اسکیم: پنجاب بورڈز 2025-2026" : "Study Scheme: Punjab Boards 2025-2026")}
             className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-teal-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
           >
             <div className="flex items-start justify-between gap-2.5">
@@ -375,7 +463,7 @@ export default function PTMDashboardView({
                 <BookOpen className="w-5 h-5" />
               </div>
               <span className="px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200 text-[10px] font-black tracking-wide shrink-0 shadow-2xs">
-                Pairing
+                {isUrdu ? 'بورڈ اسکیم' : 'Pairing'}
               </span>
             </div>
 
@@ -386,10 +474,15 @@ export default function PTMDashboardView({
               <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
                 Official Punjab Boards Pairing Scheme
               </p>
+              {isUrdu && (
+                <p className="text-[11px] text-teal-800 font-semibold mt-1 leading-tight">
+                  امتحانی تقسیم اور باب وار نمبرز کی سرکاری اسکیم
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-teal-700 transition-colors">
-              <span>View Scheme</span>
+              <span>{isUrdu ? 'View Scheme • پیئرنگ اسکیم دیکھیں' : 'View Scheme'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-teal-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
                 <ChevronRight className="w-3.5 h-3.5" />
               </div>
@@ -398,7 +491,7 @@ export default function PTMDashboardView({
 
           {/* Tool 7: Smart Syllabus */}
           <div 
-            onClick={() => notify.info("Smart Syllabus: Punjab Boards (2025-26)")}
+            onClick={() => notify.info(isUrdu ? "سمارٹ نصاب: پنجاب ٹیکسٹ بک بورڈ (2025-26)" : "Smart Syllabus: Punjab Boards (2025-26)")}
             className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-indigo-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
           >
             <div className="flex items-start justify-between gap-2.5">
@@ -417,10 +510,15 @@ export default function PTMDashboardView({
               <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
                 Curriculum Scope & PCTB Guidelines
               </p>
+              {isUrdu && (
+                <p className="text-[11px] text-blue-700 font-semibold mt-1 leading-tight">
+                  پنجاب ٹیکسٹ بک بورڈ کے مطابق سلیبس کی حدود
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-blue-700 transition-colors">
-              <span>Curriculum Scope</span>
+              <span>{isUrdu ? 'Curriculum Scope • نصاب دیکھیں' : 'Curriculum Scope'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-blue-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
                 <ChevronRight className="w-3.5 h-3.5" />
               </div>
@@ -432,14 +530,13 @@ export default function PTMDashboardView({
             onClick={() => handleNav('model_papers')}
             className="bg-white hover:bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-orange-400 shadow-2xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between min-h-[145px] group relative overflow-hidden"
           >
-            {/* Elegant glowing top-right badge */}
             <div className="flex items-start justify-between gap-2.5">
               <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-orange-500/25 group-hover:scale-110 transition-transform duration-300">
                 <FileSignature className="w-5 h-5" />
               </div>
               <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black tracking-wide uppercase shadow-sm shadow-rose-500/30 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                NEW 2026
+                {isUrdu ? 'نیا 2026' : 'NEW 2026'}
               </span>
             </div>
 
@@ -450,10 +547,15 @@ export default function PTMDashboardView({
               <p className="text-[11px] text-slate-500 font-medium mt-0.5 leading-tight">
                 Board Standard Solved Full Papers
               </p>
+              {isUrdu && (
+                <p className="text-[11px] text-orange-700 font-semibold mt-1 leading-tight">
+                  بورڈ پیٹرن پر حل شدہ مکمل ماڈل پیپرز
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-bold text-slate-600 group-hover:text-orange-700 transition-colors">
-              <span>Official Papers</span>
+              <span>{isUrdu ? 'Official Papers • ماڈل ٹیسٹ دیکھیں' : 'Official Papers'}</span>
               <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-orange-600 text-slate-400 group-hover:text-white flex items-center justify-center transition-all group-hover:translate-x-0.5 shadow-2xs">
                 <ChevronRight className="w-3.5 h-3.5" />
               </div>
@@ -469,20 +571,23 @@ export default function PTMDashboardView({
           <div>
             <h2 className="text-sm sm:text-base font-black text-slate-800 tracking-tight flex items-center gap-2">
               <Database className="w-4 h-4 text-indigo-600" />
-              Master Question Bank & Syllabus Coverage
+              <span>Master Question Bank & Syllabus Coverage</span>
+              {isUrdu && <span className="text-xs font-bold text-indigo-600 font-sans">• امتحانی سوالات کا مستند ذخیرہ</span>}
             </h2>
             <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
-              Curated board curriculum questions available in the cloud database for test generation.
+              {isUrdu 
+                ? 'کلاؤڈ ڈیٹابیس میں موجود بورڈ کے تمام مضامین کے منظور شدہ کثیر الانتخابی، مختصر اور تفصیلی سوالات۔'
+                : 'Curated board curriculum questions available in the cloud database for test generation.'}
             </p>
           </div>
           <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 self-start sm:self-auto bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-200">
-            {totalQuestions} Total Questions Bank
+            {isUrdu ? `${totalQuestions} کل سوالات کا بینک` : `${totalQuestions} Total Questions Bank`}
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
           
-          {/* Question Bank Card 1: MCQs Questions (Amber / Golden Gradient) */}
+          {/* Question Bank Card 1: MCQs Questions */}
           <div 
             onClick={() => currentUser?.isAdmin ? (onGoToUpload ? onGoToUpload() : handleNav('upload_material')) : onGoToGenerate()}
             className="rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
@@ -492,18 +597,27 @@ export default function PTMDashboardView({
                 <div className="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">
                   {totalBankMcqs}
                 </div>
-                <div className="text-sm font-bold mt-1 text-white">MCQs Questions</div>
-                <p className="text-[11px] text-white/80 font-medium mt-0.5">Total Uploaded Bank</p>
+                <div className="text-sm font-bold mt-1 text-white">
+                  MCQs Questions
+                  {isUrdu && <span className="block text-[11px] font-medium text-white/90">معروضی سوالات (کثیر الانتخابی)</span>}
+                </div>
+                <p className="text-[11px] text-white/80 font-medium mt-0.5">
+                  {isUrdu ? 'کل موجود معروضی بینک' : 'Total Uploaded Bank'}
+                </p>
               </div>
               <ListChecks className="w-14 h-14 sm:w-16 sm:h-16 text-white/20 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>{currentUser?.isAdmin ? 'Upload / Manage MCQs' : 'Select in Paper'}</span>
+              <span>
+                {currentUser?.isAdmin 
+                  ? (isUrdu ? 'Upload / Manage MCQs • اپلوڈ کریں' : 'Upload / Manage MCQs') 
+                  : (isUrdu ? 'Select in Paper • ٹیسٹ میں شامل کریں' : 'Select in Paper')}
+              </span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
-          {/* Question Bank Card 2: Short Questions (Warm Rose / Coral Gradient) */}
+          {/* Question Bank Card 2: Short Questions */}
           <div 
             onClick={() => currentUser?.isAdmin ? (onGoToUpload ? onGoToUpload() : handleNav('upload_material')) : onGoToGenerate()}
             className="rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
@@ -513,18 +627,27 @@ export default function PTMDashboardView({
                 <div className="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">
                   {totalBankShorts}
                 </div>
-                <div className="text-sm font-bold mt-1 text-white/95">Short Questions</div>
-                <p className="text-[11px] text-white/75 font-medium mt-0.5">Total Uploaded Bank</p>
+                <div className="text-sm font-bold mt-1 text-white/95">
+                  Short Questions
+                  {isUrdu && <span className="block text-[11px] font-medium text-white/90">مختصر امتحانی سوالات</span>}
+                </div>
+                <p className="text-[11px] text-white/75 font-medium mt-0.5">
+                  {isUrdu ? 'کل موجود مختصر بینک' : 'Total Uploaded Bank'}
+                </p>
               </div>
               <FileText className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>{currentUser?.isAdmin ? 'Upload / Manage Shorts' : 'Select in Paper'}</span>
+              <span>
+                {currentUser?.isAdmin 
+                  ? (isUrdu ? 'Upload / Manage Shorts • اپلوڈ کریں' : 'Upload / Manage Shorts') 
+                  : (isUrdu ? 'Select in Paper • ٹیسٹ میں شامل کریں' : 'Select in Paper')}
+              </span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
-          {/* Question Bank Card 3: Long Questions (Deep Purple / Indigo Gradient) */}
+          {/* Question Bank Card 3: Long Questions */}
           <div 
             onClick={() => currentUser?.isAdmin ? (onGoToUpload ? onGoToUpload() : handleNav('upload_material')) : onGoToGenerate()}
             className="rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-800 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
@@ -534,18 +657,27 @@ export default function PTMDashboardView({
                 <div className="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">
                   {totalBankLongs}
                 </div>
-                <div className="text-sm font-bold mt-1 text-white/95">Long Questions</div>
-                <p className="text-[11px] text-white/75 font-medium mt-0.5">Total Uploaded Bank</p>
+                <div className="text-sm font-bold mt-1 text-white/95">
+                  Long Questions
+                  {isUrdu && <span className="block text-[11px] font-medium text-white/90">انشائیہ و تفصیلی سوالات</span>}
+                </div>
+                <p className="text-[11px] text-white/75 font-medium mt-0.5">
+                  {isUrdu ? 'کل موجود انشائیہ بینک' : 'Total Uploaded Bank'}
+                </p>
               </div>
               <BookOpen className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>{currentUser?.isAdmin ? 'Upload / Manage Longs' : 'Select in Paper'}</span>
+              <span>
+                {currentUser?.isAdmin 
+                  ? (isUrdu ? 'Upload / Manage Longs • اپلوڈ کریں' : 'Upload / Manage Longs') 
+                  : (isUrdu ? 'Select in Paper • ٹیسٹ میں شامل کریں' : 'Select in Paper')}
+              </span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
-          {/* Question Bank Card 4: Complete Bank Coverage (Teal / Emerald Gradient) */}
+          {/* Question Bank Card 4: Complete Bank Coverage */}
           <div 
             onClick={onGoToGenerate}
             className="rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 bg-gradient-to-br from-teal-600 via-emerald-600 to-cyan-700 text-white flex flex-col justify-between relative group cursor-pointer border border-white/15"
@@ -555,13 +687,18 @@ export default function PTMDashboardView({
                 <div className="text-4xl sm:text-5xl font-black tracking-tight drop-shadow-xs">
                   {totalQuestions}
                 </div>
-                <div className="text-sm font-bold mt-1 text-white/95">Question Bank</div>
-                <p className="text-[11px] text-white/75 font-medium mt-0.5">Across All Subjects</p>
+                <div className="text-sm font-bold mt-1 text-white/95">
+                  Question Bank
+                  {isUrdu && <span className="block text-[11px] font-medium text-white/90">مجموعی امتحانی ذخیرہ</span>}
+                </div>
+                <p className="text-[11px] text-white/75 font-medium mt-0.5">
+                  {isUrdu ? 'تمام مضامین کا بینک' : 'Across All Subjects'}
+                </p>
               </div>
               <Layers className="w-14 h-14 sm:w-16 sm:h-16 text-white/15 absolute right-3 top-3 pointer-events-none group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
             </div>
             <div className="w-full py-2.5 px-4 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-white text-xs font-bold flex items-center justify-between transition-colors border-t border-white/15">
-              <span>Use in Exam Builder</span>
+              <span>{isUrdu ? 'Use in Exam Builder • نیا ٹیسٹ بنائیں' : 'Use in Exam Builder'}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>

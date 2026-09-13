@@ -229,6 +229,26 @@ export default function App() {
     return 'dashboard';
   });
 
+  // Universal Interface Language State ('en' | 'ur')
+  const [appLanguage, setAppLanguage] = useState(() => {
+    try {
+      return localStorage.getItem('ptm_app_language') || 'ur';
+    } catch (e) {
+      return 'ur';
+    }
+  });
+
+  const handleToggleLanguage = () => {
+    setAppLanguage(prev => {
+      const next = prev === 'ur' ? 'en' : 'ur';
+      try {
+        localStorage.setItem('ptm_app_language', next);
+      } catch (e) {}
+      notify.info(next === 'ur' ? "اردو زبان فعال کر دی گئی ہے (Urdu Active)" : "English mode activated.");
+      return next;
+    });
+  };
+
   // Strict Paywall Lock: Non-subscribed users are strictly restricted to 'pricing'
   useEffect(() => {
     if (currentUser && !userSubscribed) {
@@ -1051,6 +1071,8 @@ export default function App() {
         currentUser={currentUser}
         userSubscribed={userSubscribed}
         onLogout={handleLogout}
+        appLanguage={appLanguage}
+        onToggleLanguage={handleToggleLanguage}
       />
 
       {/* MAIN VIEWPORT CONTAINER (INDEPENDENT SMOOTH SCROLLING) */}
@@ -1078,6 +1100,8 @@ export default function App() {
           currentUser={currentUser}
           onUpdateUser={handleUpdateUser}
           onLogout={handleLogout}
+          appLanguage={appLanguage}
+          onToggleLanguage={handleToggleLanguage}
         />
 
         {/* MAIN BODY CONTENT AREA */}
@@ -1275,6 +1299,8 @@ export default function App() {
               selectedClass={selectedClass}
               savedPapers={savedPapers}
               currentUser={currentUser}
+              appLanguage={appLanguage}
+              onToggleLanguage={handleToggleLanguage}
             />
           )}
 
@@ -1359,6 +1385,8 @@ export default function App() {
                 hasActiveDraft={Boolean(paperData.mcqs?.length || paperData.shortQuestions?.length || paperData.longQuestions?.length)}
                 onExportDocx={handleExportDocx}
                 onNavigate={handleSafeNavigate}
+                appLanguage={appLanguage}
+                onToggleLanguage={handleToggleLanguage}
               />
             </div>
           )}
@@ -1371,6 +1399,8 @@ export default function App() {
               onNavigate={handleSafeNavigate}
               onGoToDashboard={() => handleSafeNavigate('dashboard')}
               onLogout={handleLogout}
+              appLanguage={appLanguage}
+              onToggleLanguage={handleToggleLanguage}
             />
           )}
 
@@ -1384,6 +1414,8 @@ export default function App() {
                 setPaperStep('canvas');
               }}
               hasActiveDraft={Boolean(paperData.mcqs?.length || paperData.shortQuestions?.length || paperData.longQuestions?.length)}
+              appLanguage={appLanguage}
+              onToggleLanguage={handleToggleLanguage}
             />
           )}
 
@@ -1396,6 +1428,8 @@ export default function App() {
               currentUser={currentUser}
               onGoToGenerator={() => handleSafeNavigate('generate_paper')}
               onGenerateSpecificPaper={handleGenerateSpecificPaperFromDateSheet}
+              appLanguage={appLanguage}
+              onToggleLanguage={handleToggleLanguage}
             />
           )}
 

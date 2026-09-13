@@ -25,7 +25,9 @@ export default function PricingPlansView({
   userSubscribed = false, 
   onNavigate, 
   onGoToDashboard, 
-  onLogout 
+  onLogout,
+  appLanguage = 'en',
+  onToggleLanguage
 }) {
   const isAdmin = isSuperAdmin(currentUser);
 
@@ -33,17 +35,22 @@ export default function PricingPlansView({
   const [paymentInfo, setPaymentInfo] = useState(() => getLocalPaymentInfo());
   const [isLoading, setIsLoading] = useState(false);
 
-  // Card Display Language State: 'en' (default) | 'ur'
+  // Card Display Language State: synced with appLanguage
   const [cardLang, setCardLang] = useState(() => {
-    try {
-      return localStorage.getItem('ptm_pricing_lang') || 'en';
-    } catch (e) {
-      return 'en';
-    }
+    return appLanguage || 'ur';
   });
+
+  useEffect(() => {
+    if (appLanguage) {
+      setCardLang(appLanguage);
+    }
+  }, [appLanguage]);
 
   const handleSetLang = (lang) => {
     setCardLang(lang);
+    if (typeof onToggleLanguage === 'function' && lang !== appLanguage) {
+      onToggleLanguage();
+    }
     try {
       localStorage.setItem('ptm_pricing_lang', lang);
     } catch (e) {}

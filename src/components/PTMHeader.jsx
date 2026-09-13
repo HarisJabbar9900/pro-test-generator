@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { 
   Menu, User, Maximize2, Cloud, LogOut, KeyRound, 
-  ChevronDown, Settings, ShieldCheck, CheckCircle2, Phone, Bot
+  ChevronDown, Settings, ShieldCheck, CheckCircle2, Phone, Bot, Languages
 } from 'lucide-react';
 import UserProfileModal from './UserProfileModal';
 
@@ -15,7 +14,9 @@ export default function PTMHeader({
   onOpenAdmin,
   currentUser,
   onUpdateUser,
-  onLogout
+  onLogout,
+  appLanguage = 'en',
+  onToggleLanguage
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -114,6 +115,21 @@ export default function PTMHeader({
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span>Cloud Active</span>
             <Cloud className="w-3 h-3 text-emerald-600" />
+          </button>
+
+          {/* Universal Language Toggle (English / اردو) */}
+          <button
+            type="button"
+            onClick={onToggleLanguage}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+              appLanguage === 'ur'
+                ? 'bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700 ring-2 ring-emerald-200'
+                : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100'
+            }`}
+            title={appLanguage === 'ur' ? "اردو فعال ہے (Switch to English)" : "اردو زبان فعال کریں (Switch to Urdu)"}
+          >
+            <Languages className="w-3.5 h-3.5" />
+            <span>{appLanguage === 'ur' ? 'اردو فعال' : 'English / اردو'}</span>
           </button>
 
           {/* REFINED USER ACCOUNT DROPDOWN (UPDATE PROFILE / CHANGE PASSWORD) */}

@@ -3,7 +3,7 @@ import {
   Gauge, Send, Save, Newspaper, Users, 
   Files, Clock, Settings, LogOut, CheckCircle2, X,
   UploadCloud, ShieldCheck, KeyRound, School, Calendar, Sparkles, Lock, Headphones, Database, Bot,
-  FileSignature
+  FileSignature, Languages
 } from 'lucide-react';
 import { notify } from '../utils/notify';
 import { isSuperAdmin } from '../utils/pricingPlansService';
@@ -21,25 +21,64 @@ export default function PTMSidebar({
   packageType = "Educators Academy",
   currentUser = null,
   userSubscribed = true,
-  onLogout
+  onLogout,
+  appLanguage = 'en',
+  onToggleLanguage
 }) {
   const isAdmin = isSuperAdmin(currentUser);
+  const isUrdu = appLanguage === 'ur';
+
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Gauge },
-    { id: 'generate_paper', label: 'Generate Paper', icon: Send },
+    { 
+      id: 'dashboard', 
+      label: isUrdu ? 'Dashboard • ڈیش بورڈ' : 'Dashboard', 
+      icon: Gauge 
+    },
+    { 
+      id: 'generate_paper', 
+      label: isUrdu ? 'Generate Paper • نیا پرچہ بنائیں' : 'Generate Paper', 
+      icon: Send 
+    },
     { 
       id: 'pricing', 
-      label: isAdmin ? 'Pricing & Packages' : 'Subscription Plans', 
+      label: isAdmin 
+        ? (isUrdu ? 'Pricing & Packages • پیکیجز' : 'Pricing & Packages') 
+        : (isUrdu ? 'Subscription Plans • پیکیجز و فیس' : 'Subscription Plans'), 
       icon: Sparkles,
-      badge: '3 Cards'
+      badge: isUrdu ? '3 پیکیجز' : '3 Cards'
     },
     ...(isAdmin ? [
-      { id: 'question_bank_editor', label: 'Questions & Answers', icon: Database, isAdmin: true, badge: 'Live Edit' },
-      { id: 'upload_material', label: 'Upload Material', icon: UploadCloud, isAdmin: true }
+      { 
+        id: 'question_bank_editor', 
+        label: isUrdu ? 'Question Bank • سوالات ایڈٹ' : 'Questions & Answers', 
+        icon: Database, 
+        isAdmin: true, 
+        badge: 'Live Edit' 
+      },
+      { 
+        id: 'upload_material', 
+        label: isUrdu ? 'Upload Material • مٹیریل اپلوڈ' : 'Upload Material', 
+        icon: UploadCloud, 
+        isAdmin: true 
+      }
     ] : []),
-    { id: 'past_papers', label: 'Past Papers', icon: Newspaper },
-    { id: 'date_sheet_planner', label: 'Date-Sheet Planner', icon: Calendar, badge: 'Planner' },
-    { id: 'contact', label: 'Contact Team', icon: Headphones, badge: 'Direct' },
+    { 
+      id: 'past_papers', 
+      label: isUrdu ? 'Past Papers • سابقہ بورڈ پرچے' : 'Past Papers', 
+      icon: Newspaper 
+    },
+    { 
+      id: 'date_sheet_planner', 
+      label: isUrdu ? 'Date-Sheet • امتحانی پلانر' : 'Date-Sheet Planner', 
+      icon: Calendar, 
+      badge: 'Planner' 
+    },
+    { 
+      id: 'contact', 
+      label: isUrdu ? 'Contact Team • رابطہ و رہنمائی' : 'Contact Team', 
+      icon: Headphones, 
+      badge: 'Direct' 
+    },
   ];
 
   const handleNavClick = (navId) => {
@@ -259,8 +298,40 @@ export default function PTMSidebar({
         })}
       </nav>
 
+      {/* LANGUAGE SWITCH BUTTON (FULL & COLLAPSED) */}
+      <div className="p-2 border-t border-slate-700/60 bg-[#1d262a]">
+        {collapsed ? (
+          <button
+            type="button"
+            onClick={onToggleLanguage}
+            className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center transition-all cursor-pointer shadow-xs ${
+              isUrdu 
+                ? 'bg-emerald-600 text-white shadow-emerald-500/30' 
+                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+            }`}
+            title={isUrdu ? "Switch to English" : "اردو فعال کریں"}
+          >
+            <Languages className="w-4 h-4" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onToggleLanguage}
+            className={`w-full py-2 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs active:scale-98 ${
+              isUrdu 
+                ? 'bg-emerald-600 text-white border-emerald-500 shadow-emerald-500/20' 
+                : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+            }`}
+            title="تبدیل کریں: انگریزی اور اردو (Switch Language)"
+          >
+            <Languages className="w-3.5 h-3.5" />
+            <span>{isUrdu ? 'اردو فعال ہے • English' : 'English / اردو منتخب کریں'}</span>
+          </button>
+        )}
+      </div>
+
       {/* FOOTER ACCENT */}
-      <div className="mt-auto p-3 text-center border-t border-slate-700/60 text-[10px] text-slate-400">
+      <div className="mt-auto p-2.5 text-center border-t border-slate-700/60 text-[10px] text-slate-400">
         {collapsed ? (
           <span className="font-mono text-[9px] font-bold text-slate-500">PTM</span>
         ) : (

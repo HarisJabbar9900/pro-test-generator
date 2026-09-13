@@ -37,8 +37,11 @@ export default function PTMSecondaryViews({
   onResumeCurrentDraft,
   hasActiveDraft = false,
   onExportDocx,
-  onNavigate
+  onNavigate,
+  appLanguage = 'en',
+  onToggleLanguage
 }) {
+  const isUrdu = appLanguage === 'ur';
   const [registeredUsers, setRegisteredUsers] = useState([]);
   const [loginLogs, setLoginLogs] = useState([]);
   const [userSearchQuery, setUserSearchQuery] = useState('');
@@ -464,12 +467,15 @@ export default function PTMSecondaryViews({
       <div className="p-4 sm:p-8 max-w-5xl mx-auto space-y-6 font-sans">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
           <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
               <Save className="w-6 h-6 text-blue-600" />
               <span>Saved Papers Archive</span>
+              {isUrdu && <span className="text-sm font-bold text-blue-600 font-sans">• محفوظ شدہ امتحانی پرچے</span>}
             </h1>
             <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Manage, re-open, print, and download your saved question papers.
+              {isUrdu 
+                ? 'آپ کے تیار کردہ تمام پیپرز کا محفوظ ریکارڈ۔ یہاں سے دوبارہ پرنٹ، ایڈٹ اور ڈاؤنلوڈ کریں۔' 
+                : 'Manage, re-open, print, and download your saved question papers.'}
             </p>
           </div>
 
@@ -480,7 +486,7 @@ export default function PTMSecondaryViews({
                 onClick={onResumeCurrentDraft || onGoToGenerate}
                 className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
               >
-                <span>⚡ Resume Active Paper</span>
+                <span>{isUrdu ? '⚡ جاری رکھیں • Resume' : '⚡ Resume Active Paper'}</span>
               </button>
             )}
             <button
@@ -488,7 +494,7 @@ export default function PTMSecondaryViews({
               onClick={onStartNewPaper || onGoToGenerate}
               className="px-4 py-2 bg-[#007bff] hover:bg-blue-600 text-white text-xs font-bold rounded-lg shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
             >
-              <span>+ Create New Paper</span>
+              <span>{isUrdu ? '+ نیا پرچہ بنائیں • New Paper' : '+ Create New Paper'}</span>
             </button>
           </div>
         </div>
@@ -688,15 +694,22 @@ export default function PTMSecondaryViews({
                 <h1 className="text-base sm:text-2xl font-black text-slate-900 tracking-tight">
                   Official Model Papers
                 </h1>
+                {isUrdu && (
+                  <span className="text-sm font-bold text-orange-600 font-sans">
+                    • سرکاری ماڈل پیپرز
+                  </span>
+                )}
                 <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] sm:text-xs font-black border border-orange-200 shadow-2xs">
-                  2025 - 2026 Session
+                  {isUrdu ? 'سیشن 2025-2026' : '2025 - 2026 Session'}
                 </span>
                 <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] sm:text-xs font-bold border border-blue-200">
-                  Full Book Syllabus
+                  {isUrdu ? 'مکمل نصاب' : 'Full Book Syllabus'}
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-slate-500 font-medium mt-0.5 leading-relaxed break-words">
-                Authentic Punjab & Federal Board examination standard model papers with complete objective & subjective questions.
+                {isUrdu 
+                  ? 'پنجاب اور فیڈرل بورڈ کے عین مطابق حل شدہ معروضی و انشائیہ ماڈل پرچے مع مکمل جوابی کلید۔'
+                  : 'Authentic Punjab & Federal Board examination standard model papers with complete objective & subjective questions.'}
               </p>
             </div>
           </div>
@@ -714,7 +727,11 @@ export default function PTMSecondaryViews({
             >
               {showAnswerKeys ? <EyeOff className="w-3.5 h-3.5 shrink-0" /> : <Eye className="w-3.5 h-3.5 shrink-0" />}
               <span className="sm:hidden">{showAnswerKeys ? 'Hide' : 'Keys'}</span>
-              <span className="hidden sm:inline">{showAnswerKeys ? 'Hide Answers' : 'Reveal Answers'}</span>
+              <span className="hidden sm:inline">
+                {showAnswerKeys 
+                  ? (isUrdu ? 'Hide • جوابات چھپائیں' : 'Hide Answers') 
+                  : (isUrdu ? 'Keys • جوابی کلید' : 'Reveal Answers')}
+              </span>
             </button>
 
             <button
@@ -724,7 +741,11 @@ export default function PTMSecondaryViews({
             >
               {copiedPaperText ? <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> : <Copy className="w-3.5 h-3.5 text-slate-500 shrink-0" />}
               <span className="sm:hidden">{copiedPaperText ? 'Copied' : 'Copy'}</span>
-              <span className="hidden sm:inline">{copiedPaperText ? 'Copied!' : 'Copy Paper'}</span>
+              <span className="hidden sm:inline">
+                {copiedPaperText 
+                  ? 'Copied!' 
+                  : (isUrdu ? 'Copy • پیپر کاپی کریں' : 'Copy Paper')}
+              </span>
             </button>
 
             <button
@@ -734,7 +755,7 @@ export default function PTMSecondaryViews({
             >
               <Printer className="w-3.5 h-3.5 shrink-0" />
               <span className="sm:hidden">Print</span>
-              <span className="hidden sm:inline">Print Paper</span>
+              <span className="hidden sm:inline">{isUrdu ? 'Print • پرنٹ کریں' : 'Print Model Paper'}</span>
             </button>
           </div>
         </div>
@@ -1129,19 +1150,26 @@ export default function PTMSecondaryViews({
                 <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
                   Past Papers Archive
                 </h1>
+                {isUrdu && (
+                  <span className="text-sm font-bold text-blue-600 font-sans">
+                    • بورڈ کے 5 سالہ پرچے
+                  </span>
+                )}
                 <span className="px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-black">
-                  2020 - 2025
+                  {isUrdu ? '5 سالہ پرچے 2020-2025' : '2020 - 2025'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 font-medium mt-0.5">
-                FBISE, BISE Lahore, Rawalpindi, and KP Board official past exam papers & solved questions
+                {isUrdu 
+                  ? 'فیڈرل، لاہور، راولپنڈی اور تمام پنجاب بورڈز کے 5 سالہ حل شدہ پرچے اور معروضی سوالات۔'
+                  : 'FBISE, BISE Lahore, Rawalpindi, and KP Board official past exam papers & solved questions'}
               </p>
             </div>
           </div>
 
           <div className="text-xs font-semibold text-slate-500 flex items-center gap-1.5 self-start sm:self-auto bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-            <span className="text-slate-500 font-medium">Archive:</span>
-            <span className="text-blue-700 font-bold">5-Year Board Papers</span>
+            <span className="text-slate-500 font-medium">{isUrdu ? 'ریکارڈ:' : 'Archive:'}</span>
+            <span className="text-blue-700 font-bold">{isUrdu ? '5 سالہ حل شدہ امتحانات' : '5-Year Board Papers'}</span>
           </div>
         </div>
 
