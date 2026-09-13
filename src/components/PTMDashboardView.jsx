@@ -86,21 +86,6 @@ export default function PTMDashboardView({
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto">
-            {/* Quick in-page Urdu toggle */}
-            <button
-              type="button"
-              onClick={onToggleLanguage}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
-                isUrdu 
-                  ? 'bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700 ring-2 ring-emerald-200'
-                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
-              }`}
-              title={isUrdu ? "اردو فعال ہے (Switch to English)" : "اردو زبان فعال کریں (Switch to Urdu)"}
-            >
-              <Languages className="w-3.5 h-3.5" />
-              <span>{isUrdu ? 'اردو فعال (Urdu)' : 'اردو میں دیکھیں'}</span>
-            </button>
-
             {isSuper && (
               <button
                 type="button"
