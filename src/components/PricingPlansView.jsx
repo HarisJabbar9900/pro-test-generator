@@ -16,7 +16,8 @@ import {
   resetPricingToDefaults,
   submitPaymentProof,
   DEFAULT_PRICING_PLANS,
-  DEFAULT_PAYMENT_INFO
+  DEFAULT_PAYMENT_INFO,
+  isSuperAdmin
 } from '../utils/pricingPlansService';
 
 export default function PricingPlansView({ 
@@ -26,7 +27,7 @@ export default function PricingPlansView({
   onGoToDashboard, 
   onLogout 
 }) {
-  const isAdmin = Boolean(currentUser?.isAdmin);
+  const isAdmin = isSuperAdmin(currentUser);
 
   const [plans, setPlans] = useState(() => getLocalPricingPlans());
   const [paymentInfo, setPaymentInfo] = useState(() => getLocalPaymentInfo());
@@ -490,91 +491,123 @@ export default function PricingPlansView({
           </a>
         </div>
 
-        {/* 3 Payment Methods Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          
-          {/* EasyPaisa */}
-          <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-extrabold text-emerald-900 flex items-center gap-1.5">
-                <Smartphone className="w-4 h-4 text-emerald-600" />
-                EasyPaisa
-              </span>
-              <button
-                type="button"
-                onClick={() => handleCopy(paymentInfo.easyPaisaNumber, 'easypaisa')}
-                className="p-1 text-emerald-700 hover:bg-emerald-100 rounded-md cursor-pointer"
-                title="Copy Number"
-              >
-                {copiedField === 'easypaisa' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-            <div className="font-mono font-bold text-sm text-emerald-950">
-              {paymentInfo.easyPaisaNumber}
-            </div>
-            <div className="text-[11px] text-emerald-800">
-              Title: <strong>{paymentInfo.easyPaisaTitle}</strong>
-            </div>
-          </div>
-
-          {/* JazzCash */}
-          <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-100 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-extrabold text-amber-900 flex items-center gap-1.5">
-                <Smartphone className="w-4 h-4 text-amber-600" />
-                JazzCash
-              </span>
-              <button
-                type="button"
-                onClick={() => handleCopy(paymentInfo.jazzCashNumber, 'jazzcash')}
-                className="p-1 text-amber-700 hover:bg-amber-100 rounded-md cursor-pointer"
-                title="Copy Number"
-              >
-                {copiedField === 'jazzcash' ? <Check className="w-3.5 h-3.5 text-amber-600" /> : <Copy className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-            <div className="font-mono font-bold text-sm text-amber-950">
-              {paymentInfo.jazzCashNumber}
-            </div>
-            <div className="text-[11px] text-amber-800">
-              Title: <strong>{paymentInfo.jazzCashTitle}</strong>
-            </div>
-          </div>
-
-          {/* Bank Transfer */}
-          <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100 space-y-1.5">
-            <div className="flex items-center justify-between">
-              <span className="font-extrabold text-blue-900 flex items-center gap-1.5">
-                <Building className="w-4 h-4 text-blue-600" />
-                {paymentInfo.bankName || 'Meezan Bank'}
-              </span>
-              <button
-                type="button"
-                onClick={() => handleCopy(paymentInfo.bankAccountNumber, 'bank')}
-                className="p-1 text-blue-700 hover:bg-blue-100 rounded-md cursor-pointer"
-                title="Copy Account Number"
-              >
-                {copiedField === 'bank' ? <Check className="w-3.5 h-3.5 text-blue-600" /> : <Copy className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-            <div className="font-mono font-bold text-xs text-blue-950 truncate">
-              Acc: {paymentInfo.bankAccountNumber}
-            </div>
-            <div className="text-[11px] text-blue-800 truncate">
-              Title: <strong>{paymentInfo.bankAccountTitle}</strong>
-            </div>
-            {paymentInfo.bankIban && (
-              <div className="text-[10px] font-mono text-blue-600 truncate">
-                IBAN: {paymentInfo.bankIban}
+        {/* 3 Payment Methods Columns & Note (Blurred for Regular Users) */}
+        <div className="relative">
+          <div className={!isAdmin ? "filter blur-md select-none pointer-events-none opacity-40 transition-all duration-300" : ""}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              
+              {/* EasyPaisa */}
+              <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-emerald-900 flex items-center gap-1.5">
+                    <Smartphone className="w-4 h-4 text-emerald-600" />
+                    EasyPaisa
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(paymentInfo.easyPaisaNumber, 'easypaisa')}
+                    className="p-1 text-emerald-700 hover:bg-emerald-100 rounded-md cursor-pointer"
+                    title="Copy Number"
+                  >
+                    {copiedField === 'easypaisa' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+                <div className="font-mono font-bold text-sm text-emerald-950">
+                  {paymentInfo.easyPaisaNumber}
+                </div>
+                <div className="text-[11px] text-emerald-800">
+                  Title: <strong>{paymentInfo.easyPaisaTitle}</strong>
+                </div>
               </div>
-            )}
+
+              {/* JazzCash */}
+              <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-100 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-amber-900 flex items-center gap-1.5">
+                    <Smartphone className="w-4 h-4 text-amber-600" />
+                    JazzCash
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(paymentInfo.jazzCashNumber, 'jazzcash')}
+                    className="p-1 text-amber-700 hover:bg-amber-100 rounded-md cursor-pointer"
+                    title="Copy Number"
+                  >
+                    {copiedField === 'jazzcash' ? <Check className="w-3.5 h-3.5 text-amber-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+                <div className="font-mono font-bold text-sm text-amber-950">
+                  {paymentInfo.jazzCashNumber}
+                </div>
+                <div className="text-[11px] text-amber-800">
+                  Title: <strong>{paymentInfo.jazzCashTitle}</strong>
+                </div>
+              </div>
+
+              {/* Bank Transfer */}
+              <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-blue-900 flex items-center gap-1.5">
+                    <Building className="w-4 h-4 text-blue-600" />
+                    {paymentInfo.bankName || 'Meezan Bank'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(paymentInfo.bankAccountNumber, 'bank')}
+                    className="p-1 text-blue-700 hover:bg-blue-100 rounded-md cursor-pointer"
+                    title="Copy Account Number"
+                  >
+                    {copiedField === 'bank' ? <Check className="w-3.5 h-3.5 text-blue-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+                <div className="font-mono font-bold text-xs text-blue-950 truncate">
+                  Acc: {paymentInfo.bankAccountNumber}
+                </div>
+                <div className="text-[11px] text-blue-800 truncate">
+                  Title: <strong>{paymentInfo.bankAccountTitle}</strong>
+                </div>
+                {paymentInfo.bankIban && (
+                  <div className="text-[10px] font-mono text-blue-600 truncate">
+                    IBAN: {paymentInfo.bankIban}
+                  </div>
+                )}
+              </div>
+
+            </div>
+
+            {/* Urdu note */}
+            <div className="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 text-center font-medium">
+              {paymentInfo.instructions}
+            </div>
           </div>
 
-        </div>
-
-        {/* Urdu note */}
-        <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 text-center font-medium">
-          {paymentInfo.instructions}
+          {/* Blur Protection Lock Overlay for Users */}
+          {!isAdmin && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-3 text-center">
+              <div className="bg-white/95 backdrop-blur-md shadow-xl border border-slate-200/90 rounded-2xl p-5 sm:p-6 max-w-md mx-auto space-y-3 animate-fadeIn">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 text-amber-600 border border-amber-200/80 flex items-center justify-center mx-auto shadow-xs">
+                  <Lock className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="font-black text-slate-900 text-sm sm:text-base tracking-tight">
+                    آفیشل ادائیگی اکاؤنٹس (Official Accounts)
+                  </h4>
+                  <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">
+                    پیکیج کی فیس جمع کروانے اور اکاؤنٹ ایکٹیویٹ کروانے کے لیے براہ کرم آفیشل ایڈمن واٹس ایپ پر رابطہ فرمائیں۔
+                  </p>
+                </div>
+                <a
+                  href={`https://wa.me/${(paymentInfo.adminWhatsApp || '923001234567').replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام علیکم! مجھے Pro Test Maker کا پیکیج ایکٹیویٹ کروانا ہے، برائے مہربانی آفیشل پیمنٹ اکاؤنٹ نمبرز فراہم کریں۔')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Contact Admin for Payment Info</span>
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
