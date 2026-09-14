@@ -515,12 +515,12 @@ export default function PTMSecondaryViews({
               </button>
             )}
             <div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                <Save className="w-6 h-6 text-blue-600" />
-                <span>Saved Papers Archive</span>
-                {isUrdu && <span className="text-sm font-bold text-blue-600 font-sans">• محفوظ شدہ امتحانی پرچے</span>}
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2 flex-wrap">
+                <Save className="w-6 h-6 text-blue-600 shrink-0" />
+                <span className="whitespace-nowrap">Saved Papers Archive</span>
+                {isUrdu && <span className="text-sm font-bold text-blue-600 font-sans whitespace-nowrap">• محفوظ شدہ امتحانی پرچے</span>}
               </h1>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
+              <p className="text-xs text-slate-500 font-medium mt-0.5 max-w-2xl leading-relaxed">
                 {isUrdu 
                   ? 'آپ کے تیار کردہ تمام پیپرز کا محفوظ ریکارڈ۔ یہاں سے دوبارہ پرنٹ، ایڈٹ اور ڈاؤنلوڈ کریں۔' 
                   : 'Manage, re-open, print, and download your saved question papers.'}
@@ -733,101 +733,102 @@ export default function PTMSecondaryViews({
     return (
       <div className="w-full max-w-7xl mx-auto p-2.5 sm:p-6 md:p-8 space-y-4 sm:space-y-6 font-sans min-w-0 overflow-x-hidden">
         {/* HEADER & TOP CONTROLS */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs min-w-0">
-          <div className="flex items-center gap-3 min-w-0">
-            {onBack && (
-              <button
-                type="button"
-                onClick={onBack}
-                className="p-2.5 rounded-xl hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
-                title="Back to Dashboard"
-              >
-                <ArrowLeft className="w-5 h-5 text-slate-700" />
-              </button>
-            )}
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center shadow-xs shrink-0">
-              <FileSignature className="w-5 h-5 sm:w-6 sm:h-6" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                <h1 className="text-base sm:text-2xl font-black text-slate-900 tracking-tight">
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs min-w-0">
+          {/* Top section: Title left, Actions right */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 sm:gap-4 pb-3 sm:pb-3.5 border-b border-slate-100">
+            {/* Identity: Back + Icon + Title + Session Badges */}
+            <div className="flex items-center gap-2.5 sm:gap-3.5 flex-wrap min-w-0">
+              {onBack && (
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="p-2 sm:p-2.5 rounded-xl hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 shrink-0"
+                  title="Back to Dashboard"
+                >
+                  <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700" />
+                </button>
+              )}
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center shadow-xs shrink-0">
+                <FileSignature className="w-5 h-5 text-orange-600" />
+              </div>
+              <div className="flex items-center gap-2 flex-wrap min-w-0">
+                <h1 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight whitespace-nowrap">
                   Official Model Papers
                 </h1>
                 {isUrdu && (
-                  <span className="text-sm font-bold text-orange-600 font-sans">
+                  <span className="text-xs sm:text-sm font-bold text-orange-600 font-sans whitespace-nowrap">
                     • سرکاری ماڈل پیپرز
                   </span>
                 )}
-                <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] sm:text-xs font-black border border-orange-200 shadow-2xs">
+                <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] sm:text-xs font-black border border-orange-200 shadow-2xs whitespace-nowrap">
                   {isUrdu ? 'سیشن 2025-2026' : '2025 - 2026 Session'}
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] sm:text-xs font-bold border border-blue-200">
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] sm:text-xs font-bold border border-blue-200 whitespace-nowrap">
                   {isUrdu ? 'مکمل نصاب' : 'Full Book Syllabus'}
                 </span>
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 font-medium mt-0.5 leading-relaxed break-words">
-                {isUrdu 
-                  ? 'پنجاب اور فیڈرل بورڈ کے عین مطابق حل شدہ معروضی و انشائیہ ماڈل پرچے مع مکمل جوابی کلید۔'
-                  : 'Authentic Punjab & Federal Board examination standard model papers with complete objective & subjective questions.'}
-              </p>
+            </div>
+
+            {/* Quick Action Buttons - 2x2 grid on mobile, flex row on sm+ */}
+            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 shrink-0 w-full lg:w-auto">
+              <button
+                type="button"
+                onClick={() => setShowAnswerKeys(!showAnswerKeys)}
+                className={`px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs whitespace-nowrap ${
+                  showAnswerKeys 
+                    ? 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700' 
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                {showAnswerKeys ? <EyeOff className="w-3.5 h-3.5 shrink-0" /> : <Eye className="w-3.5 h-3.5 shrink-0" />}
+                <span>
+                  {showAnswerKeys 
+                    ? (isUrdu ? 'Hide Keys' : 'Hide Answers') 
+                    : (isUrdu ? 'جوابی کلید' : 'Reveal Answers')}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleCopyModelPaper(selectedPaper)}
+                className="px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs whitespace-nowrap"
+              >
+                {copiedPaperText ? <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> : <Copy className="w-3.5 h-3.5 text-slate-500 shrink-0" />}
+                <span>
+                  {copiedPaperText 
+                    ? 'Copied!' 
+                    : (isUrdu ? 'کاپی پیپر' : 'Copy Paper')}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold bg-slate-900 text-white hover:bg-slate-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm whitespace-nowrap"
+              >
+                <Printer className="w-3.5 h-3.5 shrink-0" />
+                <span>{isUrdu ? 'پرنٹ کریں' : 'Print Model Paper'}</span>
+              </button>
+
+              {onOpenPairingSchemeModal && (
+                <button
+                  type="button"
+                  onClick={onOpenPairingSchemeModal}
+                  className="px-3 py-2 rounded-xl text-[11px] sm:text-xs font-black bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 hover:from-amber-400 hover:to-orange-400 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
+                >
+                  <Award className="w-3.5 h-3.5 shrink-0" />
+                  <span>{isUrdu ? 'پیئرنگ اسکیم' : 'Pairing Scheme 2026'}</span>
+                </button>
+              )}
             </div>
           </div>
 
-          {/* QUICK ACTIONS BAR (MOBILE PRIORITY: 3-COL ON PHONES, FLEX ROW ON DESKTOP) */}
-          <div className="grid grid-cols-3 gap-1.5 w-full sm:w-auto sm:flex sm:items-center sm:gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => setShowAnswerKeys(!showAnswerKeys)}
-              className={`px-1.5 sm:px-3.5 py-2 rounded-xl text-[11px] sm:text-xs font-bold border transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-2xs ${
-                showAnswerKeys 
-                  ? 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700' 
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              {showAnswerKeys ? <EyeOff className="w-3.5 h-3.5 shrink-0" /> : <Eye className="w-3.5 h-3.5 shrink-0" />}
-              <span className="sm:hidden">{showAnswerKeys ? 'Hide' : 'Keys'}</span>
-              <span className="hidden sm:inline">
-                {showAnswerKeys 
-                  ? (isUrdu ? 'Hide • جوابات چھپائیں' : 'Hide Answers') 
-                  : (isUrdu ? 'Keys • جوابی کلید' : 'Reveal Answers')}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleCopyModelPaper(selectedPaper)}
-              className="px-1.5 sm:px-3.5 py-2 rounded-xl text-[11px] sm:text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-2xs"
-            >
-              {copiedPaperText ? <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> : <Copy className="w-3.5 h-3.5 text-slate-500 shrink-0" />}
-              <span className="sm:hidden">{copiedPaperText ? 'Copied' : 'Copy'}</span>
-              <span className="hidden sm:inline">
-                {copiedPaperText 
-                  ? 'Copied!' 
-                  : (isUrdu ? 'Copy • پیپر کاپی کریں' : 'Copy Paper')}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="px-1.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-bold bg-slate-900 text-white hover:bg-slate-800 transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-sm"
-            >
-              <Printer className="w-3.5 h-3.5 shrink-0" />
-              <span className="sm:hidden">Print</span>
-              <span className="hidden sm:inline">{isUrdu ? 'Print • پرنٹ کریں' : 'Print Model Paper'}</span>
-            </button>
-
-            {onOpenPairingSchemeModal && (
-              <button
-                type="button"
-                onClick={onOpenPairingSchemeModal}
-                className="col-span-3 sm:col-span-1 px-2 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-black bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 hover:from-amber-400 hover:to-orange-400 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
-              >
-                <Award className="w-3.5 h-3.5 shrink-0" />
-                <span>{isUrdu ? 'پیئرنگ اسکیم 2026' : 'Pairing Scheme 2026'}</span>
-              </button>
-            )}
-          </div>
+          {/* Subtitle / Description Row (Spans full width across the card, never squished) */}
+          <p className="text-[11px] sm:text-xs text-slate-500 font-medium pt-2.5 leading-relaxed">
+            {isUrdu 
+              ? 'پنجاب اور فیڈرل بورڈ کے عین مطابق حل شدہ معروضی و انشائیہ ماڈل پرچے مع مکمل جوابی کلید۔'
+              : 'Authentic Punjab & Federal Board examination standard model papers with complete objective & subjective questions.'}
+          </p>
         </div>
 
         {/* CLASS SELECTION TABS (TOUCH-SCROLLABLE WITH NO HORIZONTAL CUTOFF) */}
@@ -1226,20 +1227,20 @@ export default function PTMSecondaryViews({
               <Newspaper className="w-6 h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight whitespace-nowrap">
                   Past Papers Archive
                 </h1>
                 {isUrdu && (
-                  <span className="text-sm font-bold text-blue-600 font-sans">
+                  <span className="text-sm font-bold text-blue-600 font-sans whitespace-nowrap">
                     • بورڈ کے 5 سالہ پرچے
                   </span>
                 )}
-                <span className="px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-black">
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-black whitespace-nowrap">
                   {isUrdu ? '5 سالہ پرچے 2020-2025' : '2020 - 2025'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
+              <p className="text-xs text-slate-500 font-medium mt-0.5 max-w-2xl leading-relaxed">
                 {isUrdu 
                   ? 'فیڈرل، لاہور، راولپنڈی اور تمام پنجاب بورڈز کے 5 سالہ حل شدہ پرچے اور معروضی سوالات۔'
                   : 'FBISE, BISE Lahore, Rawalpindi, and KP Board official past exam papers & solved questions'}
