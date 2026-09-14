@@ -275,6 +275,30 @@
     top: 437mm !important;
   }
 
+  /* Dedicated Logo Watermark Container (Upright, centered, prominent) */
+  .a4-paper .watermark-logo-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: absolute !important;
+    top: 140mm !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    color: #000000 !important;
+    opacity: 0.08 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    pointer-events: none !important;
+    user-select: none !important;
+    z-index: 0 !important;
+    width: 320px !important;
+    height: 320px !important;
+  }
+
+  .a4-paper .watermark-logo-container.watermark-page-2 {
+    top: 437mm !important;
+  }
+
   /* Paper footer */
   .a4-paper footer {
     page-break-inside: avoid !important;
@@ -377,6 +401,28 @@
 }
 
 .watermark-container.watermark-page-2 {
+  top: 437mm;
+}
+
+/* Dedicated Logo Watermark Container (Upright, centered, prominent) */
+.watermark-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 140mm;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000000;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  width: 320px;
+  height: 320px;
+}
+
+.watermark-logo-container.watermark-page-2 {
   top: 437mm;
 }
 

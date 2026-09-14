@@ -544,83 +544,90 @@ export default function DefaultPaperSettingsView({
             </select>
           </div>
 
-          {/* 8. Watermark (Logo + Name) */}
+          {/* 8. Watermark Selection (Text vs Picture/Logo) */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
-              <span>Watermark (لوگو اور نام):</span>
-              <span className="text-[10px] text-blue-700 font-extrabold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                Logo + Text Active
+              <span>Watermark Type (واٹر مارک کی قسم):</span>
+              <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded border ${
+                formData.watermarkType === 'Picture Watermark' 
+                  ? 'bg-purple-50 text-purple-700 border-purple-200' 
+                  : formData.watermarkType === 'None' 
+                  ? 'bg-slate-100 text-slate-500 border-slate-200' 
+                  : 'bg-blue-50 text-blue-700 border-blue-200'
+              }`}>
+                {formData.watermarkType === 'Picture Watermark' ? '🖼️ Logo Active' : formData.watermarkType === 'None' ? '⚪ Disabled' : '📝 Text Active'}
               </span>
             </label>
             <select
-              value={formData.watermarkType || 'Text Watermark'}
+              value={formData.watermarkType === 'Picture Watermark' ? 'Picture Watermark' : formData.watermarkType === 'None' ? 'None' : 'Text Watermark'}
               onChange={(e) => handleChange('watermarkType', e.target.value)}
               className="w-full px-3 py-2 bg-white border border-slate-300 hover:border-slate-400 focus:border-blue-500 rounded-lg text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer shadow-2xs"
             >
-              <option value="Text Watermark">Logo + Text Watermark (لوگو اور نام دونوں - تجویز کردہ)</option>
-              <option value="Text Only">Text Only (صرف اکیڈمی کا نام)</option>
-              <option value="Logo Only">Logo Only (صرف اکیڈمی کا لوگو)</option>
+              <option value="Text Watermark">Text Watermark (صرف ٹیکسٹ واٹر مارک — جیسے اکیڈمی کا نام)</option>
+              <option value="Picture Watermark">Picture / Logo Watermark (صرف تصویر یا لوگو واٹر مارک)</option>
               <option value="None">None (کوئی واٹر مارک نہیں)</option>
             </select>
 
-            {formData.watermarkType !== 'None' && (
-              <div className="mt-2.5 space-y-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                {formData.watermarkType !== 'Logo Only' && (
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
-                      <span>Watermark Text (اکیڈمی کا نام):</span>
-                      <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-100 px-1.5 py-0.2 rounded">LIVE PREVIEW</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.watermarkText || formData.academyName || ''}
-                      onChange={(e) => handleChange('watermarkText', e.target.value)}
-                      placeholder="AL-ZIA SCIENCE ACADEMY"
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 focus:border-blue-500 rounded-lg text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 shadow-2xs"
-                    />
-                  </div>
-                )}
+            {/* If Text Watermark is selected */}
+            {(formData.watermarkType === 'Text Watermark' || (!formData.watermarkType && formData.showWatermark !== false)) && (
+              <div className="mt-2.5 space-y-1.5 p-2.5 rounded-xl bg-blue-50/50 border border-blue-200">
+                <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
+                  <span>Watermark Text (واٹر مارک کا نام):</span>
+                  <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-100 px-1.5 py-0.2 rounded">DIAGONAL TEXT</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.watermarkText || formData.academyName || ''}
+                  onChange={(e) => handleChange('watermarkText', e.target.value)}
+                  placeholder="AL-ZIA SCIENCE ACADEMY"
+                  className="w-full px-2.5 py-1.5 bg-white border border-blue-300 focus:border-blue-500 rounded-lg text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 shadow-2xs"
+                />
+                <p className="text-[10px] text-slate-500">
+                  یہ نام پورے پیپر پر ہلکے انداز میں ترچھا (Diagonal) پرنٹ ہوگا۔
+                </p>
+              </div>
+            )}
 
-                {/* Custom Logo Upload (Optional) */}
-                <div className="space-y-1.5 pt-1.5 border-t border-slate-200">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-slate-700">Academy Logo (اسکول یا اکیڈمی کا لوگو):</span>
-                    {formData.logoUrl && (
-                      <button
-                        type="button"
-                        onClick={() => handleChange('logoUrl', '')}
-                        className="text-[10px] text-rose-600 hover:text-rose-700 font-bold underline cursor-pointer"
-                      >
-                        Remove Logo
-                      </button>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {formData.logoUrl ? (
-                      <div className="w-10 h-10 rounded-lg border border-slate-300 bg-white p-0.5 shrink-0 flex items-center justify-center overflow-hidden shadow-xs">
-                        <img src={formData.logoUrl} alt="Logo" className="w-full h-full object-contain" />
-                      </div>
-                    ) : (
-                      <div className="w-10 h-10 rounded-lg border border-dashed border-blue-400 bg-blue-50/60 text-blue-700 shrink-0 flex flex-col items-center justify-center text-[9px] font-black">
-                        <span>AUTO</span>
-                        <span>CREST</span>
-                      </div>
-                    )}
-                    <label className="flex-1 px-3 py-2 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 cursor-pointer text-center transition-all truncate shadow-2xs flex items-center justify-center gap-1.5">
-                      <Image className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                      <span>{formData.logoUrl ? 'Change Logo Image...' : 'Upload School / Academy Logo'}</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleLogoUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                  <p className="text-[10px] text-slate-500 leading-tight">
-                    اگر کسٹم تصویر اپلوڈ نہ ہو تو سسٹم خودکار طور پر نام کے حروف سے ایک باوقار کریسٹ (Crest) لوگو بنا کر واٹر مارک میں شامل کرتا ہے۔
-                  </p>
+            {/* If Picture/Logo Watermark is selected */}
+            {formData.watermarkType === 'Picture Watermark' && (
+              <div className="mt-2.5 space-y-2 p-2.5 rounded-xl bg-purple-50/50 border border-purple-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-purple-950">Academy Logo / Picture (لوگو کی تصویر):</span>
+                  {formData.logoUrl && (
+                    <button
+                      type="button"
+                      onClick={() => handleChange('logoUrl', '')}
+                      className="text-[10px] text-rose-600 hover:text-rose-700 font-bold underline cursor-pointer"
+                    >
+                      Remove Custom Logo
+                    </button>
+                  )}
                 </div>
+                <div className="flex items-center gap-2.5">
+                  {formData.logoUrl ? (
+                    <div className="w-12 h-12 rounded-xl border border-purple-300 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-xs">
+                      <img src={formData.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl border border-dashed border-purple-400 bg-white text-purple-700 shrink-0 flex flex-col items-center justify-center text-[9px] font-black shadow-xs">
+                      <span>AUTO</span>
+                      <span>SEAL</span>
+                    </div>
+                  )}
+                  <label className="flex-1 px-3 py-2 bg-white hover:bg-purple-50 border border-purple-300 rounded-lg text-xs font-bold text-purple-900 cursor-pointer text-center transition-all truncate shadow-2xs flex items-center justify-center gap-1.5">
+                    <Image className="w-4 h-4 text-purple-600 shrink-0" />
+                    <span>{formData.logoUrl ? 'Change Custom Logo...' : 'Upload School / Academy Logo'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                <p className="text-[10px] text-slate-500 leading-tight">
+                  پیپر کے بالکل درمیان میں بڑا اور باوقار لوگو واٹر مارک پرنٹ ہوگا (اگر تصویر اپلوڈ نہ ہو تو اسکول کے نام کا آفیشل کریسٹ بنے گا)۔
+                </p>
               </div>
             )}
           </div>
