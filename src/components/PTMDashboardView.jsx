@@ -533,33 +533,6 @@ export default function PTMDashboardView({
 
       {/* 1. TOP 5 SPECIFIC USER METRIC CARDS (DEDICATED TO THIS USER) */}
       <div className="space-y-2.5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1 border-b border-slate-200/80">
-          <div className="flex items-center gap-2">
-            <span className="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-wider">
-              {currentUser?.name ? `${currentUser.name} • Faculty Dashboard` : 'Teacher Overview'}
-            </span>
-            {isUrdu && (
-              <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
-                اساتذہ ڈیش بورڈ
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2 self-start sm:self-auto">
-            {isSuper && (
-              <button
-                type="button"
-                onClick={() => handleNav('user_management')}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-300 transition-all cursor-pointer shadow-2xs"
-                title="User Management (تمام رجسٹرڈ اساتذہ اور پاسورڈز دیکھیں)"
-              >
-                <Users className="w-3.5 h-3.5 text-blue-600" />
-                <span>{isUrdu ? 'یوزر مینجمنٹ • User Management' : 'User Management'}</span>
-              </button>
-            )}
-          </div>
-        </div>
-
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
           
           {/* User Card 1: Generate Paper (Full Width on mobile, compact on desktop) */}
