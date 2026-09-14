@@ -231,25 +231,44 @@
 
   .a4-paper .watermark-container {
     display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
     position: absolute !important;
     top: 140mm !important;
     left: 50% !important;
     transform: translate(-50%, -50%) rotate(-28deg) !important;
-    font-size: 38pt !important;
-    font-weight: 900 !important;
     color: #000000 !important;
     opacity: 0.08 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.12em !important;
     pointer-events: none !important;
     user-select: none !important;
     z-index: 0 !important;
-    width: 85% !important;
-    max-width: 85% !important;
+    width: 90% !important;
+    max-width: 90% !important;
     text-align: center !important;
-    line-height: 1.25 !important;
+    line-height: 1.2 !important;
+  }
+
+  .a4-paper .watermark-name-text {
+    font-size: 28pt !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    line-height: 1.15 !important;
+    word-wrap: break-word !important;
+    text-align: center !important;
+  }
+
+  .a4-paper .watermark-tagline-text {
+    font-size: 9pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.22em !important;
+    margin-top: 1.5mm !important;
+    opacity: 0.85 !important;
+    text-align: center !important;
   }
 
   .a4-paper .watermark-container.watermark-page-2 {
@@ -318,27 +337,43 @@
 
 .watermark-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   position: absolute;
   top: 140mm;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-28deg);
-  font-size: clamp(2rem, 4.5vw, 3.2rem);
-  font-weight: 900;
   color: #000000;
   opacity: 0.08;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
   pointer-events: none;
   white-space: normal;
-  width: 85%;
-  max-width: 85%;
+  width: 90%;
+  max-width: 90%;
   user-select: none;
   z-index: 0;
   text-align: center;
-  line-height: 1.25;
+  line-height: 1.2;
+}
+
+.watermark-name-text {
+  font-size: clamp(1.6rem, 3.6vw, 2.7rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
   word-wrap: break-word;
+  text-align: center;
+}
+
+.watermark-tagline-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  margin-top: 4px;
+  opacity: 0.85;
+  text-align: center;
 }
 
 .watermark-container.watermark-page-2 {

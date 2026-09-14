@@ -44,6 +44,7 @@ export default function DefaultPaperSettingsView({
     syllabus: paperConfig.syllabus || '',
     watermarkText: (paperConfig.watermarkText && paperConfig.watermarkText !== 'PRO TEST MAKER') ? paperConfig.watermarkText : 'AL-ZIA SCIENCE ACADEMY',
     showWatermark: paperConfig.showWatermark !== false,
+    logoUrl: paperConfig.logoUrl || '',
     mcqLayout: paperConfig.mcqLayout || '1 Column',
     mcqOptionsCols: String(paperConfig.mcqOptionsCols || 2)
   });
@@ -136,13 +137,29 @@ export default function DefaultPaperSettingsView({
     isUserEdit.current = true;
     setFormData(prev => {
       const next = { ...prev, [field]: value };
-      if (field === 'watermarkType' && value === 'Text Watermark') {
+      if (field === 'watermarkType' && (value === 'Text Watermark' || value === 'Logo + Text Watermark')) {
         if (!prev.watermarkText || prev.watermarkText === 'PRO TEST MAKER') {
-          next.watermarkText = 'AL-ZIA SCIENCE ACADEMY';
+          next.watermarkText = prev.academyName || 'AL-ZIA SCIENCE ACADEMY';
         }
       }
       return next;
     });
+  };
+
+  const handleLogoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      notify.error("Logo file size must be under 2MB.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const base64 = uploadEvent.target.result;
+      handleChange('logoUrl', base64);
+      notify.success("Academy Logo uploaded successfully!");
+    };
+    reader.readAsDataURL(file);
   };
 
   // Auto-save ONLY when user explicitly changed a field
@@ -527,35 +544,83 @@ export default function DefaultPaperSettingsView({
             </select>
           </div>
 
-          {/* 8. Watermark */}
+          {/* 8. Watermark (Logo + Name) */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-800 block">
-              Watermark:
+            <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+              <span>Watermark (لوگو اور نام):</span>
+              <span className="text-[10px] text-blue-700 font-extrabold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                Logo + Text Active
+              </span>
             </label>
             <select
-              value={formData.watermarkType}
+              value={formData.watermarkType || 'Text Watermark'}
               onChange={(e) => handleChange('watermarkType', e.target.value)}
               className="w-full px-3 py-2 bg-white border border-slate-300 hover:border-slate-400 focus:border-blue-500 rounded-lg text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer shadow-2xs"
             >
-              <option value="Text Watermark">Text Watermark (AL-ZIA SCIENCE ACADEMY)</option>
-              <option value="Picture Watermark">Picture Watermark</option>
-              <option value="Custom Academy Logo">Custom Academy Logo</option>
-              <option value="None">None</option>
+              <option value="Text Watermark">Logo + Text Watermark (لوگو اور نام دونوں - تجویز کردہ)</option>
+              <option value="Text Only">Text Only (صرف اکیڈمی کا نام)</option>
+              <option value="Logo Only">Logo Only (صرف اکیڈمی کا لوگو)</option>
+              <option value="None">None (کوئی واٹر مارک نہیں)</option>
             </select>
 
-            {formData.watermarkType === 'Text Watermark' && (
-              <div className="mt-2 space-y-1">
-                <label className="text-[11px] font-bold text-blue-900 flex items-center justify-between">
-                  <span>Watermark Text:</span>
-                  <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-100 px-1.5 py-0.2 rounded">AL-ZIA ACTIVE</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.watermarkText}
-                  onChange={(e) => handleChange('watermarkText', e.target.value)}
-                  placeholder="AL-ZIA SCIENCE ACADEMY"
-                  className="w-full px-2.5 py-1.5 bg-blue-50/50 border border-blue-300 focus:border-blue-500 rounded-lg text-xs font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-100 shadow-2xs"
-                />
+            {formData.watermarkType !== 'None' && (
+              <div className="mt-2.5 space-y-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                {formData.watermarkType !== 'Logo Only' && (
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
+                      <span>Watermark Text (اکیڈمی کا نام):</span>
+                      <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-100 px-1.5 py-0.2 rounded">LIVE PREVIEW</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.watermarkText || formData.academyName || ''}
+                      onChange={(e) => handleChange('watermarkText', e.target.value)}
+                      placeholder="AL-ZIA SCIENCE ACADEMY"
+                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 focus:border-blue-500 rounded-lg text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 shadow-2xs"
+                    />
+                  </div>
+                )}
+
+                {/* Custom Logo Upload (Optional) */}
+                <div className="space-y-1.5 pt-1.5 border-t border-slate-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-slate-700">Academy Logo (اسکول یا اکیڈمی کا لوگو):</span>
+                    {formData.logoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => handleChange('logoUrl', '')}
+                        className="text-[10px] text-rose-600 hover:text-rose-700 font-bold underline cursor-pointer"
+                      >
+                        Remove Logo
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {formData.logoUrl ? (
+                      <div className="w-10 h-10 rounded-lg border border-slate-300 bg-white p-0.5 shrink-0 flex items-center justify-center overflow-hidden shadow-xs">
+                        <img src={formData.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-lg border border-dashed border-blue-400 bg-blue-50/60 text-blue-700 shrink-0 flex flex-col items-center justify-center text-[9px] font-black">
+                        <span>AUTO</span>
+                        <span>CREST</span>
+                      </div>
+                    )}
+                    <label className="flex-1 px-3 py-2 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 cursor-pointer text-center transition-all truncate shadow-2xs flex items-center justify-center gap-1.5">
+                      <Image className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                      <span>{formData.logoUrl ? 'Change Logo Image...' : 'Upload School / Academy Logo'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                  <p className="text-[10px] text-slate-500 leading-tight">
+                    اگر کسٹم تصویر اپلوڈ نہ ہو تو سسٹم خودکار طور پر نام کے حروف سے ایک باوقار کریسٹ (Crest) لوگو بنا کر واٹر مارک میں شامل کرتا ہے۔
+                  </p>
+                </div>
               </div>
             )}
           </div>

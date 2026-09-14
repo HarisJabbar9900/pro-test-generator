@@ -17,6 +17,115 @@ import { formatPaperFileName } from '../utils/syllabusHelper';
 const EMPTY_PAPER_DATA = Object.freeze({ mcqs: [], shortQuestions: [], longQuestions: [] });
 const EMPTY_CONFIG = Object.freeze({});
 
+// ============================================================
+// ACADEMY WATERMARK LOGO EMBLEM (Official Heraldic Crest / SVG)
+// ============================================================
+function AcademyWatermarkLogo({ name, logoUrl, size = 110 }) {
+  if (logoUrl) {
+    return (
+      <img
+        src={logoUrl}
+        alt="Academy Logo"
+        className="object-contain filter grayscale contrast-125 mb-2 pointer-events-none"
+        style={{ width: `${size}px`, height: `${size}px`, maxHeight: `${size}px` }}
+      />
+    );
+  }
+
+  // Calculate intelligent initials from school/academy name
+  const cleanName = (name || 'ACADEMY').trim();
+  let initials = 'PTM';
+  if (cleanName.toUpperCase().includes('AL-ZIA')) {
+    initials = 'AZ';
+  } else {
+    const words = cleanName.split(/\s+/).filter(Boolean);
+    if (words.length >= 3) {
+      initials = (words[0][0] + words[1][0] + words[2][0]).toUpperCase();
+    } else if (words.length === 2) {
+      initials = (words[0][0] + words[1][0]).toUpperCase();
+    } else if (words.length === 1 && words[0].length >= 2) {
+      initials = words[0].substring(0, Math.min(words[0].length, 3)).toUpperCase();
+    }
+  }
+
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      width={size}
+      height={size}
+      className="mb-2 pointer-events-none"
+      fill="currentColor"
+    >
+      {/* Outer Laurel Wreath / Educational Crest Leaves */}
+      <g opacity="0.85">
+        {/* Left Laurel Leaves */}
+        <path d="M 28 32 C 24 28 17 30 18 36 C 19 42 27 42 28 36 Z" />
+        <path d="M 23 44 C 18 41 12 45 14 51 C 16 56 24 54 24 48 Z" />
+        <path d="M 22 58 C 17 56 12 62 15 67 C 18 72 26 69 25 62 Z" />
+        <path d="M 27 72 C 22 72 19 80 24 84 C 28 87 34 81 31 75 Z" />
+        <path d="M 37 83 C 33 85 32 94 38 96 C 43 97 47 89 42 85 Z" />
+
+        {/* Right Laurel Leaves */}
+        <path d="M 72 32 C 76 28 83 30 82 36 C 81 42 73 42 72 36 Z" />
+        <path d="M 77 44 C 82 41 88 45 86 51 C 84 56 76 54 76 48 Z" />
+        <path d="M 78 58 C 83 56 88 62 85 67 C 82 72 74 69 75 62 Z" />
+        <path d="M 73 72 C 78 72 81 80 76 84 C 72 87 66 81 69 75 Z" />
+        <path d="M 63 83 C 67 85 68 94 62 96 C 57 97 53 89 58 85 Z" />
+      </g>
+
+      {/* Graduation Cap at Top */}
+      <path d="M 50 7 L 63 13 L 50 19 L 37 13 Z" />
+      <path d="M 44 16.5 L 44 21 C 44 23 56 23 56 21 L 56 16.5 Z" />
+      <path d="M 61 14.5 L 63.5 22" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+
+      {/* Heraldic Shield */}
+      <path
+        d="M 50 21 Q 72 21 75 39 Q 75 67 50 83 Q 25 67 25 39 Q 28 21 50 21 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3.2"
+      />
+      <path
+        d="M 50 25 Q 68 25 71 41 Q 71 64 50 79 Q 29 64 29 41 Q 32 25 50 25 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeDasharray="2 1.5"
+      />
+
+      {/* Open Book of Knowledge in upper half of shield */}
+      <path
+        d="M 37 38 Q 43 36 50 39 Q 57 36 63 38 L 63 46 Q 57 44 50 47 Q 43 44 37 46 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <line x1="50" y1="39" x2="50" y2="47" stroke="currentColor" strokeWidth="1.6" />
+
+      {/* Academy Monogram / Initials in center of shield */}
+      <text
+        x="50"
+        y="66"
+        textAnchor="middle"
+        fontSize={initials.length > 2 ? "14" : "17"}
+        fontWeight="900"
+        fontFamily="serif"
+        letterSpacing="0.05em"
+        fill="currentColor"
+      >
+        {initials}
+      </text>
+
+      {/* Bottom Ribbon / Banner */}
+      <path
+        d="M 33 87 L 50 84 L 67 87 L 63 92 L 50 89 L 37 92 Z"
+        fill="currentColor"
+        opacity="0.85"
+      />
+    </svg>
+  );
+}
+
 export default function PaperCanvas({
   config,
   paperConfig: propPaperConfig,
@@ -58,6 +167,7 @@ export default function PaperCanvas({
     watermarkText: configWatermarkText,
     showWatermark: configShowWatermark,
     watermarkType = 'Text Watermark',
+    logoUrl = paperConfig.logoUrl,
     theme,
     showAnswerKey,
     headerLayout = 'Layout 13',
@@ -254,7 +364,9 @@ export default function PaperCanvas({
 
   const effectiveWatermark = (configWatermarkText && configWatermarkText !== 'PRO TEST MAKER')
     ? configWatermarkText
-    : (watermarkType === 'Text Watermark' ? 'AL-ZIA SCIENCE ACADEMY' : (configWatermarkText || 'AL-ZIA SCIENCE ACADEMY'));
+    : (academyName && academyName !== 'PRO TEST MAKER' 
+        ? academyName 
+        : (configWatermarkText || academyName || 'AL-ZIA SCIENCE ACADEMY'));
 
   // Dynamic scaled dimensions & negative margin compensation to eliminate unscaled dead whitespace below paper
   const currentScale = zoomLevel / 100;
@@ -1129,14 +1241,38 @@ export default function PaperCanvas({
             }}
           >
           
-          {/* Watermark Layer (Page 1 + Page 2 centered) */}
-          {isWatermarkEnabled && effectiveWatermark && (
+          {/* Watermark Layer (Page 1 + Page 2 centered: Dynamic Academy Logo + Text) */}
+          {isWatermarkEnabled && (effectiveWatermark || logoUrl || paperConfig.logoUrl) && (
             <div className="paper-watermarks-layer">
               <div className="watermark-container">
-                {effectiveWatermark}
+                {watermarkType !== 'Text Only' && (
+                  <AcademyWatermarkLogo name={effectiveWatermark} logoUrl={logoUrl || paperConfig.logoUrl} size={110} />
+                )}
+                {watermarkType !== 'Logo Only' && effectiveWatermark && (
+                  <div className="watermark-name-text">
+                    {effectiveWatermark}
+                  </div>
+                )}
+                {tagline && watermarkType !== 'Logo Only' && (
+                  <div className="watermark-tagline-text">
+                    {tagline}
+                  </div>
+                )}
               </div>
               <div className="watermark-container watermark-page-2">
-                {effectiveWatermark}
+                {watermarkType !== 'Text Only' && (
+                  <AcademyWatermarkLogo name={effectiveWatermark} logoUrl={logoUrl || paperConfig.logoUrl} size={110} />
+                )}
+                {watermarkType !== 'Logo Only' && effectiveWatermark && (
+                  <div className="watermark-name-text">
+                    {effectiveWatermark}
+                  </div>
+                )}
+                {tagline && watermarkType !== 'Logo Only' && (
+                  <div className="watermark-tagline-text">
+                    {tagline}
+                  </div>
+                )}
               </div>
             </div>
           )}
