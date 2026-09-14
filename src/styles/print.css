@@ -252,7 +252,7 @@
   }
 
   .a4-paper .watermark-name-text {
-    font-size: 28pt !important;
+    font-size: 34pt !important;
     font-weight: 900 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.12em !important;
@@ -262,7 +262,7 @@
   }
 
   .a4-paper .watermark-tagline-text {
-    font-size: 9pt !important;
+    font-size: 10pt !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.22em !important;
@@ -291,8 +291,8 @@
     pointer-events: none !important;
     user-select: none !important;
     z-index: 0 !important;
-    width: 320px !important;
-    height: 320px !important;
+    width: 400px !important;
+    height: 400px !important;
   }
 
   .a4-paper .watermark-logo-container.watermark-page-2 {
@@ -381,7 +381,7 @@
 }
 
 .watermark-name-text {
-  font-size: clamp(1.6rem, 3.6vw, 2.7rem);
+  font-size: clamp(2rem, 4.2vw, 3.2rem);
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -391,11 +391,11 @@
 }
 
 .watermark-tagline-text {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.22em;
-  margin-top: 4px;
+  margin-top: 5px;
   opacity: 0.85;
   text-align: center;
 }
@@ -418,8 +418,8 @@
   pointer-events: none;
   user-select: none;
   z-index: 0;
-  width: 320px;
-  height: 320px;
+  width: 400px;
+  height: 400px;
 }
 
 .watermark-logo-container.watermark-page-2 {

@@ -20,7 +20,7 @@ const EMPTY_CONFIG = Object.freeze({});
 // ============================================================
 // ACADEMY WATERMARK LOGO EMBLEM (Official Seal & Crest)
 // ============================================================
-function AcademyWatermarkLogo({ name, logoUrl, size = 280 }) {
+function AcademyWatermarkLogo({ name, logoUrl, size = 380 }) {
   if (logoUrl) {
     return (
       <img
@@ -1278,7 +1278,7 @@ export default function PaperCanvas({
                   <AcademyWatermarkLogo 
                     name={effectiveWatermark} 
                     logoUrl={logoUrl || paperConfig.logoUrl} 
-                    size={280} 
+                    size={380} 
                   />
                 </div>
               ) : (
@@ -1300,7 +1300,7 @@ export default function PaperCanvas({
                   <AcademyWatermarkLogo 
                     name={effectiveWatermark} 
                     logoUrl={logoUrl || paperConfig.logoUrl} 
-                    size={280} 
+                    size={380} 
                   />
                 </div>
               ) : (
